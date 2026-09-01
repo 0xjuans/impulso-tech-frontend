@@ -1,0 +1,32 @@
+# Instrucciones locales para Claude — no deben publicarse
+CLAUDE.md
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Dependencias
+node_modules/
+
+# Build de Angular
+dist/
+tmp/
+out-tsc/
+.angular/
+
+# Logs y temporales
+*.log
+*.tmp
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Variables de entorno locales
+.env
+.env.*
+!.env.example
