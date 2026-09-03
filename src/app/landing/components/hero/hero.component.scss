@@ -152,27 +152,33 @@
 
 .hero__rotator {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
   /* Ancho suficiente para acomodar la palabra más larga del set. */
   min-width: 14ch;
-  height: 1.05em;
-  vertical-align: baseline;
-  /* Recorte solo vertical mediante clip-path para que las palabras cortas
-     no queden truncadas lateralmente pero conserven el efecto slide. */
-  clip-path: inset(-0.15em 0);
+  /* Altura un poco mayor al em para respetar ascendentes y descendentes. */
+  height: 1.1em;
+  vertical-align: middle;
+  line-height: 1;
+  /* Overflow visible: las palabras se posicionan absolutamente y se
+     animan mediante opacidad y traslación vertical sin recortarse. */
+  overflow: visible;
 }
 
 .hero__rotator-word {
   position: absolute;
-  left: 0;
-  top: 0;
+  inset: 0;
+  display: flex;
+  align-items: center;
   white-space: nowrap;
+  line-height: 1;
   background: linear-gradient(120deg, #ff8a3d 0%, #ff4f00 55%, #e63a00 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   opacity: 0;
-  transform: translateY(60%);
+  transform: translateY(30%);
   transition: opacity 500ms ease, transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -647,6 +653,7 @@
 
 /* --------------------------------------------------------- Responsive */
 
+/* Tablet: se mantiene el modo absoluto pero con más aire vertical. */
 @media (max-width: 1024px) {
   .hero__content {
     grid-template-columns: 1fr;
@@ -654,24 +661,30 @@
   }
 
   .hero__cards {
-    min-height: 560px;
-    max-width: 480px;
+    min-height: 620px;
+    max-width: 520px;
     margin: 0 auto;
     width: 100%;
   }
 
   .floating-card--terminal { right: 0; }
   .floating-card--progress { left: 0; top: 260px; }
-  .floating-card--pet      { right: 0; top: 430px; }
+  .floating-card--pet      { right: 0; top: 460px; }
 }
 
-@media (max-width: 640px) {
+/* Mobile: se abandona el posicionamiento absoluto de las tarjetas
+   para evitar solapes con la marquesina y con el resto del contenido.
+   Las tarjetas pasan a apilarse en columna con separación regular. */
+@media (max-width: 720px) {
   .hero {
     padding-top: calc(var(--nav-height) + var(--spacing-2xl));
+    /* Espacio suficiente para que la marquesina fija no cubra la última tarjeta. */
     padding-bottom: 120px;
   }
 
   .hero__title { font-size: clamp(36px, 10vw, 52px); }
+
+  .hero__subtitle { font-size: 16px; }
 
   .hero__proof {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -680,13 +693,53 @@
 
   .hero__proof strong { font-size: 20px; }
 
-  .hero__cards { min-height: 460px; }
-  .floating-card--terminal { width: 100%; }
-  .floating-card--progress { width: 88%; }
-  .floating-card--pet      { width: 92%; }
+  .hero__orb { display: none; }
 
-  .hero__marquee { bottom: 56px; }
-  .hero__scroll  { display: none; }
+  .hero__cards {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+    min-height: 0;
+    max-width: 100%;
+  }
+
+  /* Todas las tarjetas comparten ancho para quedar perfectamente
+     centradas dentro del contenedor en mobile. */
+  .floating-card {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    align-self: center;
+    animation: none;
+    transform: none !important;
+  }
+
+  .floating-card--terminal { border-radius: var(--radius-lg); }
+
+  .floating-card__code {
+    font-size: 12px;
+    padding: 14px 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .floating-card__title { font-size: 11px; }
+
+  .floating-card__footer { padding: 0 16px 14px; }
+
+  /* La marquesina deja de flotar sobre el contenido: se ancla al final
+     del hero con position: relative para que fluya con el layout. */
+  .hero__marquee {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    margin-top: var(--spacing-2xl);
+  }
+
+  .hero__scroll { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

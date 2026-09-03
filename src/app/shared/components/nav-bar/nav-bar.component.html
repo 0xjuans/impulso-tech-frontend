@@ -17,18 +17,30 @@
 
     <div class="nav__actions">
       <a class="nav__link nav__link--muted" routerLink="/auth/login">Iniciar sesión</a>
-      <a class="btn btn--primary btn--sm" routerLink="/auth/register">Empezar gratis</a>
+      <a class="btn btn--primary btn--sm" routerLink="/auth/register">Crear cuenta</a>
     </div>
 
-    <!-- Botón de menú visible solo en viewport reducido. -->
+    <!--
+      Botón de menú inspirado en un editor de código: tres líneas de
+      diferente longitud representan sentencias y un cursor naranja
+      parpadea al final de la primera. Al abrirse, las líneas se
+      transforman en una "X" y el cursor se detiene, indicando que el
+      "programa" del menú está en pausa.
+    -->
     <button
       type="button"
-      class="nav__burger"
+      class="code-menu"
+      [class.is-open]="menuOpen()"
       (click)="toggleMenu()"
       [attr.aria-expanded]="menuOpen()"
       aria-controls="nav-mobile"
-      aria-label="Abrir menú">
-      <span></span><span></span><span></span>
+      [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'">
+      <span class="code-menu__glyph" aria-hidden="true">
+        <span class="code-menu__line code-menu__line--1"></span>
+        <span class="code-menu__line code-menu__line--2"></span>
+        <span class="code-menu__line code-menu__line--3"></span>
+        <span class="code-menu__caret"></span>
+      </span>
     </button>
   </div>
 </header>
