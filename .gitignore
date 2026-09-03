@@ -1,32 +1,47 @@
-# Instrucciones locales para Claude — no deben publicarse
-CLAUDE.md
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# IDEs
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
 .idea/
-.vscode/
-*.iml
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# Dependencias
-node_modules/
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
 
-# Build de Angular
-dist/
-tmp/
-out-tsc/
-.angular/
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
 
-# Logs y temporales
-*.log
-*.tmp
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Sistema operativo
+# System files
 .DS_Store
 Thumbs.db
 
-# Variables de entorno locales
-.env
-.env.*
-!.env.example
+#Claude
+CLAUDE.md
+zapier-inspired-DESIGN.md
+/.claude

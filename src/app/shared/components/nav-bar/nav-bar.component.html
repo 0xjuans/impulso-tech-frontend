@@ -1,0 +1,34 @@
+<!--
+  Barra de navegación superior. El atributo data-scrolled controla la
+  transición a un fondo sólido cuando el usuario abandona el hero.
+-->
+<header class="nav" [ngClass]="{ 'nav--scrolled': scrolled(), 'nav--open': menuOpen() }">
+  <div class="nav__inner container">
+    <a class="nav__brand" routerLink="/" (click)="closeMenu()" aria-label="Impulso Tech — Inicio">
+      <span class="nav__brand-mark" aria-hidden="true">◐</span>
+      <span class="nav__brand-name">Impulso<span class="nav__brand-accent">.tech</span></span>
+    </a>
+
+    <nav class="nav__links" aria-label="Navegación principal">
+      <a class="nav__link" href="#rutas" (click)="closeMenu()">Rutas</a>
+      <a class="nav__link" href="#laboratorios" (click)="closeMenu()">Laboratorios</a>
+      <a class="nav__link" href="#comunidad" (click)="closeMenu()">Comunidad</a>
+    </nav>
+
+    <div class="nav__actions">
+      <a class="nav__link nav__link--muted" routerLink="/auth/login">Iniciar sesión</a>
+      <a class="btn btn--primary btn--sm" routerLink="/auth/register">Empezar gratis</a>
+    </div>
+
+    <!-- Botón de menú visible solo en viewport reducido. -->
+    <button
+      type="button"
+      class="nav__burger"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="nav-mobile"
+      aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>

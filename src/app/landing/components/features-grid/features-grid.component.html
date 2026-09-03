@@ -1,0 +1,26 @@
+<!-- Cuadrícula de pilares de la plataforma -->
+<section class="features" id="rutas" aria-labelledby="features-title">
+  <div class="container">
+    <header class="features__header">
+      <span class="eyebrow">Todo en una sola plataforma</span>
+      <h2 id="features-title" class="features__title">
+        Diseñado como se enseña programación<br />
+        <em>de verdad</em>, no como se vende.
+      </h2>
+      <p class="features__lead">
+        Impulso Tech combina lo mejor del aula, la comunidad y la industria en
+        una experiencia coherente para el estudiante hispanohablante.
+      </p>
+    </header>
+
+    <div class="features__grid" role="list">
+      @for (feature of features; track feature.title) {
+        <article class="feature" [attr.data-accent]="feature.accent" role="listitem">
+          <div class="feature__icon" aria-hidden="true">{{ feature.icon }}</div>
+          <h3 class="feature__title">{{ feature.title }}</h3>
+          <p class="feature__description">{{ feature.description }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14100e"/>
+      <stop offset="0.5" stop-color="#1c1512"/>
+      <stop offset="1" stop-color="#0e0a08"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0.2" cy="0.2" r="0.6">
+      <stop offset="0" stop-color="#ff4f00" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ff4f00" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0.85" cy="0.85" r="0.55">
+      <stop offset="0" stop-color="#6b8afd" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#6b8afd" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#fffefb" fill-opacity="0.05"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#dots)"/>
+  <rect width="1600" height="900" fill="url(#glowA)"/>
+  <rect width="1600" height="900" fill="url(#glowB)"/>
+  <g font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="18" fill="#fffefb" fill-opacity="0.10">
+    <text x="80"  y="200">const impulso = () =&gt; learn(code);</text>
+    <text x="80"  y="260">while (curioso) &#123; practicar(); &#125;</text>
+    <text x="80"  y="320">function siguientePaso() &#123; ... &#125;</text>
+    <text x="80"  y="380">await mascota.explicar(error);</text>
+    <text x="820" y="500">$ npm run challenge -- palindromo</text>
+    <text x="820" y="560">✓ 12/12 pruebas superadas</text>
+    <text x="820" y="620">+ 120 XP · racha 14 días 🔥</text>
+  </g>
+</svg>
