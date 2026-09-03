@@ -621,42 +621,15 @@
   to   { transform: translateX(-50%); }
 }
 
-/* --------------------------------------------------- Indicador de scroll */
-
-.hero__scroll {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 40px;
-  border: 2px solid rgba(255, 254, 251, 0.5);
-  border-radius: var(--radius-pill);
-  display: flex;
-  justify-content: center;
-  padding-top: 6px;
-  z-index: 2;
-}
-
-.hero__scroll span {
-  width: 3px;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--color-canvas);
-  animation: scrollDot 1.8s ease-in-out infinite;
-}
-
-@keyframes scrollDot {
-  0%   { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(14px); opacity: 0; }
-}
-
 /* --------------------------------------------------------- Responsive */
 
-/* Tablet: se mantiene el modo absoluto pero con más aire vertical. */
+/* Tablet: se mantiene el modo absoluto pero con más aire vertical.
+   Se usa minmax(0, 1fr) en lugar de 1fr para que la columna no se
+   expanda al ancho de su contenido intrínseco (por ejemplo, el
+   bloque de código del terminal) y respete el padding lateral. */
 @media (max-width: 1024px) {
   .hero__content {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--spacing-3xl);
   }
 
@@ -738,14 +711,11 @@
     right: auto;
     margin-top: var(--spacing-2xl);
   }
-
-  .hero__scroll { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .floating-card,
   .pet__eyes span,
-  .hero__scroll span,
   .hero__marquee-track,
   .hero__glow,
   .hero__orb,
