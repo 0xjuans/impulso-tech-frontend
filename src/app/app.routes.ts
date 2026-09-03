@@ -18,6 +18,10 @@ export const routes: Routes = [
     title: 'Impulso Tech — Aprende programación con retos, IA y comunidad',
   },
   {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.routes').then((m) => m.authRoutes),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

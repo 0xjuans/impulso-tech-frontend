@@ -1,0 +1,137 @@
+<!-- Formulario de registro de un nuevo estudiante -->
+@if (succeeded()) {
+  <div class="auth-form">
+    <header>
+      <h1 class="auth-form__title">¡Cuenta creada!</h1>
+      <p class="auth-form__lead">
+        Te enviamos un correo con un enlace para verificar tu cuenta.
+        Revisa tu bandeja de entrada (y la carpeta de spam) y regresa
+        cuando la confirmes.
+      </p>
+    </header>
+    <div class="auth-form__alert auth-form__alert--success">
+      Una vez verifiques el correo, podrás iniciar sesión con tus datos.
+    </div>
+    <div class="auth-form__actions">
+      <a class="auth-form__submit" routerLink="/auth/login">Ir a iniciar sesión</a>
+    </div>
+  </div>
+} @else {
+  <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <header>
+      <h1 class="auth-form__title">Crear cuenta</h1>
+      <p class="auth-form__lead">
+        Empieza tu primera ruta de aprendizaje en menos de cinco minutos.
+      </p>
+    </header>
+
+    @if (errorMessage()) {
+      <div class="auth-form__alert auth-form__alert--error" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="auth-form__row">
+      <div class="auth-form__group">
+        <label class="auth-form__label" for="reg-first">Nombres</label>
+        <input
+          id="reg-first"
+          class="auth-form__input"
+          type="text"
+          autocomplete="given-name"
+          formControlName="firstName"
+          [attr.aria-invalid]="form.controls.firstName.invalid && form.controls.firstName.touched" />
+        @if (form.controls.firstName.touched && form.controls.firstName.hasError('required')) {
+          <span class="auth-form__error">Ingresa tu nombre.</span>
+        }
+      </div>
+      <div class="auth-form__group">
+        <label class="auth-form__label" for="reg-last">Apellidos</label>
+        <input
+          id="reg-last"
+          class="auth-form__input"
+          type="text"
+          autocomplete="family-name"
+          formControlName="lastName"
+          [attr.aria-invalid]="form.controls.lastName.invalid && form.controls.lastName.touched" />
+        @if (form.controls.lastName.touched && form.controls.lastName.hasError('required')) {
+          <span class="auth-form__error">Ingresa tu apellido.</span>
+        }
+      </div>
+    </div>
+
+    <div class="auth-form__group">
+      <label class="auth-form__label" for="reg-username">Nombre de usuario</label>
+      <input
+        id="reg-username"
+        class="auth-form__input"
+        type="text"
+        autocomplete="username"
+        placeholder="ej. juan.perez"
+        formControlName="username"
+        [attr.aria-invalid]="form.controls.username.invalid && form.controls.username.touched" />
+      @if (form.controls.username.touched && form.controls.username.hasError('required')) {
+        <span class="auth-form__error">Elige un nombre de usuario.</span>
+      } @else if (form.controls.username.touched && form.controls.username.hasError('minlength')) {
+        <span class="auth-form__error">Usa al menos 3 caracteres.</span>
+      } @else if (form.controls.username.touched && form.controls.username.hasError('pattern')) {
+        <span class="auth-form__error">Solo letras, números, puntos, guiones y guiones bajos.</span>
+      } @else {
+        <span class="auth-form__hint">Tus compañeros te encontrarán con este nombre.</span>
+      }
+    </div>
+
+    <div class="auth-form__group">
+      <label class="auth-form__label" for="reg-email">Correo electrónico</label>
+      <input
+        id="reg-email"
+        class="auth-form__input"
+        type="email"
+        autocomplete="email"
+        placeholder="tu.correo@colegio.edu.co"
+        formControlName="email"
+        [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched" />
+      @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+        <span class="auth-form__error">Ingresa tu correo electrónico.</span>
+      } @else if (form.controls.email.touched && form.controls.email.hasError('email')) {
+        <span class="auth-form__error">El correo no tiene un formato válido.</span>
+      }
+    </div>
+
+    <div class="auth-form__group">
+      <label class="auth-form__label" for="reg-password">Contraseña</label>
+      <input
+        id="reg-password"
+        class="auth-form__input"
+        type="password"
+        autocomplete="new-password"
+        formControlName="password"
+        [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched" />
+      @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+        <span class="auth-form__error">Crea una contraseña.</span>
+      } @else if (
+        form.controls.password.touched &&
+        (form.controls.password.hasError('minlength') || form.controls.password.hasError('pattern'))
+      ) {
+        <span class="auth-form__error">
+          Mínimo 8 caracteres, con al menos una letra y un número.
+        </span>
+      } @else {
+        <span class="auth-form__hint">
+          Mínimo 8 caracteres, con al menos una letra y un número.
+        </span>
+      }
+    </div>
+
+    <div class="auth-form__actions">
+      <button type="submit" class="auth-form__submit" [disabled]="submitting()">
+        @if (submitting()) { Creando cuenta... } @else { Crear cuenta }
+      </button>
+    </div>
+
+    <p class="auth-form__secondary">
+      ¿Ya tienes cuenta?
+      <a routerLink="/auth/login">Iniciar sesión</a>
+    </p>
+  </form>
+}

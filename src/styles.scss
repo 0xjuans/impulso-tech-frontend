@@ -123,3 +123,159 @@ button {
   text-transform: uppercase;
   color: var(--color-body);
 }
+
+/* Estilos compartidos por los formularios de autenticación ---------------
+   Se declaran de forma global para que las páginas de login, registro,
+   recuperación y verificación reutilicen la misma apariencia sin
+   duplicar reglas en cada componente.
+------------------------------------------------------------------------- */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.auth-form__title {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+.auth-form__lead {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-body);
+}
+
+.auth-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-form__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: 0.01em;
+}
+
+.auth-form__input,
+.auth-form__select {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+  border: 1.5px solid var(--color-mute);
+  border-radius: var(--radius-sm);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.auth-form__input::placeholder { color: var(--color-body-mid); }
+
+.auth-form__input:focus,
+.auth-form__select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(255, 79, 0, 0.14);
+}
+
+.auth-form__input[aria-invalid='true'] {
+  border-color: #d64545;
+  box-shadow: 0 0 0 4px rgba(214, 69, 69, 0.12);
+}
+
+.auth-form__hint {
+  font-size: 12px;
+  color: var(--color-body);
+  line-height: 1.4;
+}
+
+.auth-form__error {
+  font-size: 12.5px;
+  color: #b53232;
+  line-height: 1.4;
+}
+
+.auth-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 480px) {
+  .auth-form__row { grid-template-columns: 1fr; }
+}
+
+.auth-form__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.auth-form__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 22px rgba(255, 79, 0, 0.32);
+  transition: background-color 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+.auth-form__submit:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.auth-form__submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-form__secondary {
+  font-size: 14px;
+  color: var(--color-body);
+  text-align: center;
+}
+
+.auth-form__secondary a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.auth-form__secondary a:hover { text-decoration: underline; }
+
+.auth-form__alert {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.auth-form__alert--error {
+  background: rgba(214, 69, 69, 0.10);
+  border: 1px solid rgba(214, 69, 69, 0.25);
+  color: #a52c2c;
+}
+
+.auth-form__alert--success {
+  background: rgba(33, 209, 124, 0.12);
+  border: 1px solid rgba(33, 209, 124, 0.30);
+  color: #1a7c50;
+}

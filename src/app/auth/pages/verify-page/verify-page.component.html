@@ -1,0 +1,27 @@
+<!-- Resultado de la verificación de correo -->
+<div class="auth-form">
+  <header>
+    <h1 class="auth-form__title">
+      @switch (state()) {
+        @case ('loading')  { Verificando cuenta }
+        @case ('success')  { ¡Cuenta verificada! }
+        @case ('missing')  { Enlace incompleto }
+        @default           { No pudimos verificar tu cuenta }
+      }
+    </h1>
+    <p class="auth-form__lead">{{ message() }}</p>
+  </header>
+
+  @if (state() === 'success') {
+    <div class="auth-form__alert auth-form__alert--success">
+      Ya puedes iniciar sesión y comenzar tu primera ruta de aprendizaje.
+    </div>
+    <div class="auth-form__actions">
+      <a class="auth-form__submit" routerLink="/auth/login">Iniciar sesión</a>
+    </div>
+  } @else if (state() === 'error' || state() === 'missing') {
+    <div class="auth-form__actions">
+      <a class="auth-form__submit" routerLink="/auth/login">Volver a iniciar sesión</a>
+    </div>
+  }
+</div>
