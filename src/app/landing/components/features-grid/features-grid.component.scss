@@ -1,0 +1,111 @@
+/* Cuadrícula de pilares de la plataforma. Alterna superficies claras y
+   oscuras siguiendo la guía Zapier-inspired para crear ritmo visual. */
+
+.features {
+  padding: var(--spacing-5xl) 0;
+  background: var(--color-canvas);
+}
+
+.features__header {
+  max-width: 720px;
+  margin-bottom: var(--spacing-4xl);
+}
+
+.features__title {
+  margin: 12px 0 var(--spacing-lg);
+  font-size: clamp(28px, 3.5vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.features__title em {
+  font-style: normal;
+  color: var(--color-primary);
+}
+
+.features__lead {
+  font-size: var(--text-body-md);
+  color: var(--color-body);
+  max-width: 620px;
+  line-height: 1.55;
+}
+
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.feature {
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+  background: var(--color-canvas-soft);
+  color: var(--color-ink);
+  border: 1px solid transparent;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-height: 260px;
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(32, 21, 21, 0.08);
+}
+
+.feature[data-accent='ink'] {
+  background: var(--color-ink);
+  color: var(--color-on-primary);
+}
+
+.feature[data-accent='ink'] .feature__description {
+  color: rgba(255, 254, 251, 0.72);
+}
+
+.feature[data-accent='primary'] {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.feature[data-accent='primary'] .feature__description {
+  color: rgba(255, 254, 251, 0.85);
+}
+
+.feature__icon {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.feature__title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+.feature__description {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-body);
+}
+
+@media (max-width: 960px) {
+  .features__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .features {
+    padding: var(--spacing-4xl) 0;
+  }
+
+  .features__grid {
+    grid-template-columns: 1fr;
+  }
+}

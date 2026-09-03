@@ -1,0 +1,94 @@
+<!--
+  Sección de demostración de laboratorios.
+  Muestra el flujo real del estudiante: escribir código, ejecutarlo en un
+  contenedor y ver el resultado con métricas de rendimiento.
+-->
+<section class="labs" id="laboratorios" aria-labelledby="labs-title">
+  <div class="container labs__inner">
+    <div class="labs__text">
+      <span class="eyebrow">Laboratorios en la nube</span>
+      <h2 id="labs-title" class="labs__title">
+        Escribe código.<br />
+        <span class="labs__title-accent">Ejecútalo de verdad.</span>
+      </h2>
+      <p class="labs__lead">
+        Escribe tu solución en el editor, presiona ejecutar y observa el
+        resultado al instante. Todo corre en la nube y con seguridad, sin
+        instalar nada ni configurar tu equipo.
+      </p>
+
+      <ul class="labs__list" role="list">
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Corrección automática con casos de prueba
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Pistas específicas para cada error
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Resultados rápidos y claros
+        </li>
+      </ul>
+
+      <div class="labs__langs">
+        @for (lang of languages; track lang.name) {
+          <span class="labs__lang-chip">
+            <span class="labs__lang-icon" aria-hidden="true">{{ lang.icon }}</span>
+            {{ lang.name }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="labs__demo" aria-hidden="true">
+      <div class="terminal">
+        <header class="terminal__bar">
+          <span class="terminal__dots">
+            <span class="terminal__dot terminal__dot--r"></span>
+            <span class="terminal__dot terminal__dot--y"></span>
+            <span class="terminal__dot terminal__dot--g"></span>
+          </span>
+          <span class="terminal__title">laboratorio · fibonacci.py</span>
+          <span class="terminal__badge">EN VIVO</span>
+        </header>
+        <div class="terminal__body">
+          @for (line of codeLines; track $index) {
+            <div class="terminal__line" [class]="'terminal__line--' + line.type">
+              @if (line.type === 'output') {
+                <span class="terminal__prefix terminal__prefix--dim">❯</span>
+              } @else if (line.type === 'success') {
+                <span class="terminal__prefix terminal__prefix--ok">✓</span>
+              } @else if (line.type === 'error') {
+                <span class="terminal__prefix terminal__prefix--err">✗</span>
+              } @else {
+                <span class="terminal__prefix">❯</span>
+              }
+              <span class="terminal__code">{{ line.text }}</span>
+            </div>
+          }
+          <div class="terminal__cursor"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métricas de los laboratorios -->
+  <div class="container">
+    <div class="labs__metrics" role="list">
+      @for (metric of metrics; track metric.label) {
+        <div class="labs__metric" role="listitem">
+          <strong class="labs__metric-value">{{ metric.value }}</strong>
+          <span class="labs__metric-label">{{ metric.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>

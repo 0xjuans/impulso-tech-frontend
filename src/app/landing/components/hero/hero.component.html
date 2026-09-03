@@ -1,0 +1,175 @@
+<!--
+  Estructura del hero:
+    1. Capa de video de fondo (autoplay, muted, loop, playsinline).
+    2. Superposición degradada + grano para asegurar el contraste del texto.
+    3. Contenido principal: eyebrow, título con palabra rotativa,
+       subtítulo, acciones y prueba social.
+    4. Tarjetas flotantes que resaltan los pilares de la plataforma.
+    5. Marquesina infinita de tecnologías al pie del hero.
+-->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__media" aria-hidden="true">
+    <video
+      #heroVideo
+      class="hero__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      disablepictureinpicture
+      preload="auto"
+      poster="assets/video/hero-poster.svg">
+      <source src="assets/video/hero.mp4" type="video/mp4" />
+    </video>
+    <div class="hero__overlay"></div>
+    <div class="hero__glow"></div>
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="hero__grain"></div>
+  </div>
+
+  <div class="hero__content container">
+    <div class="hero__text">
+      <span class="hero__eyebrow">
+        <span class="hero__eyebrow-dot" aria-hidden="true"></span>
+        Plataforma educativa · programación con propósito
+      </span>
+
+      <h1 id="hero-title" class="hero__title">
+        Aprende a
+        <span class="hero__rotator" aria-live="polite">
+          @for (word of rotatingWords; track word; let i = $index) {
+            <span
+              class="hero__rotator-word"
+              [class.is-active]="i === rotatingIndex()"
+              [attr.aria-hidden]="i !== rotatingIndex()">
+              {{ word }}
+            </span>
+          }
+        </span>
+        <br />
+        como se hace<br />
+        <span class="hero__title-outline">en la industria.</span>
+      </h1>
+
+      <p class="hero__subtitle">
+        Rutas guiadas, laboratorios en la nube, retos gamificados y una
+        mascota con IA que te acompaña. Todo en un solo lugar, pensado para
+        estudiantes hispanohablantes.
+      </p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" routerLink="/auth/register">
+          Empezar gratis
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M5 12h14M13 6l6 6-6 6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </a>
+        <a class="btn btn--ghost" href="#rutas">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8 5v14l11-7z" fill="currentColor" />
+          </svg>
+          Ver cómo funciona
+        </a>
+      </div>
+
+      <ul class="hero__proof" aria-label="Prueba social">
+        <li>
+          <strong>+40</strong>
+          <span>rutas de aprendizaje</span>
+        </li>
+        <li>
+          <strong>1 200</strong>
+          <span>retos con evaluación automática</span>
+        </li>
+        <li>
+          <strong>24/7</strong>
+          <span>mascota con IA disponible</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Cards flotantes que anticipan la experiencia real de la app. -->
+    <aside class="hero__cards" aria-hidden="true">
+      <!-- Orbe decorativo tras las tarjetas para dar profundidad. -->
+      <div class="hero__orb"></div>
+
+      <article class="floating-card floating-card--terminal">
+        <header class="floating-card__bar">
+          <span class="dot dot--r"></span>
+          <span class="dot dot--y"></span>
+          <span class="dot dot--g"></span>
+          <span class="floating-card__title">reto-04 · palíndromos.js</span>
+          <span class="floating-card__badge">EN VIVO</span>
+        </header>
+        <pre class="floating-card__code"><code><span class="tk-c">// evalúa cada intento en 200 ms</span>
+<span class="tk-k">function</span> <span class="tk-f">esPalindromo</span>(texto) &#123;
+  <span class="tk-k">const</span> limpio = texto.toLowerCase();
+  <span class="tk-k">return</span> limpio === [...limpio]
+    .reverse()
+    .join(<span class="tk-s">''</span>)<span class="typing-caret"></span>;
+&#125;</code></pre>
+        <footer class="floating-card__footer">
+          <span class="pill pill--ok">✓ 12/12 pruebas</span>
+          <span class="pill">+120 XP</span>
+          <span class="pill pill--time">⚡ 187 ms</span>
+        </footer>
+      </article>
+
+      <article class="floating-card floating-card--progress">
+        <div class="floating-card__row">
+          <span class="avatar">JS</span>
+          <div class="floating-card__meta">
+            <strong>Ruta JavaScript</strong>
+            <small>Módulo 3 de 8 · lección 12</small>
+          </div>
+        </div>
+        <div class="progress">
+          <div class="progress__bar"></div>
+        </div>
+        <div class="floating-card__row floating-card__row--split">
+          <span class="pill pill--warm">🔥 racha 14 días</span>
+          <span class="pill pill--cool">nivel 7</span>
+        </div>
+      </article>
+
+      <article class="floating-card floating-card--pet">
+        <div class="pet">
+          <div class="pet__eyes">
+            <span></span><span></span>
+          </div>
+          <div class="pet__mouth"></div>
+        </div>
+        <div class="pet__content">
+          <strong class="pet__name">Nova · tu mascota IA</strong>
+          <p class="pet__bubble">
+            Detecté un bucle infinito en tu solución. ¿Revisamos juntos la
+            condición de salida?
+          </p>
+        </div>
+      </article>
+    </aside>
+  </div>
+
+  <!-- Marquesina infinita con las tecnologías cubiertas por la plataforma. -->
+  <div class="hero__marquee" aria-label="Tecnologías cubiertas por la plataforma">
+    <div class="hero__marquee-track">
+      @for (tech of technologies; track tech) {
+        <span class="hero__marquee-item">{{ tech }}</span>
+        <span class="hero__marquee-sep" aria-hidden="true">◆</span>
+      }
+      @for (tech of technologies; track tech) {
+        <span class="hero__marquee-item" aria-hidden="true">{{ tech }}</span>
+        <span class="hero__marquee-sep" aria-hidden="true">◆</span>
+      }
+    </div>
+  </div>
+
+  <a class="hero__scroll" href="#rutas" aria-label="Desplazarse al contenido">
+    <span></span>
+  </a>
+</section>
