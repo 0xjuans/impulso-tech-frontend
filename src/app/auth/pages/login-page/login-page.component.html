@@ -1,0 +1,65 @@
+<!-- Formulario de inicio de sesión -->
+<form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <header>
+    <h1 class="auth-form__title">Iniciar sesión</h1>
+    <p class="auth-form__lead">
+      Continúa donde dejaste tu ruta de aprendizaje.
+    </p>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="auth-form__alert auth-form__alert--error" role="alert">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="auth-form__group">
+    <label class="auth-form__label" for="login-email">Correo electrónico</label>
+    <input
+      id="login-email"
+      class="auth-form__input"
+      type="email"
+      autocomplete="email"
+      placeholder="tu.correo@colegio.edu.co"
+      formControlName="email"
+      [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched" />
+    @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+      <span class="auth-form__error">Ingresa tu correo electrónico.</span>
+    } @else if (form.controls.email.touched && form.controls.email.hasError('email')) {
+      <span class="auth-form__error">El correo no tiene un formato válido.</span>
+    }
+  </div>
+
+  <div class="auth-form__group">
+    <label class="auth-form__label" for="login-password">Contraseña</label>
+    <input
+      id="login-password"
+      class="auth-form__input"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Tu contraseña"
+      formControlName="password"
+      [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched" />
+    @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+      <span class="auth-form__error">Ingresa tu contraseña.</span>
+    }
+  </div>
+
+  <div class="auth-form__actions">
+    <button
+      type="submit"
+      class="auth-form__submit"
+      [disabled]="submitting()">
+      @if (submitting()) { Iniciando sesión... } @else { Entrar }
+    </button>
+
+    <a routerLink="/auth/forgot-password" class="auth-form__secondary">
+      ¿Olvidaste tu contraseña?
+    </a>
+  </div>
+
+  <p class="auth-form__secondary">
+    ¿Aún no tienes cuenta?
+    <a routerLink="/auth/register">Crear cuenta</a>
+  </p>
+</form>

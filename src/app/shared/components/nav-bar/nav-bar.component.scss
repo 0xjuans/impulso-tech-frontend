@@ -119,21 +119,108 @@
 .btn--sm {
   padding: 10px 18px;
   font-size: 14px;
+  /* Evita que el CTA envuelva a dos líneas en viewports estrechos. */
+  white-space: nowrap;
 }
 
-.nav__burger {
+/* Botón de menú "code-menu" ------------------------------------------------
+   Reemplazo del clásico icono de hamburguesa por un símbolo que evoca
+   líneas de código con un cursor de terminal parpadeante. Cuando el menú
+   se abre, las tres líneas se transforman en una "X" y el cursor se
+   detiene, señalando visualmente el cambio de estado.
+------------------------------------------------------------------------- */
+
+.code-menu {
   display: none;
-  flex-direction: column;
-  gap: 5px;
-  padding: 8px;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  color: inherit;
+  transition: background-color 160ms ease;
 }
 
-.nav__burger span {
+.code-menu:hover {
+  background-color: rgba(255, 254, 251, 0.08);
+}
+
+.nav--scrolled .code-menu:hover {
+  background-color: rgba(32, 21, 21, 0.06);
+}
+
+.code-menu__glyph {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 22px;
-  height: 2px;
+}
+
+.code-menu__line {
+  position: absolute;
+  left: 10px;
+  height: 2.5px;
   background-color: currentColor;
   border-radius: 2px;
+  transform-origin: center;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    width 320ms ease, opacity 200ms ease, top 320ms ease;
+}
+
+.code-menu__line--1 { top: 14px; width: 16px; }
+.code-menu__line--2 { top: 21px; width: 22px; }
+.code-menu__line--3 { top: 28px; width: 12px; }
+
+/* Cursor de terminal anclado al final de la primera línea. */
+.code-menu__caret {
+  position: absolute;
+  top: 12px;
+  left: 28px;
+  width: 4px;
+  height: 6px;
+  background-color: var(--color-primary);
+  border-radius: 1px;
+  box-shadow: 0 0 6px rgba(255, 79, 0, 0.65);
+  animation: codeMenuBlink 1s steps(2, start) infinite;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms ease, top 320ms ease, left 320ms ease,
+    width 320ms ease, height 320ms ease, box-shadow 320ms ease;
+}
+
+@keyframes codeMenuBlink {
+  50% { opacity: 0; }
+}
+
+/* Estado abierto: las líneas 1 y 3 se cruzan en el centro para formar
+   una "X" perfecta, la línea 2 se desvanece y el cursor de terminal
+   queda anclado en el punto de intersección, quieto, indicando la
+   pausa del "programa" del menú. */
+.code-menu.is-open .code-menu__line--1 {
+  top: 21px;
+  left: 11px;
+  width: 22px;
+  transform: rotate(45deg);
+}
+
+.code-menu.is-open .code-menu__line--2 {
+  opacity: 0;
+  transform: scaleX(0.2);
+}
+
+.code-menu.is-open .code-menu__line--3 {
+  top: 21px;
+  left: 11px;
+  width: 22px;
+  transform: rotate(-45deg);
+}
+
+.code-menu.is-open .code-menu__caret {
+  top: 19px;
+  left: 20px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  transform: none;
+  animation: none;
+  box-shadow: 0 0 0 3px rgba(255, 79, 0, 0.25);
 }
 
 /* Responsive --------------------------------------------------------------
@@ -167,7 +254,21 @@
     display: none;
   }
 
-  .nav__burger {
-    display: inline-flex;
+  .code-menu {
+    display: inline-block;
   }
+}
+
+/* Ajustes específicos para móviles estrechos: se compacta el CTA
+   principal para que conviva con el logo y el botón hamburguesa
+   sin desbordar el ancho del viewport. */
+@media (max-width: 480px) {
+  .nav__inner { gap: var(--spacing-md); }
+
+  .nav__actions .btn--sm {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .nav__brand { font-size: 18px; }
 }

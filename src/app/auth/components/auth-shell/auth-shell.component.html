@@ -1,0 +1,37 @@
+<!-- Layout de dos columnas para todas las pantallas de autenticación -->
+<div class="auth">
+  <aside class="auth__brand" aria-label="Impulso Tech">
+    <a class="auth__logo" routerLink="/">
+      <span class="auth__logo-mark" aria-hidden="true">◐</span>
+      <span>Impulso<span class="auth__logo-accent">.tech</span></span>
+    </a>
+
+    <div class="auth__pitch">
+      <span class="auth__eyebrow">Para estudiantes de colegios en Bogotá</span>
+      <h2 class="auth__headline">
+        Programar es una <span class="auth__headline-accent">herramienta</span>.
+        Aquí aprendes a usarla.
+      </h2>
+      <p class="auth__lead">
+        Rutas guiadas, laboratorios en la nube, retos que se corrigen al
+        instante y una mascota con IA que te acompaña en cada paso.
+      </p>
+    </div>
+
+    <ul class="auth__list" aria-label="Beneficios">
+      <li><span>✓</span> Sin costo para estudiantes de colegio</li>
+      <li><span>✓</span> Aprendes con proyectos que puedes mostrar</li>
+      <li><span>✓</span> Tu progreso siempre queda guardado</li>
+    </ul>
+
+    <div class="auth__decor" aria-hidden="true">
+      <div class="auth__decor-orb"></div>
+    </div>
+  </aside>
+
+  <main class="auth__main">
+    <div class="auth__form-wrap">
+      <router-outlet />
+    </div>
+  </main>
+</div>

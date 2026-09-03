@@ -5,7 +5,6 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { HeroComponent } from '../../components/hero/hero.component';
 import { FeaturesGridComponent } from '../../components/features-grid/features-grid.component';
 import { LabsDemoComponent } from '../../components/labs-demo/labs-demo.component';
-import { SocialProofComponent } from '../../components/social-proof/social-proof.component';
 import { CtaBandComponent } from '../../components/cta-band/cta-band.component';
 
 /**
@@ -13,9 +12,9 @@ import { CtaBandComponent } from '../../components/cta-band/cta-band.component';
  *
  * Actúa como contenedor de las distintas secciones de la landing page:
  * navegación, hero con video, cuadrícula de pilares, demostración de
- * laboratorios, prueba social, banda de llamada a la acción y pie de
- * página. Cada bloque se implementa en un componente independiente para
- * facilitar su reutilización y prueba.
+ * laboratorios, banda de llamada a la acción y pie de página. Cada
+ * bloque se implementa en un componente independiente para facilitar
+ * su reutilización y prueba.
  */
 @Component({
   selector: 'app-landing-page',
@@ -25,7 +24,6 @@ import { CtaBandComponent } from '../../components/cta-band/cta-band.component';
     HeroComponent,
     FeaturesGridComponent,
     LabsDemoComponent,
-    SocialProofComponent,
     CtaBandComponent,
     FooterComponent,
   ],
