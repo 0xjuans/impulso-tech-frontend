@@ -126,8 +126,14 @@
   z-index: 10;
 }
 
-.shell__top-user {
+.shell__top-right {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.shell__top-user {
   display: inline-flex;
   align-items: center;
   gap: 12px;

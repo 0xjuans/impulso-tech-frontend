@@ -3,6 +3,8 @@ import { NgClass } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { MascotWidgetComponent } from '../mascot-widget/mascot-widget.component';
+import { NotificationsBellComponent } from '../notifications-bell/notifications-bell.component';
 
 /** Entrada del menú lateral del área del estudiante. */
 interface NavItem {
@@ -23,7 +25,14 @@ interface NavItem {
 @Component({
   selector: 'app-student-shell',
   standalone: true,
-  imports: [NgClass, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [
+    NgClass,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    NotificationsBellComponent,
+    MascotWidgetComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './student-shell.component.html',
   styleUrl: './student-shell.component.scss',
@@ -64,6 +73,8 @@ export class StudentShellComponent {
     { path: 'home', icon: '🏠', label: 'Inicio' },
     { path: 'routes', icon: '🧭', label: 'Rutas' },
     { path: 'courses', icon: '📚', label: 'Cursos' },
+    { path: 'messages', icon: '💬', label: 'Mensajes' },
+    { path: 'notifications', icon: '🔔', label: 'Notificaciones' },
     { path: 'profile', icon: '👤', label: 'Mi perfil' },
   ];
 

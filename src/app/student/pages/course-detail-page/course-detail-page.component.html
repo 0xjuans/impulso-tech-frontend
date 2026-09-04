@@ -4,7 +4,8 @@
     <div class="course-detail__placeholder">Cargando curso...</div>
   } @else if (error()) {
     <div class="course-detail__alert" role="alert">{{ error() }}</div>
-  } @else if (course(); as c) {
+  } @else {
+    @if (course(); as c) {
     <header class="course-detail__hero">
       <a class="course-detail__back" routerLink="/student/courses">← Todos los cursos</a>
       <span class="course-detail__eyebrow">Curso</span>
@@ -102,5 +103,6 @@
         </ol>
       }
     </section>
+    }
   }
 </section>

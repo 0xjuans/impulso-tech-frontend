@@ -46,11 +46,15 @@
       <span></span><span></span><span></span>
     </button>
 
-    <div class="shell__top-user" aria-live="polite">
-      <div class="shell__avatar" aria-hidden="true">{{ initials() }}</div>
-      <div class="shell__user-meta">
-        <strong>{{ displayName() }}</strong>
-        <small>&#64;{{ user()?.username }}</small>
+    <div class="shell__top-right">
+      <app-notifications-bell />
+
+      <div class="shell__top-user" aria-live="polite">
+        <div class="shell__avatar" aria-hidden="true">{{ initials() }}</div>
+        <div class="shell__user-meta">
+          <strong>{{ displayName() }}</strong>
+          <small>&#64;{{ user()?.username }}</small>
+        </div>
       </div>
     </div>
   </header>
@@ -59,4 +63,7 @@
   <main class="shell__main">
     <router-outlet />
   </main>
+
+  <!-- Widget flotante de la mascota IA -->
+  <app-mascot-widget />
 </div>
