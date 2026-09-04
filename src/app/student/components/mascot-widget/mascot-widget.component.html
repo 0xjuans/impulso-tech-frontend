@@ -1,0 +1,94 @@
+<!-- Widget flotante de la mascota IA -->
+<div class="mascot" [class.mascot--open]="open()">
+  @if (open()) {
+    <section class="mascot__panel" role="dialog" aria-label="Chat con la mascota">
+      <header class="mascot__header">
+        <div class="mascot__brand">
+          <span class="mascot__avatar" aria-hidden="true">◐</span>
+          <div>
+            <strong>Mascota</strong>
+            <small>Impulso Tech</small>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="mascot__close"
+          (click)="toggle()"
+          aria-label="Cerrar chat">
+          ✕
+        </button>
+      </header>
+
+      <div class="mascot__thread" #thread>
+        @if (initializing()) {
+          <div class="mascot__placeholder">Abriendo la conversación...</div>
+        } @else if (initError() !== null) {
+          <div class="mascot__alert" role="alert">{{ initError() }}</div>
+        } @else {
+          @if (messages().length === 0) {
+            <div class="mascot__welcome">
+              <p>¡Hola! Estoy aquí para ayudarte a aprender.</p>
+              <p>Pídeme una explicación, una pista o una idea para practicar.</p>
+              <ul class="mascot__quick">
+                @for (prompt of quickPrompts; track prompt) {
+                  <li>
+                    <button type="button" (click)="useQuickPrompt(prompt)">{{ prompt }}</button>
+                  </li>
+                }
+              </ul>
+            </div>
+          } @else {
+            <ul class="mascot__messages">
+              @for (msg of messages(); track msg.id) {
+                <li
+                  class="mascot__msg"
+                  [class.mascot__msg--mine]="msg.role === 'USER'">
+                  <div class="mascot__bubble">
+                    <p>{{ msg.content }}</p>
+                    <span class="mascot__time">{{ msg.createdAt | date: 'shortTime' }}</span>
+                  </div>
+                </li>
+              }
+              @if (sending()) {
+                <li class="mascot__msg">
+                  <div class="mascot__bubble mascot__bubble--typing" aria-live="polite">
+                    <span></span><span></span><span></span>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        }
+      </div>
+
+      <form class="mascot__composer" (submit)="$event.preventDefault(); send()">
+        <textarea
+          class="mascot__input"
+          [ngModel]="draft()"
+          (ngModelChange)="draft.set($event)"
+          name="draft"
+          rows="2"
+          maxlength="4000"
+          placeholder="Escribe a la mascota..."
+          [disabled]="sending() || conversation() === null"></textarea>
+        <div class="mascot__actions">
+          @if (sendError(); as err) {
+            <span class="mascot__error" role="alert">{{ err }}</span>
+          }
+          <button type="submit" class="mascot__send" [disabled]="!canSend()">
+            {{ sending() ? '...' : 'Enviar' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+
+  <button
+    type="button"
+    class="mascot__trigger"
+    (click)="toggle()"
+    [attr.aria-expanded]="open()"
+    aria-label="Abrir chat con la mascota">
+    <span aria-hidden="true">{{ open() ? '×' : '◐' }}</span>
+  </button>
+</div>
