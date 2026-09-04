@@ -1,0 +1,59 @@
+<!-- Catálogo de cursos publicados -->
+<section class="courses">
+  <header class="courses__header">
+    <span class="courses__eyebrow">Cursos</span>
+    <h1 class="courses__title">Explora los cursos disponibles</h1>
+    <p class="courses__lead">
+      Elige un curso, inscríbete y avanza por sus módulos y lecciones a tu ritmo.
+    </p>
+  </header>
+
+  @if (loading()) {
+    <div class="courses__placeholder">Cargando cursos...</div>
+  } @else if (error()) {
+    <div class="courses__alert" role="alert">{{ error() }}</div>
+  } @else if (courses().length === 0) {
+    <div class="courses__empty">
+      <h2>Todavía no hay cursos publicados</h2>
+      <p>Nuestros instructores están preparando los primeros cursos. Vuelve pronto.</p>
+    </div>
+  } @else {
+    <ul class="course-grid">
+      @for (course of courses(); track course.id) {
+        <li class="course-card">
+          <div class="course-card__cover" aria-hidden="true">
+            @if (course.coverImageUrl) {
+              <img [src]="course.coverImageUrl" alt="" loading="lazy" />
+            } @else {
+              <span class="course-card__cover-fallback">{{ course.name[0] }}</span>
+            }
+            <span class="course-card__difficulty" [attr.data-level]="course.difficulty">
+              {{ course.difficulty }}
+            </span>
+          </div>
+
+          <div class="course-card__body">
+            <h2 class="course-card__name">{{ course.name }}</h2>
+            <p class="course-card__description">{{ course.description }}</p>
+
+            @if (course.technology) {
+              <ul class="course-card__tags" aria-label="Tecnologías">
+                <li>{{ course.technology }}</li>
+              </ul>
+            }
+          </div>
+
+          <footer class="course-card__foot">
+            <div class="course-card__meta">
+              @if (course.estimatedDurationHours) {
+                <span>⏱ {{ course.estimatedDurationHours }} h estimadas</span>
+              }
+              <span>👤 {{ course.instructorFullName }}</span>
+            </div>
+            <a class="course-card__cta" [routerLink]="['/student/courses', course.id]">Ver curso</a>
+          </footer>
+        </li>
+      }
+    </ul>
+  }
+</section>

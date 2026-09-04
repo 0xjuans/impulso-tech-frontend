@@ -63,6 +63,7 @@ export class StudentShellComponent {
   protected readonly navItems: readonly NavItem[] = [
     { path: 'home', icon: '🏠', label: 'Inicio' },
     { path: 'routes', icon: '🧭', label: 'Rutas' },
+    { path: 'courses', icon: '📚', label: 'Cursos' },
     { path: 'profile', icon: '👤', label: 'Mi perfil' },
   ];
 

@@ -1,0 +1,106 @@
+<!-- Detalle de un curso, módulos y progreso del estudiante -->
+<section class="course-detail">
+  @if (loading()) {
+    <div class="course-detail__placeholder">Cargando curso...</div>
+  } @else if (error()) {
+    <div class="course-detail__alert" role="alert">{{ error() }}</div>
+  } @else if (course(); as c) {
+    <header class="course-detail__hero">
+      <a class="course-detail__back" routerLink="/student/courses">← Todos los cursos</a>
+      <span class="course-detail__eyebrow">Curso</span>
+      <h1 class="course-detail__title">{{ c.name }}</h1>
+      <p class="course-detail__lead">{{ c.description }}</p>
+
+      <ul class="course-detail__meta">
+        <li><strong>Dificultad:</strong> {{ c.difficulty }}</li>
+        @if (c.estimatedDurationHours) {
+          <li><strong>Duración:</strong> {{ c.estimatedDurationHours }} h</li>
+        }
+        @if (c.technology) {
+          <li><strong>Tecnología:</strong> {{ c.technology }}</li>
+        }
+        <li><strong>Instructor:</strong> {{ c.instructorFullName }}</li>
+        @if (c.generatesCertificate) {
+          <li class="course-detail__badge">🎓 Genera certificado</li>
+        }
+      </ul>
+
+      @if (progress(); as p) {
+        <div class="course-detail__progress" role="status">
+          <div class="course-detail__progress-bar">
+            <span [style.width.%]="p.completionPercentage"></span>
+          </div>
+          <p>
+            Progreso: <strong>{{ p.completionPercentage }}%</strong>
+            ({{ p.mandatoryLessonsCompleted }} / {{ p.mandatoryLessonsTotal }} lecciones obligatorias)
+            · Estado: <strong>{{ p.status }}</strong>
+          </p>
+        </div>
+      } @else {
+        <div class="course-detail__cta">
+          <button
+            type="button"
+            class="course-detail__enroll"
+            (click)="enroll()"
+            [disabled]="enrolling()">
+            {{ enrolling() ? 'Inscribiendo...' : 'Inscribirme en este curso' }}
+          </button>
+          @if (enrollmentError(); as err) {
+            <p class="course-detail__enroll-error" role="alert">{{ err }}</p>
+          }
+        </div>
+      }
+    </header>
+
+    <section class="course-detail__modules" aria-label="Módulos del curso">
+      <h2 class="course-detail__section-title">Contenido del curso</h2>
+
+      @if (modules().length === 0) {
+        <p class="course-detail__empty">
+          Este curso aún no tiene módulos publicados. Vuelve pronto para ver el contenido.
+        </p>
+      } @else {
+        <ol class="module-list">
+          @for (module of modules(); track module.id) {
+            <li class="module">
+              <header class="module__header">
+                <span class="module__number">{{ module.orderIndex }}</span>
+                <div>
+                  <h3 class="module__name">{{ module.name }}</h3>
+                  @if (module.description) {
+                    <p class="module__description">{{ module.description }}</p>
+                  }
+                </div>
+              </header>
+
+              @if (lessonsByModule()[module.id]; as lessons) {
+                @if (lessons.length === 0) {
+                  <p class="module__empty">Este módulo aún no tiene lecciones publicadas.</p>
+                } @else {
+                  <ul class="lesson-list">
+                    @for (lesson of lessons; track lesson.id) {
+                      <li class="lesson" [class.lesson--done]="completedLessonIds().has(lesson.id)">
+                        <a class="lesson__link" [routerLink]="['/student/lessons', lesson.id]">
+                          <span class="lesson__check" aria-hidden="true">
+                            {{ completedLessonIds().has(lesson.id) ? '✓' : '○' }}
+                          </span>
+                          <span class="lesson__title">{{ lesson.title }}</span>
+                          @if (lesson.estimatedDurationMinutes) {
+                            <span class="lesson__duration">{{ lesson.estimatedDurationMinutes }} min</span>
+                          }
+                          @if (lesson.optional) {
+                            <span class="lesson__optional">opcional</span>
+                          }
+                        </a>
+                      </li>
+                    }
+                  </ul>
+                }
+              }
+            </li>
+          }
+        </ol>
+      }
+    </section>
+  }
+</section>

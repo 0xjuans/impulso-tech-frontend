@@ -34,6 +34,28 @@ export const studentRoutes: Routes = [
         title: 'Rutas de aprendizaje · Impulso Tech',
       },
       {
+        path: 'courses',
+        loadComponent: () =>
+          import('./pages/courses-page/courses-page.component').then(
+            (m) => m.CoursesPageComponent,
+          ),
+        title: 'Cursos · Impulso Tech',
+      },
+      {
+        path: 'courses/:id',
+        loadComponent: () =>
+          import('./pages/course-detail-page/course-detail-page.component').then(
+            (m) => m.CourseDetailPageComponent,
+          ),
+        title: 'Detalle del curso · Impulso Tech',
+      },
+      {
+        path: 'lessons/:id',
+        loadComponent: () =>
+          import('./pages/lesson-page/lesson-page.component').then((m) => m.LessonPageComponent),
+        title: 'Lección · Impulso Tech',
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./pages/profile-page/profile-page.component').then(
