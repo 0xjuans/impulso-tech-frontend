@@ -1,0 +1,63 @@
+<!-- Catálogo de rutas de aprendizaje publicadas -->
+<section class="routes">
+  <header class="routes__header">
+    <span class="routes__eyebrow">Rutas de aprendizaje</span>
+    <h1 class="routes__title">Elige la ruta que quieres recorrer</h1>
+    <p class="routes__lead">
+      Cada ruta agrupa cursos, retos y laboratorios diseñados para llevarte
+      del punto cero a construir tus propios proyectos.
+    </p>
+  </header>
+
+  @if (loading()) {
+    <div class="routes__placeholder">Cargando rutas...</div>
+  } @else if (error()) {
+    <div class="routes__alert" role="alert">{{ error() }}</div>
+  } @else if (routes().length === 0) {
+    <div class="routes__empty">
+      <h2>Todavía no hay rutas publicadas</h2>
+      <p>Nuestros instructores están preparando las primeras rutas. Vuelve pronto.</p>
+    </div>
+  } @else {
+    <ul class="route-grid">
+      @for (route of routes(); track route.id) {
+        <li class="route-card">
+          <div class="route-card__cover" aria-hidden="true">
+            @if (route.coverImageUrl) {
+              <img [src]="route.coverImageUrl" alt="" loading="lazy" />
+            } @else {
+              <span class="route-card__cover-fallback">{{ route.name[0] }}</span>
+            }
+            <span class="route-card__difficulty" [attr.data-level]="route.difficulty">
+              {{ route.difficulty }}
+            </span>
+          </div>
+
+          <div class="route-card__body">
+            <h2 class="route-card__name">{{ route.name }}</h2>
+            <p class="route-card__description">{{ route.description }}</p>
+
+            @if (splitTechnologies(route.technologies).length > 0) {
+              <ul class="route-card__tags" aria-label="Tecnologías">
+                @for (tech of splitTechnologies(route.technologies); track tech) {
+                  <li>{{ tech }}</li>
+                }
+              </ul>
+            }
+          </div>
+
+          <footer class="route-card__foot">
+            <div class="route-card__meta">
+              @if (route.estimatedDurationHours) {
+                <span>⏱ {{ route.estimatedDurationHours }} h estimadas</span>
+              }
+              <span>👤 {{ route.instructorFullName }}</span>
+            </div>
+            <!-- El detalle y la inscripción se conectarán al implementar RF-011. -->
+            <button type="button" class="route-card__cta" disabled>Ver ruta (próximamente)</button>
+          </footer>
+        </li>
+      }
+    </ul>
+  }
+</section>

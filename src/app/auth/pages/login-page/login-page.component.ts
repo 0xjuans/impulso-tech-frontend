@@ -52,7 +52,7 @@ export class LoginPageComponent {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: () => {
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/student';
           void this.router.navigateByUrl(returnUrl);
         },
         error: (err: Error) => this.errorMessage.set(err.message),

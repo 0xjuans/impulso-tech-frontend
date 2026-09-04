@@ -1,0 +1,62 @@
+<!-- Layout principal del área privada del estudiante -->
+<div class="shell" [ngClass]="{ 'shell--menu-open': menuOpen() }">
+  <!-- Barra lateral -->
+  <aside class="shell__side" aria-label="Navegación principal">
+    <a class="shell__brand" routerLink="/student/home" (click)="closeMenu()">
+      <span class="shell__brand-mark" aria-hidden="true">◐</span>
+      <span>Impulso<span class="shell__brand-accent">.tech</span></span>
+    </a>
+
+    <nav class="shell__nav">
+      @for (item of navItems; track item.path) {
+        <a
+          class="shell__link"
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          (click)="closeMenu()">
+          <span class="shell__link-icon" aria-hidden="true">{{ item.icon }}</span>
+          <span class="shell__link-label">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <button type="button" class="shell__logout" (click)="logout()">
+      <span aria-hidden="true">⎋</span>
+      Cerrar sesión
+    </button>
+  </aside>
+
+  <!-- Cortina para cerrar el menú lateral en mobile al hacer clic fuera. -->
+  @if (menuOpen()) {
+    <button
+      type="button"
+      class="shell__scrim"
+      (click)="closeMenu()"
+      aria-label="Cerrar menú"></button>
+  }
+
+  <!-- Cabecera superior -->
+  <header class="shell__top">
+    <button
+      type="button"
+      class="shell__burger"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="shell__top-user" aria-live="polite">
+      <div class="shell__avatar" aria-hidden="true">{{ initials() }}</div>
+      <div class="shell__user-meta">
+        <strong>{{ displayName() }}</strong>
+        <small>&#64;{{ user()?.username }}</small>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="shell__main">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,184 @@
+<!-- Página de gestión del perfil del usuario autenticado -->
+<section class="profile">
+  <header class="profile__header">
+    <span class="profile__eyebrow">Mi perfil</span>
+    <h1 class="profile__title">Cómo te ven los demás en Impulso Tech</h1>
+    <p class="profile__lead">
+      Actualiza tu información pública y mantén tu cuenta segura.
+    </p>
+  </header>
+
+  <div class="profile__grid">
+    <!-- Bloque de información pública ------------------------------------ -->
+    <form
+      class="profile__card auth-form"
+      [formGroup]="profileForm"
+      (ngSubmit)="submitProfile()"
+      novalidate>
+      <header>
+        <h2 class="profile__section-title">Información pública</h2>
+        <p class="auth-form__lead">
+          Estos datos aparecen en tu perfil, en foros y en los rankings.
+        </p>
+      </header>
+
+      @if (profileMessage()) {
+        <div class="auth-form__alert auth-form__alert--success">{{ profileMessage() }}</div>
+      }
+      @if (profileError()) {
+        <div class="auth-form__alert auth-form__alert--error" role="alert">
+          {{ profileError() }}
+        </div>
+      }
+
+      <div class="auth-form__row">
+        <div class="auth-form__group">
+          <label class="auth-form__label" for="profile-first">Nombres</label>
+          <input
+            id="profile-first"
+            class="auth-form__input"
+            type="text"
+            autocomplete="given-name"
+            formControlName="firstName" />
+        </div>
+        <div class="auth-form__group">
+          <label class="auth-form__label" for="profile-last">Apellidos</label>
+          <input
+            id="profile-last"
+            class="auth-form__input"
+            type="text"
+            autocomplete="family-name"
+            formControlName="lastName" />
+        </div>
+      </div>
+
+      <div class="auth-form__group">
+        <label class="auth-form__label" for="profile-username">Nombre de usuario</label>
+        <input
+          id="profile-username"
+          class="auth-form__input"
+          type="text"
+          autocomplete="username"
+          formControlName="username" />
+        @if (profileForm.controls.username.touched && profileForm.controls.username.invalid) {
+          <span class="auth-form__error">
+            Usa entre 3 y 60 caracteres: letras, números, puntos, guiones y guiones bajos.
+          </span>
+        }
+      </div>
+
+      <div class="auth-form__group">
+        <label class="auth-form__label" for="profile-photo">URL de tu foto de perfil</label>
+        <input
+          id="profile-photo"
+          class="auth-form__input"
+          type="url"
+          placeholder="https://..."
+          formControlName="profilePhotoUrl" />
+        <span class="auth-form__hint">Opcional. Debe ser un enlace público a una imagen.</span>
+      </div>
+
+      <div class="auth-form__actions">
+        <button type="submit" class="auth-form__submit" [disabled]="profileSubmitting()">
+          @if (profileSubmitting()) { Guardando... } @else { Guardar cambios }
+        </button>
+      </div>
+    </form>
+
+    <!-- Bloque de cambio de contraseña ----------------------------------- -->
+    <form
+      class="profile__card auth-form"
+      [formGroup]="passwordForm"
+      (ngSubmit)="submitPassword()"
+      novalidate>
+      <header>
+        <h2 class="profile__section-title">Cambiar contraseña</h2>
+        <p class="auth-form__lead">
+          Confirma tu contraseña actual antes de definir una nueva.
+        </p>
+      </header>
+
+      @if (passwordMessage()) {
+        <div class="auth-form__alert auth-form__alert--success">{{ passwordMessage() }}</div>
+      }
+      @if (passwordError()) {
+        <div class="auth-form__alert auth-form__alert--error" role="alert">
+          {{ passwordError() }}
+        </div>
+      }
+
+      <div class="auth-form__group">
+        <label class="auth-form__label" for="profile-current">Contraseña actual</label>
+        <input
+          id="profile-current"
+          class="auth-form__input"
+          type="password"
+          autocomplete="current-password"
+          formControlName="currentPassword" />
+        @if (
+          passwordForm.controls.currentPassword.touched &&
+          passwordForm.controls.currentPassword.hasError('required')
+        ) {
+          <span class="auth-form__error">Ingresa tu contraseña actual.</span>
+        }
+      </div>
+
+      <div class="auth-form__group">
+        <label class="auth-form__label" for="profile-new">Nueva contraseña</label>
+        <input
+          id="profile-new"
+          class="auth-form__input"
+          type="password"
+          autocomplete="new-password"
+          formControlName="newPassword" />
+        @if (
+          passwordForm.controls.newPassword.touched &&
+          passwordForm.controls.newPassword.invalid
+        ) {
+          <span class="auth-form__error">
+            Mínimo 8 caracteres, con al menos una letra y un número.
+          </span>
+        } @else {
+          <span class="auth-form__hint">
+            Mínimo 8 caracteres, con al menos una letra y un número.
+          </span>
+        }
+      </div>
+
+      <div class="auth-form__actions">
+        <button type="submit" class="auth-form__submit" [disabled]="passwordSubmitting()">
+          @if (passwordSubmitting()) { Actualizando... } @else { Cambiar contraseña }
+        </button>
+      </div>
+    </form>
+
+    <!-- Bloque de resumen de cuenta ------------------------------------- -->
+    <aside class="profile__meta">
+      <h2 class="profile__section-title">Datos de tu cuenta</h2>
+      <dl class="profile__list">
+        <div>
+          <dt>Correo electrónico</dt>
+          <dd>{{ user()?.email }}</dd>
+        </div>
+        <div>
+          <dt>Rol</dt>
+          <dd>{{ user()?.role }}</dd>
+        </div>
+        <div>
+          <dt>Estado</dt>
+          <dd>{{ user()?.status }}</dd>
+        </div>
+        <div>
+          <dt>Miembro desde</dt>
+          <dd>{{ user()?.createdAt | date: 'longDate' }}</dd>
+        </div>
+        @if (user()?.emailVerifiedAt) {
+          <div>
+            <dt>Correo verificado</dt>
+            <dd>{{ user()?.emailVerifiedAt | date: 'longDate' }}</dd>
+          </div>
+        }
+      </dl>
+    </aside>
+  </div>
+</section>

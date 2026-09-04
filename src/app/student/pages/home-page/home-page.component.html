@@ -1,0 +1,72 @@
+<!-- Página de inicio del estudiante -->
+<section class="home">
+  <header class="home__header">
+    <span class="home__eyebrow">Panel del estudiante</span>
+    <h1 class="home__title">
+      {{ greeting() }}, <span class="home__title-accent">{{ user()?.firstName }}</span>
+    </h1>
+    <p class="home__lead">
+      Continúa donde dejaste o descubre una nueva ruta para seguir avanzando.
+    </p>
+  </header>
+
+  <div class="home__grid">
+    <article class="stat-card">
+      <span class="stat-card__label">Cursos activos</span>
+      <strong class="stat-card__value">{{ enrollments().length }}</strong>
+      <span class="stat-card__hint">de todas tus rutas en marcha</span>
+    </article>
+    <article class="stat-card stat-card--warm">
+      <span class="stat-card__label">Racha actual</span>
+      <strong class="stat-card__value">— días</strong>
+      <span class="stat-card__hint">próximamente</span>
+    </article>
+    <article class="stat-card stat-card--cool">
+      <span class="stat-card__label">Nivel</span>
+      <strong class="stat-card__value">1</strong>
+      <span class="stat-card__hint">gana XP al completar lecciones</span>
+    </article>
+  </div>
+
+  <section class="home__section">
+    <div class="home__section-head">
+      <h2>Continúa aprendiendo</h2>
+      <a class="home__section-link" routerLink="/app/routes">Ver todas las rutas →</a>
+    </div>
+
+    @if (loading()) {
+      <div class="home__placeholder">Cargando tus cursos...</div>
+    } @else if (error()) {
+      <div class="home__alert" role="alert">{{ error() }}</div>
+    } @else if (enrollments().length === 0) {
+      <div class="home__empty">
+        <h3>Aún no te has inscrito en ningún curso</h3>
+        <p>
+          Explora las rutas de aprendizaje y elige la que más te llame la
+          atención para comenzar.
+        </p>
+        <a class="home__cta" routerLink="/app/routes">Ver rutas de aprendizaje</a>
+      </div>
+    } @else {
+      <ul class="course-list">
+        @for (enrollment of enrollments(); track enrollment.id) {
+          <li class="course-card">
+            <header class="course-card__head">
+              <span class="course-card__status" [attr.data-status]="enrollment.status">
+                {{ enrollment.status }}
+              </span>
+              <h3 class="course-card__title">{{ enrollment.courseName }}</h3>
+            </header>
+            <p class="course-card__meta">
+              @if (enrollment.lastAccessedAt) {
+                Último avance: {{ enrollment.lastAccessedAt | date: 'mediumDate' }}
+              } @else {
+                Iniciado el {{ enrollment.startedAt | date: 'mediumDate' }}
+              }
+            </p>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</section>
