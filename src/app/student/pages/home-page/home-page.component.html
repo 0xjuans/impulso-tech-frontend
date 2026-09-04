@@ -16,57 +16,139 @@
       <strong class="stat-card__value">{{ enrollments().length }}</strong>
       <span class="stat-card__hint">de todas tus rutas en marcha</span>
     </article>
+
     <article class="stat-card stat-card--warm">
       <span class="stat-card__label">Racha actual</span>
-      <strong class="stat-card__value">— días</strong>
-      <span class="stat-card__hint">próximamente</span>
+      <strong class="stat-card__value">
+        {{ streak()?.currentStreak ?? 0 }}
+        <small>días</small>
+      </strong>
+      <span class="stat-card__hint">
+        @if (streak()?.longestStreak) {
+          Récord: {{ streak()?.longestStreak }} días
+        } @else {
+          empieza tu primera racha
+        }
+      </span>
     </article>
+
     <article class="stat-card stat-card--cool">
       <span class="stat-card__label">Nivel</span>
-      <strong class="stat-card__value">1</strong>
-      <span class="stat-card__hint">gana XP al completar lecciones</span>
+      <strong class="stat-card__value">{{ xp()?.currentLevel ?? 1 }}</strong>
+      <span class="stat-card__hint">{{ xp()?.totalXp ?? 0 }} XP acumulados</span>
+      @if (xp(); as x) {
+        <div class="stat-card__bar" role="progressbar" [attr.aria-valuenow]="levelProgress()">
+          <span [style.width.%]="levelProgress()"></span>
+        </div>
+        <span class="stat-card__hint stat-card__hint--soft">
+          {{ x.xpToNextLevel }} XP para el siguiente nivel
+        </span>
+      }
     </article>
   </div>
 
-  <section class="home__section">
-    <div class="home__section-head">
-      <h2>Continúa aprendiendo</h2>
-      <a class="home__section-link" routerLink="/app/routes">Ver todas las rutas →</a>
-    </div>
-
-    @if (loading()) {
-      <div class="home__placeholder">Cargando tus cursos...</div>
-    } @else if (error()) {
-      <div class="home__alert" role="alert">{{ error() }}</div>
-    } @else if (enrollments().length === 0) {
-      <div class="home__empty">
-        <h3>Aún no te has inscrito en ningún curso</h3>
-        <p>
-          Explora las rutas de aprendizaje y elige la que más te llame la
-          atención para comenzar.
-        </p>
-        <a class="home__cta" routerLink="/app/routes">Ver rutas de aprendizaje</a>
+  <div class="home__two-columns">
+    <section class="home__section">
+      <div class="home__section-head">
+        <h2>Continúa aprendiendo</h2>
+        <a class="home__section-link" routerLink="/student/courses">Ver todos los cursos →</a>
       </div>
-    } @else {
-      <ul class="course-list">
-        @for (enrollment of enrollments(); track enrollment.id) {
-          <li class="course-card">
-            <header class="course-card__head">
-              <span class="course-card__status" [attr.data-status]="enrollment.status">
-                {{ enrollment.status }}
-              </span>
-              <h3 class="course-card__title">{{ enrollment.courseName }}</h3>
-            </header>
-            <p class="course-card__meta">
-              @if (enrollment.lastAccessedAt) {
-                Último avance: {{ enrollment.lastAccessedAt | date: 'mediumDate' }}
-              } @else {
-                Iniciado el {{ enrollment.startedAt | date: 'mediumDate' }}
-              }
-            </p>
-          </li>
+
+      @if (loading()) {
+        <div class="home__placeholder">Cargando tus cursos...</div>
+      } @else if (error()) {
+        <div class="home__alert" role="alert">{{ error() }}</div>
+      } @else if (enrollments().length === 0) {
+        <div class="home__empty">
+          <h3>Aún no te has inscrito en ningún curso</h3>
+          <p>
+            Explora los cursos disponibles y elige el que más te llame la
+            atención para comenzar.
+          </p>
+          <a class="home__cta" routerLink="/student/courses">Ver cursos</a>
+        </div>
+      } @else {
+        <ul class="course-list">
+          @for (enrollment of enrollments(); track enrollment.id) {
+            <li class="course-card">
+              <header class="course-card__head">
+                <span class="course-card__status" [attr.data-status]="enrollment.status">
+                  {{ enrollment.status }}
+                </span>
+                <a
+                  class="course-card__title"
+                  [routerLink]="['/student/courses', enrollment.courseId]">
+                  {{ enrollment.courseName }}
+                </a>
+              </header>
+              <p class="course-card__meta">
+                @if (enrollment.lastAccessedAt) {
+                  Último avance: {{ enrollment.lastAccessedAt | date: 'mediumDate' }}
+                } @else {
+                  Iniciado el {{ enrollment.startedAt | date: 'mediumDate' }}
+                }
+              </p>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <aside class="home__aside">
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Mis insignias</h2>
+          <span class="panel__count">{{ badges().length }}</span>
+        </div>
+        @if (recentBadges().length === 0) {
+          <p class="panel__empty">
+            Todavía no has ganado insignias. Completa lecciones y retos para
+            desbloquear las primeras.
+          </p>
+        } @else {
+          <ul class="badge-list">
+            @for (item of recentBadges(); track item.badge.id) {
+              <li class="badge" [attr.data-rarity]="item.badge.rarity">
+                <div class="badge__icon" aria-hidden="true">
+                  @if (item.badge.iconUrl) {
+                    <img [src]="item.badge.iconUrl" [alt]="item.badge.name" />
+                  } @else {
+                    <span>🏅</span>
+                  }
+                </div>
+                <div class="badge__body">
+                  <strong class="badge__name">{{ item.badge.name }}</strong>
+                  <span class="badge__meta">{{ item.awardedAt | date: 'mediumDate' }}</span>
+                </div>
+              </li>
+            }
+          </ul>
         }
-      </ul>
-    }
-  </section>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2>Ranking global</h2>
+          @if (myRankingPosition(); as me) {
+            <span class="panel__count">Tú: #{{ me.position }}</span>
+          }
+        </div>
+        @if (rankingTop().length === 0) {
+          <p class="panel__empty">Todavía no hay suficientes datos para armar el ranking.</p>
+        } @else {
+          <ol class="ranking">
+            @for (entry of rankingTop(); track entry.userId) {
+              <li
+                class="ranking__row"
+                [class.ranking__row--me]="entry.userId === user()?.id">
+                <span class="ranking__position">#{{ entry.position }}</span>
+                <span class="ranking__name">{{ entry.username }}</span>
+                <span class="ranking__xp">{{ entry.xp }} XP</span>
+              </li>
+            }
+          </ol>
+        }
+      </section>
+    </aside>
+  </div>
 </section>
