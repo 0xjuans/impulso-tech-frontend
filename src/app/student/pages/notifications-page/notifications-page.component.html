@@ -1,0 +1,55 @@
+<!-- Listado completo de notificaciones del estudiante -->
+<section class="notifs">
+  <header class="notifs__header">
+    <div>
+      <span class="notifs__eyebrow">Centro de notificaciones</span>
+      <h1 class="notifs__title">Todas tus notificaciones</h1>
+      <p class="notifs__lead">
+        Aquí llegan tus insignias, avances y avisos de la plataforma.
+      </p>
+    </div>
+    <div class="notifs__actions">
+      <label class="notifs__toggle">
+        <input type="checkbox" [checked]="onlyUnread()" (change)="toggleOnlyUnread()" />
+        Solo no leídas
+      </label>
+      <button type="button" class="notifs__mark-all" (click)="markAllAsRead()">
+        Marcar todas como leídas
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="notifs__placeholder">Cargando notificaciones...</div>
+  } @else if (error()) {
+    <div class="notifs__alert" role="alert">{{ error() }}</div>
+  } @else if (items().length === 0) {
+    <div class="notifs__empty">
+      <h2>Todo al día</h2>
+      <p>No tienes notificaciones para mostrar en este momento.</p>
+    </div>
+  } @else {
+    <ul class="notifs__list">
+      @for (item of items(); track item.id) {
+        <li
+          class="notifs__item"
+          [class.notifs__item--unread]="!item.readAt"
+          (click)="markAsRead(item)">
+          <div class="notifs__item-body">
+            <span class="notifs__item-type" [attr.data-type]="item.type">{{ item.type }}</span>
+            <strong class="notifs__item-title">{{ item.title }}</strong>
+            <p class="notifs__item-message">{{ item.message }}</p>
+            <span class="notifs__item-time">{{ item.createdAt | date: 'medium' }}</span>
+          </div>
+          <button
+            type="button"
+            class="notifs__delete"
+            (click)="remove(item, $event)"
+            aria-label="Eliminar notificación">
+            ✕
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>
