@@ -52,10 +52,30 @@ export class LoginPageComponent {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: () => {
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/student';
-          void this.router.navigateByUrl(returnUrl);
+          const target = this.resolveReturnUrl();
+          void this.router.navigateByUrl(target);
         },
         error: (err: Error) => this.errorMessage.set(err.message),
       });
+  }
+
+  /**
+   * Devuelve la URL de destino tras el login. Sólo acepta rutas
+   * internas relativas y descarta las que apuntan al propio flujo de
+   * autenticación, para evitar bucles o redirecciones a rutas rotas
+   * que caigan en el wildcard {@code **} y devuelvan al landing.
+   */
+  private resolveReturnUrl(): string {
+    const raw = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (!raw) {
+      return '/student';
+    }
+    const trimmed = raw.trim();
+    const isInternal = trimmed.startsWith('/') && !trimmed.startsWith('//');
+    const isAuthFlow = trimmed === '/' || trimmed === '' || trimmed.startsWith('/auth');
+    if (!isInternal || isAuthFlow) {
+      return '/student';
+    }
+    return trimmed;
   }
 }
