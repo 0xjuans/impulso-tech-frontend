@@ -5,6 +5,50 @@
  */
 import { ContentStatus, DifficultyLevel } from '../learning-routes/learning-route.dto';
 
+/** Datos necesarios para crear un curso. */
+export interface CreateCourseRequest {
+  readonly name: string;
+  readonly description: string;
+  readonly objective?: string | null;
+  readonly coverImageUrl?: string | null;
+  readonly difficulty: DifficultyLevel;
+  readonly estimatedDurationHours?: number | null;
+  readonly technology?: string | null;
+  readonly learningRouteId?: number | null;
+  readonly generatesCertificate?: boolean;
+}
+
+/** Datos para actualizar campos permitidos de un curso existente. */
+export interface UpdateCourseRequest {
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly objective?: string | null;
+  readonly coverImageUrl?: string | null;
+  readonly difficulty?: DifficultyLevel | null;
+  readonly estimatedDurationHours?: number | null;
+  readonly technology?: string | null;
+  readonly learningRouteId?: number | null;
+  readonly generatesCertificate?: boolean | null;
+}
+
+/** Datos para crear un módulo dentro de un curso. */
+export interface CreateCourseModuleRequest {
+  readonly name: string;
+  readonly description?: string | null;
+  readonly objective?: string | null;
+  readonly orderIndex?: number | null;
+  readonly optional: boolean;
+}
+
+/** Datos para actualizar un módulo existente. */
+export interface UpdateCourseModuleRequest {
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly objective?: string | null;
+  readonly orderIndex?: number | null;
+  readonly optional?: boolean | null;
+}
+
 /** Representación pública de un curso publicado. */
 export interface Course {
   readonly id: number;

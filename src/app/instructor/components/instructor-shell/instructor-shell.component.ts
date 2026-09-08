@@ -55,6 +55,7 @@ export class InstructorShellComponent {
 
   protected readonly navItems: readonly NavItem[] = [
     { path: 'dashboard', icon: '📊', label: 'Panel' },
+    { path: 'courses', icon: '📚', label: 'Cursos' },
   ];
 
   protected toggleMenu(): void {

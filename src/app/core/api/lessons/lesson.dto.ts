@@ -5,6 +5,28 @@
  */
 import { ContentStatus } from '../learning-routes/learning-route.dto';
 
+/** Datos para crear una lección dentro de un módulo. */
+export interface CreateLessonRequest {
+  readonly title: string;
+  readonly description?: string | null;
+  readonly objective?: string | null;
+  readonly content?: string | null;
+  readonly estimatedDurationMinutes?: number | null;
+  readonly orderIndex?: number | null;
+  readonly optional: boolean;
+}
+
+/** Datos para actualizar una lección existente. */
+export interface UpdateLessonRequest {
+  readonly title?: string | null;
+  readonly description?: string | null;
+  readonly objective?: string | null;
+  readonly content?: string | null;
+  readonly estimatedDurationMinutes?: number | null;
+  readonly orderIndex?: number | null;
+  readonly optional?: boolean | null;
+}
+
 /** Representación pública de una lección publicada. */
 export interface Lesson {
   readonly id: number;
