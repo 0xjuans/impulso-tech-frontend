@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import { defaultAreaFor } from '../../../core/auth/guards/role.guard';
 import { AuthService } from '../../../core/auth/services/auth.service';
 
 /**
@@ -66,15 +67,16 @@ export class LoginPageComponent {
    * que caigan en el wildcard {@code **} y devuelvan al landing.
    */
   private resolveReturnUrl(): string {
+    const fallback = defaultAreaFor(this.auth.currentUser()?.role ?? 'ESTUDIANTE');
     const raw = this.route.snapshot.queryParamMap.get('returnUrl');
     if (!raw) {
-      return '/student';
+      return fallback;
     }
     const trimmed = raw.trim();
     const isInternal = trimmed.startsWith('/') && !trimmed.startsWith('//');
     const isAuthFlow = trimmed === '/' || trimmed === '' || trimmed.startsWith('/auth');
     if (!isInternal || isAuthFlow) {
-      return '/student';
+      return fallback;
     }
     return trimmed;
   }

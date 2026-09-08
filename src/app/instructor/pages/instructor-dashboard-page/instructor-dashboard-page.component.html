@@ -1,0 +1,80 @@
+<!-- Panel de métricas del instructor -->
+<section class="dash">
+  <header class="dash__header">
+    <span class="dash__eyebrow">Panel del instructor</span>
+    <h1 class="dash__title">Estado general de tus contenidos</h1>
+    <p class="dash__lead">
+      Resumen de rutas, cursos, lecciones e inscripciones bajo tu responsabilidad.
+    </p>
+  </header>
+
+  @if (loading()) {
+    <div class="dash__placeholder">Cargando panel...</div>
+  } @else if (error()) {
+    <div class="dash__alert" role="alert">{{ error() }}</div>
+  } @else {
+    @if (data(); as d) {
+      <div class="dash__section">
+        <h2>Contenidos</h2>
+        <div class="dash__grid">
+          <article class="stat">
+            <span class="stat__label">Rutas gestionadas</span>
+            <strong class="stat__value">{{ d.routesTotal }}</strong>
+            <span class="stat__hint">
+              {{ d.routesPublished }} publicadas · {{ d.routesDraft }} en borrador
+            </span>
+          </article>
+          <article class="stat">
+            <span class="stat__label">Cursos gestionados</span>
+            <strong class="stat__value">{{ d.coursesTotal }}</strong>
+            <span class="stat__hint">
+              {{ d.coursesPublished }} publicados · {{ d.coursesDraft }} borrador · {{ d.coursesDisabled }} deshabilitados
+            </span>
+          </article>
+          <article class="stat">
+            <span class="stat__label">Lecciones publicadas</span>
+            <strong class="stat__value">{{ d.publishedLessons }}</strong>
+            <span class="stat__hint">en tus cursos publicados</span>
+          </article>
+        </div>
+      </div>
+
+      <div class="dash__section">
+        <h2>Alcance con estudiantes</h2>
+        <div class="dash__grid">
+          <article class="stat stat--cool">
+            <span class="stat__label">Inscripciones</span>
+            <strong class="stat__value">{{ d.totalEnrollments }}</strong>
+            <span class="stat__hint">totales en tus cursos</span>
+          </article>
+          <article class="stat stat--cool">
+            <span class="stat__label">Estudiantes únicos</span>
+            <strong class="stat__value">{{ d.uniqueStudents }}</strong>
+            <span class="stat__hint">personas distintas alcanzadas</span>
+          </article>
+        </div>
+      </div>
+
+      <div class="dash__section">
+        <h2>Pendientes por revisar</h2>
+        <div class="dash__grid">
+          <article class="stat stat--warm" [class.stat--has]="d.pendingChallenges > 0">
+            <span class="stat__label">Retos pendientes</span>
+            <strong class="stat__value">{{ d.pendingChallenges }}</strong>
+            <span class="stat__hint">intentos por evaluar</span>
+          </article>
+          <article class="stat stat--warm" [class.stat--has]="d.pendingProjects > 0">
+            <span class="stat__label">Proyectos pendientes</span>
+            <strong class="stat__value">{{ d.pendingProjects }}</strong>
+            <span class="stat__hint">entregas por revisar</span>
+          </article>
+          <article class="stat stat--warm" [class.stat--has]="d.openAssignedTickets > 0">
+            <span class="stat__label">Tickets asignados</span>
+            <strong class="stat__value">{{ d.openAssignedTickets }}</strong>
+            <span class="stat__hint">abiertos y esperando respuesta</span>
+          </article>
+        </div>
+      </div>
+    }
+  }
+</section>
