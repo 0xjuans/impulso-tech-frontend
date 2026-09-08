@@ -7,5 +7,5 @@
 export const environment = {
   production: true,
   /** URL base de la API REST del backend de Impulso Tech. */
-  apiBaseUrl: 'https://api.impulso.tech/api',
+  apiBaseUrl: 'https://jubilant-acceptance-production-b89a.up.railway.app/api',
 } as const;

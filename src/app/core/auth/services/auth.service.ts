@@ -63,6 +63,23 @@ export class AuthService {
   }
 
   /**
+   * Reemplaza el usuario autenticado actual (por ejemplo, tras actualizar
+   * el perfil desde {@code /api/users/me}) sin alterar el token vigente.
+   */
+  updateCurrentUser(user: User): void {
+    this._currentUser.set(user);
+    const token = this._accessToken();
+    if (token) {
+      this.storage.save({
+        accessToken: token,
+        tokenType: 'Bearer',
+        expiresAt: '',
+        user,
+      });
+    }
+  }
+
+  /**
    * Registra un nuevo estudiante en la plataforma.
    *
    * El backend crea la cuenta en estado {@code PENDIENTE_VERIFICACION} y

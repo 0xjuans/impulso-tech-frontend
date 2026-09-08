@@ -1,0 +1,117 @@
+<!-- Inbox de mensajería directa -->
+<section class="msgs">
+  <header class="msgs__header">
+    <span class="msgs__eyebrow">Mensajes</span>
+    <h1 class="msgs__title">Tu bandeja de conversaciones</h1>
+    <p class="msgs__lead">Comunícate directamente con instructores y compañeros.</p>
+  </header>
+
+  @if (error()) {
+    <div class="msgs__alert" role="alert">{{ error() }}</div>
+  }
+
+  <div class="msgs__layout">
+    <!-- Lista de conversaciones -->
+    <aside class="msgs__sidebar" aria-label="Conversaciones">
+      @if (loadingConversations()) {
+        <div class="msgs__placeholder">Cargando...</div>
+      } @else if (conversations().length === 0) {
+        <div class="msgs__empty">
+          <p>Aún no tienes conversaciones.</p>
+        </div>
+      } @else {
+        <ul class="conv-list">
+          @for (c of conversations(); track c.id) {
+            <li
+              class="conv"
+              [class.conv--active]="activeId() === c.id"
+              (click)="selectConversation(c)">
+              <div class="conv__avatar" aria-hidden="true">
+                @if (c.otherPhotoUrl) {
+                  <img [src]="c.otherPhotoUrl" [alt]="c.otherUsername" />
+                } @else {
+                  <span>{{ (c.otherFullName || c.otherUsername)[0] }}</span>
+                }
+              </div>
+              <div class="conv__body">
+                <div class="conv__row">
+                  <strong class="conv__name">{{ c.otherFullName || c.otherUsername }}</strong>
+                  <span class="conv__time">{{ c.lastMessageAt | date: 'shortTime' }}</span>
+                </div>
+                <div class="conv__row">
+                  <p class="conv__preview">{{ c.lastMessagePreview || 'Sin mensajes aún' }}</p>
+                  @if (c.unreadCount > 0) {
+                    <span class="conv__unread">{{ c.unreadCount }}</span>
+                  }
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </aside>
+
+    <!-- Hilo activo -->
+    <section class="msgs__thread" aria-label="Mensajes">
+      @if (active(); as a) {
+        <header class="thread__head">
+          <div class="thread__avatar" aria-hidden="true">
+            {{ (a.otherFullName || a.otherUsername)[0] }}
+          </div>
+          <div>
+            <strong>{{ a.otherFullName || a.otherUsername }}</strong>
+            <small>&#64;{{ a.otherUsername }}</small>
+          </div>
+        </header>
+
+        <div class="thread__body">
+          @if (loadingMessages()) {
+            <div class="msgs__placeholder">Cargando mensajes...</div>
+          } @else if (messages().length === 0) {
+            <div class="msgs__empty">
+              <p>Envía el primer mensaje para iniciar la conversación.</p>
+            </div>
+          } @else {
+            <ul class="msg-list">
+              @for (m of messages(); track m.id) {
+                <li class="msg" [class.msg--mine]="m.senderId === myId()">
+                  <div class="msg__bubble">
+                    <p>{{ m.content }}</p>
+                    <span class="msg__time">{{ m.sentAt | date: 'shortTime' }}</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <form class="thread__composer" (submit)="$event.preventDefault(); send()">
+          <textarea
+            class="thread__input"
+            [ngModel]="draft()"
+            (ngModelChange)="draft.set($event)"
+            name="draft"
+            rows="2"
+            maxlength="4000"
+            placeholder="Escribe tu mensaje..."
+            [disabled]="sending()"></textarea>
+          <div class="thread__actions">
+            @if (sendError(); as err) {
+              <span class="thread__error" role="alert">{{ err }}</span>
+            }
+            <button
+              type="submit"
+              class="thread__send"
+              [disabled]="sending() || draft().trim().length === 0">
+              {{ sending() ? 'Enviando...' : 'Enviar' }}
+            </button>
+          </div>
+        </form>
+      } @else {
+        <div class="thread__hint">
+          <p>Selecciona una conversación para leer sus mensajes.</p>
+        </div>
+      }
+    </section>
+  </div>
+</section>

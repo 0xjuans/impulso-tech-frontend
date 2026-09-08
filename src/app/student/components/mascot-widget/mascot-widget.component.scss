@@ -1,0 +1,285 @@
+/* Widget flotante de la mascota IA ----------------------------------------- */
+
+:host { display: block; }
+
+.mascot {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.mascot > * { pointer-events: auto; }
+
+.mascot__trigger {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #ff8a3d, #ff4f00);
+  color: #fff;
+  cursor: pointer;
+  font-size: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(255, 79, 0, 0.35);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.mascot__trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(255, 79, 0, 0.45);
+}
+
+.mascot--open .mascot__trigger {
+  background: var(--color-ink);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.mascot__panel {
+  width: 360px;
+  max-width: 92vw;
+  height: 520px;
+  max-height: 78vh;
+  background: var(--color-canvas);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(32, 21, 21, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: mascotFadeIn 180ms ease;
+}
+
+@keyframes mascotFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mascot__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(32, 21, 21, 0.06);
+  background: linear-gradient(135deg, #ff8a3d, #ff4f00);
+  color: #fff;
+}
+
+.mascot__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mascot__brand strong { display: block; font-size: 14px; }
+.mascot__brand small  { display: block; font-size: 11px; opacity: 0.8; }
+
+.mascot__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.mascot__close {
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 150ms ease;
+}
+
+.mascot__close:hover { background: rgba(255, 255, 255, 0.35); }
+
+.mascot__thread {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 14px;
+  background: var(--color-canvas-soft);
+}
+
+.mascot__placeholder,
+.mascot__alert {
+  padding: 18px;
+  text-align: center;
+  color: var(--color-body);
+  font-size: 13px;
+}
+
+.mascot__alert {
+  background: rgba(214, 69, 69, 0.08);
+  border: 1px solid rgba(214, 69, 69, 0.25);
+  color: #a52c2c;
+  border-radius: var(--radius-sm);
+}
+
+.mascot__welcome {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--color-ink);
+  font-size: 14px;
+}
+
+.mascot__welcome p { margin: 0; line-height: 1.4; }
+
+.mascot__quick {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mascot__quick button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(32, 21, 21, 0.1);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.mascot__quick button:hover {
+  background: var(--color-canvas-soft);
+  border-color: rgba(255, 79, 0, 0.35);
+}
+
+.mascot__messages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mascot__msg { display: flex; }
+.mascot__msg--mine { justify-content: flex-end; }
+
+.mascot__bubble {
+  max-width: 78%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--color-canvas);
+  border: 1px solid rgba(32, 21, 21, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mascot__msg--mine .mascot__bubble {
+  background: #ff4f00;
+  color: #fff;
+  border-color: transparent;
+}
+
+.mascot__bubble p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.mascot__time { font-size: 10px; opacity: 0.7; align-self: flex-end; }
+
+.mascot__bubble--typing {
+  padding: 12px 14px;
+  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+}
+
+.mascot__bubble--typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-body);
+  opacity: 0.6;
+  animation: typing 1.2s infinite ease-in-out;
+}
+
+.mascot__bubble--typing span:nth-child(2) { animation-delay: 0.15s; }
+.mascot__bubble--typing span:nth-child(3) { animation-delay: 0.30s; }
+
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+.mascot__composer {
+  border-top: 1px solid rgba(32, 21, 21, 0.06);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--color-canvas);
+}
+
+.mascot__input {
+  width: 100%;
+  border: 1px solid rgba(32, 21, 21, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: none;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+.mascot__input:focus {
+  outline: 2px solid rgba(255, 138, 61, 0.4);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.mascot__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.mascot__error {
+  color: #a52c2c;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.mascot__send {
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease, opacity 150ms ease;
+}
+
+.mascot__send:hover:not([disabled]) { background: var(--color-ink-soft); }
+.mascot__send[disabled] { opacity: 0.5; cursor: not-allowed; }

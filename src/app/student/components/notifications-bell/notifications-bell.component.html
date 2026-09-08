@@ -1,0 +1,54 @@
+<!-- Campana de notificaciones con panel desplegable -->
+<div class="bell" (click)="stop($event)">
+  <button
+    type="button"
+    class="bell__trigger"
+    (click)="toggle($event)"
+    [attr.aria-expanded]="open()"
+    aria-label="Abrir notificaciones">
+    <span aria-hidden="true">🔔</span>
+    @if (unread() > 0) {
+      <span class="bell__badge" aria-live="polite">{{ unread() > 99 ? '99+' : unread() }}</span>
+    }
+  </button>
+
+  @if (open()) {
+    <div class="bell__panel" role="dialog" aria-label="Notificaciones recientes">
+      <header class="bell__panel-head">
+        <h3>Notificaciones</h3>
+        @if (unread() > 0) {
+          <button type="button" class="bell__mark-all" (click)="markAllAsRead($event)">
+            Marcar todas como leídas
+          </button>
+        }
+      </header>
+
+      @if (loading()) {
+        <div class="bell__placeholder">Cargando...</div>
+      } @else if (recent().length === 0) {
+        <div class="bell__empty">
+          <p>No tienes notificaciones nuevas.</p>
+        </div>
+      } @else {
+        <ul class="bell__list">
+          @for (item of recent(); track item.id) {
+            <li
+              class="bell__item"
+              [class.bell__item--unread]="!item.readAt"
+              (click)="markAsRead(item, $event)">
+              <div class="bell__item-body">
+                <strong class="bell__item-title">{{ item.title }}</strong>
+                <p class="bell__item-message">{{ item.message }}</p>
+                <span class="bell__item-time">{{ item.createdAt | date: 'short' }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+
+      <footer class="bell__panel-foot">
+        <a routerLink="/student/notifications" (click)="close()">Ver todas →</a>
+      </footer>
+    </div>
+  }
+</div>

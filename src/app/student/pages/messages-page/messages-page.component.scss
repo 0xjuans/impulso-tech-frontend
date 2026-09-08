@@ -1,0 +1,299 @@
+/* Inbox de mensajería directa ---------------------------------------------- */
+
+.msgs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.msgs__eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--color-body);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.msgs__title {
+  margin: 0 0 8px;
+  font-size: clamp(22px, 3vw, 30px);
+  color: var(--color-ink);
+  letter-spacing: -0.02em;
+}
+
+.msgs__lead { margin: 0; color: var(--color-body); font-size: 14px; }
+
+.msgs__alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(214, 69, 69, 0.08);
+  border: 1px solid rgba(214, 69, 69, 0.25);
+  color: #a52c2c;
+  font-size: 13px;
+}
+
+.msgs__placeholder,
+.msgs__empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--color-body);
+  font-size: 13px;
+}
+
+.msgs__layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+  min-height: 520px;
+  align-items: stretch;
+}
+
+/* Sidebar de conversaciones ------------------------------------------------ */
+
+.msgs__sidebar {
+  background: var(--color-canvas);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(32, 21, 21, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.conv-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+}
+
+.conv {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(32, 21, 21, 0.04);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.conv:hover { background: var(--color-canvas-soft); }
+.conv--active { background: rgba(107, 138, 253, 0.12); }
+.conv--active:hover { background: rgba(107, 138, 253, 0.18); }
+
+.conv__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6b8afd, #3b52c4);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.conv__avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.conv__body { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+
+.conv__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.conv__name {
+  font-size: 14px;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conv__time { font-size: 11px; color: var(--color-body); flex-shrink: 0; }
+
+.conv__preview {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-body);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.conv__unread {
+  background: #d64545;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  padding: 2px 7px;
+  flex-shrink: 0;
+}
+
+/* Panel del hilo ---------------------------------------------------------- */
+
+.msgs__thread {
+  background: var(--color-canvas);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(32, 21, 21, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.thread__head {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(32, 21, 21, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.thread__head strong {
+  display: block;
+  color: var(--color-ink);
+  font-size: 14px;
+}
+
+.thread__head small { color: var(--color-body); font-size: 12px; }
+
+.thread__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6b8afd, #3b52c4);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.thread__hint {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-body);
+  font-size: 13px;
+  padding: 24px;
+}
+
+.thread__body {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 18px;
+  background: var(--color-canvas-soft);
+}
+
+.msg-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.msg { display: flex; }
+.msg--mine { justify-content: flex-end; }
+
+.msg__bubble {
+  max-width: 72%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--color-canvas);
+  border: 1px solid rgba(32, 21, 21, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.msg--mine .msg__bubble {
+  background: #3b52c4;
+  color: #fff;
+  border-color: transparent;
+}
+
+.msg__bubble p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.msg__time {
+  font-size: 10px;
+  opacity: 0.7;
+  align-self: flex-end;
+}
+
+/* Composer ------------------------------------------------------------------ */
+
+.thread__composer {
+  border-top: 1px solid rgba(32, 21, 21, 0.06);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--color-canvas);
+}
+
+.thread__input {
+  width: 100%;
+  border: 1px solid rgba(32, 21, 21, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 44px;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+.thread__input:focus {
+  outline: 2px solid rgba(107, 138, 253, 0.4);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.thread__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.thread__error { color: #a52c2c; font-size: 12px; }
+
+.thread__send {
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.thread__send:hover:not([disabled]) { background: var(--color-ink-soft); }
+.thread__send[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+@media (max-width: 820px) {
+  .msgs__layout { grid-template-columns: 1fr; }
+  .msgs__sidebar { max-height: 300px; }
+}

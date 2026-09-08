@@ -1,0 +1,59 @@
+<!-- Contenido de una lección con acción para marcarla como completada -->
+<section class="lesson">
+  @if (loading()) {
+    <div class="lesson__placeholder">Cargando lección...</div>
+  } @else if (error()) {
+    <div class="lesson__alert" role="alert">{{ error() }}</div>
+  } @else {
+    @if (lesson(); as l) {
+    <header class="lesson__header">
+      <span class="lesson__eyebrow">Lección</span>
+      <h1 class="lesson__title">{{ l.title }}</h1>
+      @if (l.description) {
+        <p class="lesson__lead">{{ l.description }}</p>
+      }
+      <ul class="lesson__meta">
+        @if (l.estimatedDurationMinutes) {
+          <li><strong>Duración estimada:</strong> {{ l.estimatedDurationMinutes }} min</li>
+        }
+        @if (l.optional) {
+          <li>Opcional</li>
+        }
+        @if (l.objective) {
+          <li><strong>Objetivo:</strong> {{ l.objective }}</li>
+        }
+      </ul>
+    </header>
+
+    <article class="lesson__content">
+      @if (l.content) {
+        <div class="lesson__body">{{ l.content }}</div>
+      } @else {
+        <p class="lesson__empty">Esta lección aún no tiene contenido publicado.</p>
+      }
+    </article>
+
+    <footer class="lesson__actions">
+      @if (isCompleted()) {
+        <div class="lesson__done" role="status">
+          ✓ Lección marcada como completada.
+          @if (progress(); as p) {
+            Progreso del curso: <strong>{{ p.completionPercentage }}%</strong>.
+          }
+        </div>
+      } @else {
+        <button
+          type="button"
+          class="lesson__complete"
+          (click)="complete()"
+          [disabled]="saving()">
+          {{ saving() ? 'Registrando...' : 'Marcar como completada' }}
+        </button>
+      }
+      @if (saveError(); as err) {
+        <p class="lesson__save-error" role="alert">{{ err }}</p>
+      }
+    </footer>
+    }
+  }
+</section>

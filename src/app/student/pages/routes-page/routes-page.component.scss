@@ -1,0 +1,198 @@
+/* Catálogo de rutas de aprendizaje ---------------------------------------- */
+
+.routes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.routes__header { max-width: 640px; }
+
+.routes__eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--color-body);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.routes__title {
+  margin: 0 0 8px;
+  font-size: clamp(24px, 3vw, 34px);
+  color: var(--color-ink);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.routes__lead {
+  margin: 0;
+  color: var(--color-body);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.routes__placeholder,
+.routes__alert,
+.routes__empty {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-md);
+  background: var(--color-canvas);
+  border: 1px dashed rgba(32, 21, 21, 0.12);
+  color: var(--color-body);
+  text-align: center;
+}
+
+.routes__alert {
+  background: rgba(214, 69, 69, 0.08);
+  border: 1px solid rgba(214, 69, 69, 0.25);
+  color: #a52c2c;
+}
+
+.routes__empty h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: var(--color-ink);
+}
+
+.routes__empty p { margin: 0; color: var(--color-body); }
+
+/* Grilla de rutas */
+.route-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.route-card {
+  background: var(--color-canvas);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(32, 21, 21, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.route-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.route-card__cover {
+  position: relative;
+  height: 140px;
+  background: linear-gradient(135deg, #2b2320 0%, #201515 100%);
+  color: var(--color-canvas);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.route-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.route-card__cover-fallback {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: rgba(255, 254, 251, 0.3);
+}
+
+.route-card__difficulty {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: rgba(255, 254, 251, 0.92);
+  color: var(--color-ink);
+}
+
+.route-card__difficulty[data-level='PRINCIPIANTE'] { color: #1f8f5b; }
+.route-card__difficulty[data-level='INTERMEDIO']   { color: #a04a12; }
+.route-card__difficulty[data-level='AVANZADO']     { color: #b53232; }
+
+.route-card__body {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.route-card__name {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.2;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+.route-card__description {
+  margin: 0;
+  color: var(--color-body);
+  font-size: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.route-card__tags {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.route-card__tags li {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--color-canvas-soft);
+  color: var(--color-ink-soft);
+  font-weight: 500;
+}
+
+.route-card__foot {
+  padding: 0 var(--spacing-lg) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.route-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 12px;
+  color: var(--color-body);
+}
+
+.route-card__cta {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas-soft);
+  color: var(--color-ink-soft);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: not-allowed;
+}

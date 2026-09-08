@@ -1,0 +1,106 @@
+/* Página de perfil del usuario autenticado -------------------------------- */
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.profile__header { max-width: 640px; }
+
+.profile__eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--color-body);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.profile__title {
+  margin: 0 0 8px;
+  font-size: clamp(24px, 3vw, 34px);
+  color: var(--color-ink);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.profile__lead {
+  margin: 0;
+  color: var(--color-body);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.profile__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--spacing-xl);
+  align-items: start;
+}
+
+.profile__card {
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-md);
+  background: var(--color-canvas);
+  border: 1px solid rgba(32, 21, 21, 0.06);
+  gap: var(--spacing-lg);
+}
+
+.profile__meta {
+  grid-column: 2;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-md);
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.profile__section-title {
+  margin: 0 0 4px;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: inherit;
+}
+
+.profile__meta .profile__section-title { color: var(--color-canvas); }
+
+.profile__list {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.profile__list > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile__list dt {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 254, 251, 0.55);
+  font-weight: 600;
+}
+
+.profile__list dd {
+  margin: 0;
+  color: var(--color-canvas);
+  font-size: 14px;
+  word-break: break-word;
+}
+
+/* En viewports estrechos las tres tarjetas se apilan en una sola columna. */
+@media (max-width: 960px) {
+  .profile__grid { grid-template-columns: 1fr; }
+  .profile__meta { grid-column: 1; }
+}

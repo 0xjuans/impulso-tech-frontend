@@ -1,0 +1,174 @@
+<!-- Lista de cursos gestionados por el instructor -->
+<section class="mgmt">
+  <header class="mgmt__header">
+    <div>
+      <span class="mgmt__eyebrow">Mis cursos</span>
+      <h1 class="mgmt__title">Gestión de contenidos</h1>
+      <p class="mgmt__lead">Crea nuevos cursos, edita los existentes y controla su publicación.</p>
+    </div>
+    <div class="mgmt__actions">
+      <button type="button" class="mgmt__primary" (click)="toggleForm()">
+        {{ showForm() ? 'Cancelar' : '+ Nuevo curso' }}
+      </button>
+    </div>
+  </header>
+
+  @if (showForm()) {
+    <form class="quick-form" (submit)="$event.preventDefault(); create()">
+      <h2>Crear un curso rápido</h2>
+      <p class="quick-form__hint">
+        Comienza con lo mínimo. Podrás completar el resto de los datos y añadir
+        módulos y lecciones desde el editor del curso.
+      </p>
+
+      <div class="quick-form__grid">
+        <label class="field field--full">
+          <span>Nombre *</span>
+          <input
+            type="text"
+            [ngModel]="draft().name"
+            (ngModelChange)="updateDraft('name', $event)"
+            name="name"
+            maxlength="150"
+            required />
+        </label>
+
+        <label class="field field--full">
+          <span>Descripción *</span>
+          <textarea
+            rows="3"
+            [ngModel]="draft().description"
+            (ngModelChange)="updateDraft('description', $event)"
+            name="description"
+            required></textarea>
+        </label>
+
+        <label class="field">
+          <span>Dificultad</span>
+          <select
+            [ngModel]="draft().difficulty"
+            (ngModelChange)="updateDraft('difficulty', $event)"
+            name="difficulty">
+            <option value="PRINCIPIANTE">Principiante</option>
+            <option value="INTERMEDIO">Intermedio</option>
+            <option value="AVANZADO">Avanzado</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Tecnología</span>
+          <input
+            type="text"
+            [ngModel]="draft().technology"
+            (ngModelChange)="updateDraft('technology', $event)"
+            name="technology"
+            maxlength="120"
+            placeholder="p. ej. Java" />
+        </label>
+
+        <label class="field">
+          <span>Duración estimada (horas)</span>
+          <input
+            type="number"
+            min="1"
+            [ngModel]="draft().estimatedDurationHours"
+            (ngModelChange)="updateDraft('estimatedDurationHours', $event)"
+            name="hours" />
+        </label>
+
+        <label class="field field--check">
+          <input
+            type="checkbox"
+            [ngModel]="draft().generatesCertificate"
+            (ngModelChange)="updateDraft('generatesCertificate', $event)"
+            name="cert" />
+          <span>Genera certificado al completarse</span>
+        </label>
+      </div>
+
+      @if (createError(); as err) {
+        <p class="quick-form__error" role="alert">{{ err }}</p>
+      }
+
+      <div class="quick-form__actions">
+        <button type="submit" class="mgmt__primary" [disabled]="creating()">
+          {{ creating() ? 'Creando...' : 'Crear y editar' }}
+        </button>
+      </div>
+    </form>
+  }
+
+  <div class="mgmt__filters">
+    <label class="filter">
+      <span>Buscar</span>
+      <input
+        type="search"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="applyFilters()"
+        placeholder="Nombre o descripción..." />
+    </label>
+    <label class="filter">
+      <span>Estado</span>
+      <select
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event)"
+        (change)="applyFilters()">
+        <option value="">Todos</option>
+        <option value="BORRADOR">Borrador</option>
+        <option value="PUBLICADO">Publicado</option>
+        <option value="DESHABILITADO">Deshabilitado</option>
+      </select>
+    </label>
+    <button type="button" class="mgmt__secondary" (click)="applyFilters()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="mgmt__placeholder">Cargando cursos...</div>
+  } @else if (error()) {
+    <div class="mgmt__alert" role="alert">{{ error() }}</div>
+  } @else if (courses().length === 0) {
+    <div class="mgmt__empty">
+      <h3>No tienes cursos que coincidan con los filtros</h3>
+      <p>Crea uno nuevo con el botón de arriba para empezar.</p>
+    </div>
+  } @else {
+    <ul class="course-list">
+      @for (course of courses(); track course.id) {
+        <li class="course-row">
+          <div class="course-row__main">
+            <span class="course-row__status" [attr.data-status]="course.status">
+              {{ course.status }}
+            </span>
+            <a class="course-row__name" [routerLink]="['/instructor/courses', course.id]">
+              {{ course.name }}
+            </a>
+            <p class="course-row__desc">{{ course.description }}</p>
+            <div class="course-row__meta">
+              <span>{{ course.difficulty }}</span>
+              @if (course.technology) {
+                <span>· {{ course.technology }}</span>
+              }
+              @if (course.estimatedDurationHours) {
+                <span>· {{ course.estimatedDurationHours }} h</span>
+              }
+              <span>· Actualizado {{ course.updatedAt | date: 'shortDate' }}</span>
+            </div>
+          </div>
+          <div class="course-row__actions">
+            <a class="mgmt__secondary" [routerLink]="['/instructor/courses', course.id]">Editar</a>
+            @if (course.status !== 'PUBLICADO') {
+              <button type="button" class="mgmt__primary" (click)="quickPublish(course)">
+                Publicar
+              </button>
+            } @else {
+              <button type="button" class="mgmt__danger" (click)="quickDisable(course)">
+                Deshabilitar
+              </button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

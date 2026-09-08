@@ -1,0 +1,367 @@
+<!-- Editor completo de un curso: datos generales + módulos y lecciones -->
+<section class="editor">
+  @if (loading()) {
+    <div class="editor__placeholder">Cargando editor...</div>
+  } @else if (error()) {
+    <div class="editor__alert" role="alert">{{ error() }}</div>
+  } @else {
+    @if (course(); as c) {
+      <a class="editor__back" routerLink="/instructor/courses">← Mis cursos</a>
+
+      <header class="editor__header">
+        <div>
+          <span class="editor__eyebrow">Editando curso</span>
+          <h1 class="editor__title">{{ c.name }}</h1>
+        </div>
+        <div class="editor__status">
+          <span class="editor__status-tag" [attr.data-status]="c.status">{{ c.status }}</span>
+          @if (c.status !== 'PUBLICADO') {
+            <button
+              type="button"
+              class="editor__primary"
+              (click)="changeCourseStatus('PUBLICADO')">
+              Publicar curso
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="editor__danger"
+              (click)="changeCourseStatus('BORRADOR')">
+              Volver a borrador
+            </button>
+          }
+        </div>
+      </header>
+
+      <!-- Formulario de datos generales -->
+      <form class="card" (submit)="$event.preventDefault(); save()">
+        <h2>Datos del curso</h2>
+
+        <div class="grid">
+          <label class="field field--full">
+            <span>Nombre</span>
+            <input
+              type="text"
+              [ngModel]="form().name"
+              (ngModelChange)="updateForm('name', $event)"
+              name="name"
+              maxlength="150" />
+          </label>
+
+          <label class="field field--full">
+            <span>Descripción</span>
+            <textarea
+              rows="3"
+              [ngModel]="form().description"
+              (ngModelChange)="updateForm('description', $event)"
+              name="description"></textarea>
+          </label>
+
+          <label class="field field--full">
+            <span>Objetivo de aprendizaje</span>
+            <textarea
+              rows="2"
+              [ngModel]="form().objective"
+              (ngModelChange)="updateForm('objective', $event)"
+              name="objective"></textarea>
+          </label>
+
+          <label class="field">
+            <span>Dificultad</span>
+            <select
+              [ngModel]="form().difficulty"
+              (ngModelChange)="updateForm('difficulty', $event)"
+              name="difficulty">
+              <option value="PRINCIPIANTE">Principiante</option>
+              <option value="INTERMEDIO">Intermedio</option>
+              <option value="AVANZADO">Avanzado</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Tecnología</span>
+            <input
+              type="text"
+              [ngModel]="form().technology"
+              (ngModelChange)="updateForm('technology', $event)"
+              name="tech"
+              maxlength="120" />
+          </label>
+
+          <label class="field">
+            <span>Duración estimada (horas)</span>
+            <input
+              type="number"
+              min="1"
+              [ngModel]="form().estimatedDurationHours"
+              (ngModelChange)="updateForm('estimatedDurationHours', $event)"
+              name="hours" />
+          </label>
+
+          <label class="field">
+            <span>URL de portada</span>
+            <input
+              type="url"
+              [ngModel]="form().coverImageUrl"
+              (ngModelChange)="updateForm('coverImageUrl', $event)"
+              name="cover"
+              placeholder="https://..." />
+          </label>
+
+          <label class="field field--check field--full">
+            <input
+              type="checkbox"
+              [ngModel]="form().generatesCertificate"
+              (ngModelChange)="updateForm('generatesCertificate', $event)"
+              name="cert" />
+            <span>Genera un certificado digital al completarse</span>
+          </label>
+        </div>
+
+        <div class="card__actions">
+          @if (saveMessage(); as msg) {
+            <span class="card__success">{{ msg }}</span>
+          }
+          @if (saveError(); as err) {
+            <span class="card__error" role="alert">{{ err }}</span>
+          }
+          <button type="submit" class="editor__primary" [disabled]="saving()">
+            {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </form>
+
+      <!-- Módulos y lecciones -->
+      <section class="card">
+        <div class="card__head">
+          <h2>Módulos y lecciones</h2>
+          <span class="card__count">{{ modules().length }}</span>
+        </div>
+
+        <div class="module-add">
+          <input
+            type="text"
+            [ngModel]="newModuleName()"
+            (ngModelChange)="newModuleName.set($event)"
+            name="newModule"
+            placeholder="Nombre del nuevo módulo"
+            maxlength="150" />
+          <label class="module-add__check">
+            <input
+              type="checkbox"
+              [ngModel]="newModuleOptional()"
+              (ngModelChange)="newModuleOptional.set($event)"
+              name="optional" />
+            Opcional
+          </label>
+          <button
+            type="button"
+            class="editor__primary"
+            (click)="createModule()"
+            [disabled]="creatingModule() || newModuleName().trim().length === 0">
+            + Añadir módulo
+          </button>
+        </div>
+
+        @if (modules().length === 0) {
+          <p class="module-empty">
+            Este curso todavía no tiene módulos. Añade el primero arriba para comenzar.
+          </p>
+        } @else {
+          <ol class="modules">
+            @for (node of modules(); track node.module.id) {
+              <li class="module">
+                <header class="module__row" (click)="toggleModule(node)">
+                  <span class="module__caret" aria-hidden="true">
+                    {{ node.expanded ? '▼' : '▶' }}
+                  </span>
+                  <span class="module__index">{{ node.module.orderIndex }}</span>
+                  <div class="module__body">
+                    <strong class="module__name">{{ node.module.name }}</strong>
+                    @if (node.module.optional) {
+                      <span class="module__pill">Opcional</span>
+                    }
+                    <span
+                      class="module__pill module__pill--status"
+                      [attr.data-status]="node.module.status">
+                      {{ node.module.status }}
+                    </span>
+                  </div>
+                </header>
+
+                @if (node.expanded) {
+                  <div class="module__panel" (click)="$event.stopPropagation()">
+                    @if (node.editing) {
+                      <div class="module__form">
+                        <label class="field">
+                          <span>Nombre</span>
+                          <input
+                            type="text"
+                            [ngModel]="node.draftName"
+                            (ngModelChange)="node.draftName = $event"
+                            [name]="'m-name-' + node.module.id"
+                            maxlength="150" />
+                        </label>
+                        <label class="field">
+                          <span>Descripción</span>
+                          <textarea
+                            rows="2"
+                            [ngModel]="node.draftDescription"
+                            (ngModelChange)="node.draftDescription = $event"
+                            [name]="'m-desc-' + node.module.id"></textarea>
+                        </label>
+                        <label class="field field--check">
+                          <input
+                            type="checkbox"
+                            [ngModel]="node.draftOptional"
+                            (ngModelChange)="node.draftOptional = $event"
+                            [name]="'m-opt-' + node.module.id" />
+                          <span>Módulo opcional</span>
+                        </label>
+                        <div class="module__form-actions">
+                          <button
+                            type="button"
+                            class="editor__secondary"
+                            (click)="cancelModuleEdit(node)">
+                            Cancelar
+                          </button>
+                          <button
+                            type="button"
+                            class="editor__primary"
+                            (click)="saveModule(node)">
+                            Guardar módulo
+                          </button>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="module__actions">
+                        @if (node.module.description) {
+                          <p class="module__desc">{{ node.module.description }}</p>
+                        }
+                        <button
+                          type="button"
+                          class="editor__secondary"
+                          (click)="startEditingModule(node)">
+                          Editar módulo
+                        </button>
+                        @if (node.module.status !== 'PUBLICADO') {
+                          <button
+                            type="button"
+                            class="editor__primary"
+                            (click)="changeModuleStatus(node, 'PUBLICADO')">
+                            Publicar
+                          </button>
+                        } @else {
+                          <button
+                            type="button"
+                            class="editor__secondary"
+                            (click)="changeModuleStatus(node, 'BORRADOR')">
+                            Despublicar
+                          </button>
+                        }
+                        <button
+                          type="button"
+                          class="editor__danger"
+                          (click)="deleteModule(node)">
+                          Eliminar módulo
+                        </button>
+                      </div>
+                    }
+
+                    <!-- Lecciones del módulo -->
+                    <div class="lessons">
+                      <h3>Lecciones</h3>
+                      @if (node.loadingLessons) {
+                        <p class="lessons__hint">Cargando lecciones...</p>
+                      } @else {
+                        @if (node.lessons.length === 0) {
+                          <p class="lessons__hint">Este módulo aún no tiene lecciones.</p>
+                        } @else {
+                          <ul class="lesson-list">
+                            @for (lesson of node.lessons; track lesson.id) {
+                              <li class="lesson-item">
+                                <div class="lesson-item__main">
+                                  <span class="lesson-item__num">{{ lesson.orderIndex }}</span>
+                                  <div>
+                                    <strong>{{ lesson.title }}</strong>
+                                    <div class="lesson-item__meta">
+                                      <span
+                                        class="module__pill module__pill--status"
+                                        [attr.data-status]="lesson.status">
+                                        {{ lesson.status }}
+                                      </span>
+                                      @if (lesson.optional) {
+                                        <span class="module__pill">Opcional</span>
+                                      }
+                                      @if (lesson.estimatedDurationMinutes) {
+                                        <span class="lesson-item__duration">
+                                          {{ lesson.estimatedDurationMinutes }} min
+                                        </span>
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="lesson-item__actions">
+                                  @if (lesson.status !== 'PUBLICADO') {
+                                    <button
+                                      type="button"
+                                      class="editor__primary"
+                                      (click)="changeLessonStatus(node, lesson, 'PUBLICADO')">
+                                      Publicar
+                                    </button>
+                                  } @else {
+                                    <button
+                                      type="button"
+                                      class="editor__secondary"
+                                      (click)="changeLessonStatus(node, lesson, 'BORRADOR')">
+                                      Despublicar
+                                    </button>
+                                  }
+                                  <button
+                                    type="button"
+                                    class="editor__danger"
+                                    (click)="deleteLesson(node, lesson)">
+                                    Eliminar
+                                  </button>
+                                </div>
+                              </li>
+                            }
+                          </ul>
+                        }
+                      }
+
+                      <div class="lesson-add">
+                        <input
+                          type="text"
+                          [ngModel]="node.newLessonTitle"
+                          (ngModelChange)="updateNewLesson(node, 'newLessonTitle', $event)"
+                          [name]="'l-title-' + node.module.id"
+                          placeholder="Título de la nueva lección"
+                          maxlength="180" />
+                        <label class="lesson-add__check">
+                          <input
+                            type="checkbox"
+                            [ngModel]="node.newLessonOptional"
+                            (ngModelChange)="updateNewLesson(node, 'newLessonOptional', $event)"
+                            [name]="'l-opt-' + node.module.id" />
+                          Opcional
+                        </label>
+                        <button
+                          type="button"
+                          class="editor__primary"
+                          (click)="createLesson(node)"
+                          [disabled]="node.newLessonTitle.trim().length === 0">
+                          + Añadir lección
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </li>
+            }
+          </ol>
+        }
+      </section>
+    }
+  }
+</section>

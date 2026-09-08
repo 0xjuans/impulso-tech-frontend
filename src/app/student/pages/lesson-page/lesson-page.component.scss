@@ -1,0 +1,119 @@
+/* Contenido de una lección -------------------------------------------------- */
+
+.lesson {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.lesson__placeholder,
+.lesson__alert,
+.lesson__empty {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-md);
+  background: var(--color-canvas);
+  border: 1px dashed rgba(32, 21, 21, 0.12);
+  color: var(--color-body);
+  text-align: center;
+}
+
+.lesson__alert {
+  background: rgba(214, 69, 69, 0.08);
+  border: 1px solid rgba(214, 69, 69, 0.25);
+  color: #a52c2c;
+}
+
+.lesson__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.lesson__eyebrow {
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--color-body);
+  font-weight: 600;
+}
+
+.lesson__title {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 30px);
+  color: var(--color-ink);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.lesson__lead {
+  margin: 0;
+  color: var(--color-body);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.lesson__meta {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  font-size: 13px;
+  color: var(--color-body);
+}
+
+.lesson__meta strong { color: var(--color-ink); font-weight: 600; }
+
+.lesson__content {
+  background: var(--color-canvas);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(32, 21, 21, 0.06);
+  padding: var(--spacing-xl);
+}
+
+.lesson__body {
+  white-space: pre-wrap;
+  color: var(--color-ink);
+  line-height: 1.65;
+  font-size: 15px;
+}
+
+.lesson__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lesson__complete {
+  align-self: flex-start;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: background 150ms ease;
+}
+
+.lesson__complete:hover:not([disabled]) { background: var(--color-ink-soft); }
+.lesson__complete[disabled] { opacity: 0.6; cursor: wait; }
+
+.lesson__done {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(31, 143, 91, 0.1);
+  border: 1px solid rgba(31, 143, 91, 0.3);
+  color: #1f8f5b;
+  font-size: 14px;
+}
+
+.lesson__save-error {
+  margin: 0;
+  color: #a52c2c;
+  font-size: 13px;
+}
