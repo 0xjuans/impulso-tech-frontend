@@ -4,10 +4,12 @@
     <section class="mascot__panel" role="dialog" aria-label="Chat con la mascota">
       <header class="mascot__header">
         <div class="mascot__brand">
-          <span class="mascot__avatar" aria-hidden="true">◐</span>
+          <span class="mascot__avatar" aria-hidden="true">
+            <app-mascot-avatar [state]="mascotState()" [sizePx]="40" />
+          </span>
           <div>
-            <strong>Mascota</strong>
-            <small>Impulso Tech</small>
+            <strong>Nano</strong>
+            <small>Asistente IA · Impulso Tech</small>
           </div>
         </div>
         <button
@@ -27,7 +29,6 @@
         } @else {
           @if (messages().length === 0) {
             <div class="mascot__welcome">
-              <p>¡Hola! Estoy aquí para ayudarte a aprender.</p>
               <p>Pídeme una explicación, una pista o una idea para practicar.</p>
               <ul class="mascot__quick">
                 @for (prompt of quickPrompts; track prompt) {
@@ -83,12 +84,45 @@
     </section>
   }
 
+  @if (!open() && greetingOpen()) {
+    <div class="mascot-greeting" role="dialog" aria-label="Saludo de la mascota Nano">
+      <button
+        type="button"
+        class="mascot-greeting__close"
+        (click)="dismissGreeting($event)"
+        aria-label="Cerrar saludo">
+        <app-icon name="close" [sizePx]="12" />
+      </button>
+      <p class="mascot-greeting__hi">
+        {{ greeting() }}@if (userFirstName()) {, <strong>{{ userFirstName() }}</strong>}!
+      </p>
+      <p class="mascot-greeting__lead">
+        Soy <strong>Nano</strong>. ¿Te ayudo con algo?
+      </p>
+      <button
+        type="button"
+        class="mascot-greeting__cta"
+        (click)="openFromGreeting($event)">
+        Empezar a chatear
+      </button>
+      <span class="mascot-greeting__tail" aria-hidden="true"></span>
+    </div>
+  }
+
   <button
     type="button"
     class="mascot__trigger"
+    [class.is-open]="open()"
     (click)="toggle()"
     [attr.aria-expanded]="open()"
     aria-label="Abrir chat con la mascota">
-    <span aria-hidden="true">{{ open() ? '×' : '◐' }}</span>
+    @if (open()) {
+      <app-icon name="close" [sizePx]="22" />
+    } @else {
+      <app-mascot-avatar [state]="mascotState()" [sizePx]="56" />
+    }
+    @if (!open() && greetingOpen()) {
+      <span class="mascot__trigger-ping" aria-hidden="true"></span>
+    }
   </button>
 </div>

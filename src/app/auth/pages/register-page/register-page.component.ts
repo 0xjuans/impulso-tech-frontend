@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { GoogleSignInButtonComponent } from '../../../shared/components/google-sign-in-button/google-sign-in-button.component';
+import { defaultAreaFor } from '../../../core/auth/guards/role.guard';
 import { PasswordFieldComponent } from '../../../shared/components/password-field/password-field.component';
 
 /**
@@ -21,13 +23,14 @@ import { PasswordFieldComponent } from '../../../shared/components/password-fiel
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, PasswordFieldComponent],
+  imports: [ReactiveFormsModule, RouterLink, PasswordFieldComponent, GoogleSignInButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './register-page.component.html',
 })
 export class RegisterPageComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   /** Indica si la petición de registro está en curso. */
   protected readonly submitting = signal(false);
@@ -82,6 +85,27 @@ export class RegisterPageComponent {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: () => this.succeeded.set(true),
+        error: (err: Error) => this.errorMessage.set(err.message),
+      });
+  }
+
+  /**
+   * Registra al usuario mediante el ID token de Google. Al validarse
+   * en el backend se crea (o recupera) la cuenta y se recibe un JWT
+   * propio; el usuario queda autenticado y se le lleva al área que
+   * le corresponde según su rol.
+   */
+  protected registerWithGoogle(idToken: string): void {
+    if (this.submitting()) return;
+    this.errorMessage.set(null);
+    this.submitting.set(true);
+    this.auth
+      .loginWithGoogle({ idToken })
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: (response) => {
+          void this.router.navigateByUrl(defaultAreaFor(response.user.role));
+        },
         error: (err: Error) => this.errorMessage.set(err.message),
       });
   }

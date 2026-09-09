@@ -75,6 +75,12 @@
     </a>
   </div>
 
+  <div class="auth-form__divider" aria-hidden="true"><span>o</span></div>
+
+  <app-google-sign-in-button
+    text="signin_with"
+    (credential)="loginWithGoogle($event.idToken)" />
+
   <p class="auth-form__secondary">
     ¿Aún no tienes cuenta?
     <a routerLink="/auth/register">Crear cuenta</a>

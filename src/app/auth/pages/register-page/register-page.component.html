@@ -150,6 +150,12 @@
       </button>
     </div>
 
+    <div class="auth-form__divider" aria-hidden="true"><span>o</span></div>
+
+    <app-google-sign-in-button
+      text="signup_with"
+      (credential)="registerWithGoogle($event.idToken)" />
+
     <p class="auth-form__secondary">
       ¿Ya tienes cuenta?
       <a routerLink="/auth/login">Iniciar sesión</a>

@@ -1,0 +1,195 @@
+/* Mascota IA — SVG animado con estados semánticos ------------------------ */
+
+:host {
+  display: inline-block;
+  line-height: 0;
+}
+
+.mascot-avatar {
+  --mascot-size: 48px;
+  width: var(--mascot-size);
+  height: var(--mascot-size);
+  display: inline-block;
+  position: relative;
+  /* IMPORTANTE: no aplicamos filter aquí. Los filtros SVG en el
+     contenedor causan re-muestreo del bitmap y visualmente saturan
+     los bordes, especialmente en displays de alta densidad. La
+     sombra la maneja el SVG interno con un elemento <ellipse>. */
+}
+
+.mascot-avatar__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  image-rendering: -webkit-optimize-contrast;
+  /* Sin filter: bordes 100% vectoriales. */
+}
+
+/* ------------------------------------------------------------------------ */
+/* Estado base: idle — flotación suave + parpadeo periódico + LED pulsante  */
+/* ------------------------------------------------------------------------ */
+
+.mascot-avatar__body {
+  transform-origin: 50% 90%;
+  animation: mascot-float 3.4s ease-in-out infinite;
+  transform-box: fill-box;
+}
+
+.mascot-avatar__shadow {
+  transform-origin: 50% 98px;
+  animation: mascot-shadow 3.4s ease-in-out infinite;
+  transform-box: fill-box;
+}
+
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+@keyframes mascot-shadow {
+  0%, 100% { transform: scaleX(1); opacity: 0.35; }
+  50%      { transform: scaleX(0.82); opacity: 0.22; }
+}
+
+/* LED de la antena — pulso naranja constante */
+.mascot-avatar__led {
+  transform-origin: 50px 6px;
+  animation: mascot-led 1.6s ease-in-out infinite;
+  transform-box: fill-box;
+  filter: drop-shadow(0 0 4px rgba(255, 79, 0, 0.9));
+}
+
+@keyframes mascot-led {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(0.82); opacity: 0.55; }
+}
+
+/* Antena tiene un ligero balanceo */
+.mascot-avatar__antenna {
+  transform-origin: 50px 20px;
+  animation: mascot-antenna 4s ease-in-out infinite;
+  transform-box: fill-box;
+}
+
+@keyframes mascot-antenna {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+
+/* Ojos parpadean cada 4s: escala en Y a 0.1 por 120ms */
+.mascot-avatar__eyes {
+  transform-origin: 50px 50px;
+  animation: mascot-blink 4.5s infinite;
+  transform-box: fill-box;
+}
+
+@keyframes mascot-blink {
+  0%, 92%, 96%, 100% { transform: scaleY(1); }
+  94%                { transform: scaleY(0.1); }
+}
+
+/* Voz oculta en idle */
+.mascot-avatar__voice {
+  opacity: 0;
+  transform-origin: 50px 72px;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Estado: thinking — ojos hacen glancing, LED oscila más rápido, boca fija */
+/* ------------------------------------------------------------------------ */
+
+.mascot-avatar.is-thinking .mascot-avatar__eyes {
+  animation: mascot-thinking-eyes 1.6s ease-in-out infinite;
+}
+
+@keyframes mascot-thinking-eyes {
+  0%, 100% { transform: translate(0, 0); }
+  25%      { transform: translate(2px, -1px); }
+  50%      { transform: translate(0, -2px); }
+  75%      { transform: translate(-2px, -1px); }
+}
+
+.mascot-avatar.is-thinking .mascot-avatar__led {
+  animation: mascot-led-fast 0.8s ease-in-out infinite;
+}
+
+@keyframes mascot-led-fast {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(0.7); opacity: 0.4; }
+}
+
+.mascot-avatar.is-thinking .mascot-avatar__mouth {
+  d: path('M43 74 Q50 74 57 74');
+}
+
+/* ------------------------------------------------------------------------ */
+/* Estado: talking — boca se abre/cierra, aparecen puntitos de voz          */
+/* ------------------------------------------------------------------------ */
+
+.mascot-avatar.is-talking .mascot-avatar__mouth {
+  animation: mascot-mouth-talk 0.42s ease-in-out infinite;
+}
+
+@keyframes mascot-mouth-talk {
+  0%, 100% { d: path('M43 73 Q50 76 57 73'); }
+  50%      { d: path('M43 71 Q50 78 57 71'); }
+}
+
+.mascot-avatar.is-talking .mascot-avatar__voice {
+  opacity: 0.9;
+  animation: mascot-voice 0.9s ease-in-out infinite;
+}
+
+.mascot-avatar.is-talking .mascot-avatar__voice circle {
+  animation: mascot-voice-dot 0.9s ease-in-out infinite;
+}
+
+.mascot-avatar.is-talking .mascot-avatar__voice circle:nth-child(2) { animation-delay: 0.15s; }
+.mascot-avatar.is-talking .mascot-avatar__voice circle:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes mascot-voice {
+  0%, 100% { opacity: 0.9; }
+  50%      { opacity: 0.5; }
+}
+
+@keyframes mascot-voice-dot {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%      { transform: translateY(-1.5px); opacity: 1; }
+}
+
+/* ------------------------------------------------------------------------ */
+/* Estado: happy — rebote y ojos en luna sonriente                          */
+/* ------------------------------------------------------------------------ */
+
+.mascot-avatar.is-happy .mascot-avatar__body {
+  animation: mascot-jump 0.7s ease-in-out;
+}
+
+@keyframes mascot-jump {
+  0%, 100% { transform: translateY(0); }
+  40%      { transform: translateY(-10px) scale(1.03, 0.97); }
+  60%      { transform: translateY(-6px); }
+}
+
+.mascot-avatar.is-happy .mascot-avatar__mouth {
+  d: path('M40 70 Q50 80 60 70');
+}
+
+/* ------------------------------------------------------------------------ */
+/* Preferencia del usuario                                                  */
+/* ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-avatar__body,
+  .mascot-avatar__shadow,
+  .mascot-avatar__led,
+  .mascot-avatar__antenna,
+  .mascot-avatar__eyes,
+  .mascot-avatar__mouth,
+  .mascot-avatar__voice,
+  .mascot-avatar__voice circle {
+    animation: none !important;
+  }
+}

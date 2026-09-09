@@ -1,0 +1,31 @@
+/* Contenedor del botón oficial de Google. Google renderiza un iframe
+   con su propio estilo; el wrapper sólo centra y aporta el color de
+   fallback si el clientId no está configurado. --------------------- */
+
+:host { display: block; }
+
+.gsi {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.gsi__container {
+  min-height: 44px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.gsi__container > * { max-width: 100%; }
+
+.gsi__unavailable {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: var(--color-canvas-soft, #f4f2ee);
+  color: var(--color-body, #6b625c);
+  font-size: 13px;
+  border: 1px dashed rgba(32, 21, 21, 0.15);
+  cursor: not-allowed;
+}

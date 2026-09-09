@@ -1,0 +1,122 @@
+<!--
+  Mascota SVG animada. viewBox 100x100 con márgenes generosos para los
+  elementos que se salen (antena, sombra). Todos los movimientos usan
+  CSS puro con respect a prefers-reduced-motion.
+-->
+<div
+  class="mascot-avatar"
+  [class]="stateClass()"
+  [style.--mascot-size.px]="sizePx"
+  aria-hidden="true">
+  <svg
+    class="mascot-avatar__svg"
+    viewBox="0 0 100 110"
+    xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Gradient del cuerpo -->
+      <linearGradient id="mascotBody" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ff8a3d" />
+        <stop offset="100%" stop-color="#ff4f00" />
+      </linearGradient>
+      <!-- Gradient del visor -->
+      <linearGradient id="mascotVisor" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#12100f" />
+        <stop offset="100%" stop-color="#2a2320" />
+      </linearGradient>
+      <!-- Brillo en el visor -->
+      <radialGradient id="mascotVisorGlow" cx="0.3" cy="0.3" r="0.55">
+        <stop offset="0%" stop-color="rgba(255, 138, 61, 0.55)" />
+        <stop offset="100%" stop-color="rgba(255, 138, 61, 0)" />
+      </radialGradient>
+    </defs>
+
+    <!-- Sombra debajo del cuerpo, se contrae con la respiración -->
+    <ellipse
+      class="mascot-avatar__shadow"
+      cx="50"
+      cy="98"
+      rx="24"
+      ry="4"
+      fill="rgba(0, 0, 0, 0.25)" />
+
+    <!-- Cuerpo entero flota (grupo animado) -->
+    <g class="mascot-avatar__body">
+      <!-- Antena -->
+      <g class="mascot-avatar__antenna">
+        <line
+          x1="50"
+          y1="20"
+          x2="50"
+          y2="8"
+          stroke="#3b2a20"
+          stroke-width="2"
+          stroke-linecap="round" />
+        <circle
+          class="mascot-avatar__led"
+          cx="50"
+          cy="6"
+          r="3.5"
+          fill="#ff4f00" />
+      </g>
+
+      <!-- Cabeza / cuerpo (rounded rect estilo blob) -->
+      <path
+        class="mascot-avatar__head"
+        d="M20 45
+           C20 30, 32 20, 50 20
+           C68 20, 80 30, 80 45
+           L80 62
+           C80 78, 68 88, 50 88
+           C32 88, 20 78, 20 62
+           Z"
+        fill="url(#mascotBody)"
+        stroke="#3b2a20"
+        stroke-width="1.5" />
+
+      <!-- Orejeras / audífonos laterales -->
+      <circle cx="18" cy="54" r="6" fill="#2a2320" stroke="#3b2a20" stroke-width="1.5" />
+      <circle cx="82" cy="54" r="6" fill="#2a2320" stroke="#3b2a20" stroke-width="1.5" />
+
+      <!-- Visor de ojos (panel oscuro) -->
+      <rect
+        class="mascot-avatar__visor"
+        x="28"
+        y="38"
+        width="44"
+        height="24"
+        rx="11"
+        fill="url(#mascotVisor)"
+        stroke="#12100f"
+        stroke-width="1" />
+      <rect
+        x="28"
+        y="38"
+        width="44"
+        height="24"
+        rx="11"
+        fill="url(#mascotVisorGlow)" />
+
+      <!-- Ojos (pupilas) -->
+      <g class="mascot-avatar__eyes">
+        <circle class="mascot-avatar__eye mascot-avatar__eye--left" cx="40" cy="50" r="3.6" fill="#fffef7" />
+        <circle class="mascot-avatar__eye mascot-avatar__eye--right" cx="60" cy="50" r="3.6" fill="#fffef7" />
+      </g>
+
+      <!-- Boca / speaker -->
+      <path
+        class="mascot-avatar__mouth"
+        d="M42 72 Q50 76 58 72"
+        stroke="#3b2a20"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        fill="none" />
+
+      <!-- Puntitos de "hablando" (visibles en talking) -->
+      <g class="mascot-avatar__voice">
+        <circle cx="46" cy="72" r="1.2" fill="#fffef7" />
+        <circle cx="50" cy="73" r="1.2" fill="#fffef7" />
+        <circle cx="54" cy="72" r="1.2" fill="#fffef7" />
+      </g>
+    </g>
+  </svg>
+</div>
