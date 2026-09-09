@@ -40,6 +40,29 @@
   object-fit: cover;
   opacity: 0.72;
   filter: saturate(0.9) contrast(1.05) brightness(0.95);
+  pointer-events: none;
+}
+
+.hero__poster {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+
+.hero__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.72;
+  filter: saturate(0.9) contrast(1.05) brightness(0.95);
+}
+
+/* En dispositivos táctiles / pantallas pequeñas, ocultamos el video y
+   dejamos únicamente el poster estático. Ahorra descarga de MB, evita
+   el icono nativo de reproducción de iOS y mantiene el hero fluido. */
+@media (max-width: 900px), (hover: none) and (pointer: coarse) {
+  .hero__video { display: none; }
+  .hero__poster { display: block; }
 }
 
 .hero__overlay {

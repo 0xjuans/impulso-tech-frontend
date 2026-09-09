@@ -9,6 +9,20 @@
 -->
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero__media" aria-hidden="true">
+    <!--
+      El video se muestra únicamente en desktop para preservar el
+      consumo de datos y evitar el icono de reproducción de iOS/Android
+      en móviles. En pantallas pequeñas se conserva sólo el poster con
+      los overlays, lo que hace el hero mucho más ligero.
+    -->
+    <picture class="hero__poster">
+      <img
+        src="assets/video/hero-poster.svg"
+        alt=""
+        fetchpriority="high"
+        loading="eager"
+        decoding="async" />
+    </picture>
     <video
       #heroVideo
       class="hero__video"
@@ -17,7 +31,8 @@
       loop
       playsinline
       disablepictureinpicture
-      preload="auto"
+      disableremoteplayback
+      preload="none"
       poster="assets/video/hero-poster.svg">
       <source src="assets/video/hero.mp4" type="video/mp4" />
     </video>
