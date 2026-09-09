@@ -6,7 +6,7 @@
     (click)="toggle($event)"
     [attr.aria-expanded]="open()"
     aria-label="Abrir notificaciones">
-    <span aria-hidden="true">🔔</span>
+    <app-icon name="bell" [sizePx]="18" />
     @if (unread() > 0) {
       <span class="bell__badge" aria-live="polite">{{ unread() > 99 ? '99+' : unread() }}</span>
     }

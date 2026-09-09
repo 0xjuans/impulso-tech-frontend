@@ -1,0 +1,147 @@
+<!-- Panel administrativo de tickets de soporte -->
+<section class="support">
+  <header class="support__header">
+    <span class="support__eyebrow">Administración</span>
+    <h1 class="support__title">Tickets de soporte</h1>
+    <p class="support__lead">
+      Gestiona los reportes de los estudiantes: asigna, cambia estados y registra notas de resolución.
+    </p>
+  </header>
+
+  <div class="support__filters">
+    <label class="filter">
+      <span>Estado</span>
+      <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (s of statuses; track s) {
+          <option [value]="s">{{ s }}</option>
+        }
+      </select>
+    </label>
+    <label class="filter">
+      <span>Tipo</span>
+      <select [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (t of types; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+    </label>
+    <label class="filter filter--check">
+      <input
+        type="checkbox"
+        [ngModel]="onlyMine()"
+        (ngModelChange)="onlyMine.set($event); apply()" />
+      <span>Solo asignados a mí</span>
+    </label>
+  </div>
+
+  @if (loading()) {
+    <div class="support__placeholder">Cargando tickets...</div>
+  } @else if (error()) {
+    <div class="support__alert" role="alert">{{ error() }}</div>
+  } @else if (tickets().length === 0) {
+    <div class="support__empty">
+      <h3>No hay tickets que coincidan</h3>
+      <p>Ajusta los filtros para ver más resultados.</p>
+    </div>
+  } @else {
+    <div class="support__layout">
+      <aside class="support__list">
+        <ul>
+          @for (ticket of tickets(); track ticket.id) {
+            <li
+              class="ticket"
+              [class.ticket--active]="selected()?.id === ticket.id"
+              [class.ticket--unassigned]="ticket.assigneeId === null"
+              (click)="select(ticket)">
+              <span class="ticket__status" [attr.data-status]="ticket.status">
+                {{ ticket.status }}
+              </span>
+              <strong class="ticket__title">{{ ticket.title }}</strong>
+              <div class="ticket__meta">
+                <span>#{{ ticket.id }} · {{ ticket.type }}</span>
+              </div>
+              <div class="ticket__meta">
+                <span>{{ ticket.reporterName }}</span>
+                <span class="ticket__time">{{ ticket.createdAt | date: 'shortDate' }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      </aside>
+
+      <section class="support__detail">
+        @if (selected(); as t) {
+          <header class="detail__head">
+            <div>
+              <div class="detail__meta-row">
+                <span class="ticket__status" [attr.data-status]="t.status">{{ t.status }}</span>
+                <span class="detail__meta-item">#{{ t.id }}</span>
+                <span class="detail__meta-item">{{ t.type }}</span>
+              </div>
+              <h2>{{ t.title }}</h2>
+              <p class="detail__reporter">
+                Reportado por <strong>{{ t.reporterName }}</strong> · {{ t.createdAt | date: 'medium' }}
+              </p>
+            </div>
+            <div class="detail__actions">
+              @if (t.assigneeId === null) {
+                <button type="button" class="btn btn--primary" (click)="assignToMe()" [disabled]="saving()">
+                  Asignarme
+                </button>
+              } @else {
+                <span class="detail__assignee">
+                  Asignado a <strong>{{ t.assigneeName }}</strong>
+                </span>
+                <button type="button" class="btn btn--secondary" (click)="unassign()" [disabled]="saving()">
+                  Desasignar
+                </button>
+              }
+            </div>
+          </header>
+
+          <div class="detail__body">
+            <h3>Descripción</h3>
+            <p class="detail__desc">{{ t.description }}</p>
+            @if (t.relatedId) {
+              <p class="detail__hint">Elemento relacionado: #{{ t.relatedId }}</p>
+            }
+          </div>
+
+          <div class="detail__section">
+            <h3>Cambiar estado</h3>
+            <div class="status-buttons">
+              @for (s of statuses; track s) {
+                <button
+                  type="button"
+                  class="status-chip"
+                  [class.status-chip--current]="t.status === s"
+                  (click)="changeStatus(s)"
+                  [disabled]="saving() || t.status === s">
+                  {{ s }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="detail__section">
+            <h3>Notas de resolución</h3>
+            <textarea
+              rows="4"
+              [ngModel]="resolution()"
+              (ngModelChange)="resolution.set($event)"
+              placeholder="Detalle qué se hizo para resolver el ticket..."></textarea>
+            <div class="detail__actions">
+              <button type="button" class="btn btn--primary" (click)="saveResolution()" [disabled]="saving()">
+                Guardar notas
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="detail__empty">Selecciona un ticket para ver los detalles.</div>
+        }
+      </section>
+    </div>
+  }
+</section>

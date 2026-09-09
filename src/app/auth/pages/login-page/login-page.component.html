@@ -1,7 +1,14 @@
 <!-- Formulario de inicio de sesión -->
 <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
-  <header>
-    <h1 class="auth-form__title">Iniciar sesión</h1>
+  <header class="auth-form__header">
+    <span class="auth-form__command" aria-hidden="true">
+      <span class="auth-form__prompt">&gt;</span>
+      <span class="auth-form__command-text">impulso auth --login</span>
+      <span class="auth-form__cursor"></span>
+    </span>
+    <h1 class="auth-form__title">
+      Bienvenido de vuelta
+    </h1>
     <p class="auth-form__lead">
       Continúa donde dejaste tu ruta de aprendizaje.
     </p>
@@ -32,14 +39,12 @@
 
   <div class="auth-form__group">
     <label class="auth-form__label" for="login-password">Contraseña</label>
-    <input
+    <app-password-field
       id="login-password"
-      class="auth-form__input"
-      type="password"
       autocomplete="current-password"
       placeholder="Tu contraseña"
       formControlName="password"
-      [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched" />
+      [ariaInvalid]="form.controls.password.invalid && form.controls.password.touched" />
     @if (form.controls.password.touched && form.controls.password.hasError('required')) {
       <span class="auth-form__error">Ingresa tu contraseña.</span>
     }
@@ -49,14 +54,32 @@
     <button
       type="submit"
       class="auth-form__submit"
+      [class.is-loading]="submitting()"
       [disabled]="submitting()">
-      @if (submitting()) { Iniciando sesión... } @else { Entrar }
+      <span class="auth-form__submit-label">
+        @if (submitting()) { Iniciando sesión } @else { Entrar }
+      </span>
+      @if (submitting()) {
+        <span class="auth-form__submit-dots" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      } @else {
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      }
     </button>
 
     <a routerLink="/auth/forgot-password" class="auth-form__secondary">
       ¿Olvidaste tu contraseña?
     </a>
   </div>
+
+  <div class="auth-form__divider" aria-hidden="true"><span>o</span></div>
+
+  <app-google-sign-in-button
+    text="signin_with"
+    (credential)="loginWithGoogle($event.idToken)" />
 
   <p class="auth-form__secondary">
     ¿Aún no tienes cuenta?

@@ -27,6 +27,22 @@ export const adminRoutes: Routes = [
           ),
         title: 'Panel del administrador · Impulso Tech',
       },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./pages/admin-users-page/admin-users-page.component').then(
+            (m) => m.AdminUsersPageComponent,
+          ),
+        title: 'Gestión de usuarios · Impulso Tech',
+      },
+      {
+        path: 'support',
+        loadComponent: () =>
+          import('./pages/admin-support-page/admin-support-page.component').then(
+            (m) => m.AdminSupportPageComponent,
+          ),
+        title: 'Tickets de soporte · Impulso Tech',
+      },
     ],
   },
 ];

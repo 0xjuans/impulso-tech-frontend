@@ -37,23 +37,37 @@
 .auth__logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
   font-weight: 700;
   color: var(--color-canvas);
   font-size: 20px;
 }
 
-.auth__logo-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+.auth__logo-prompt {
+  color: var(--color-primary);
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.auth__logo-caret {
+  display: inline-block;
+  width: 9px;
+  height: 1.05em;
+  margin-left: 2px;
   background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-size: 20px;
-  box-shadow: 0 4px 12px rgba(255, 79, 0, 0.35);
+  border-radius: 1px;
+  animation: auth-logo-caret 1.05s steps(2, end) infinite;
+  transform: translateY(2px);
+}
+
+@keyframes auth-logo-caret {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth__logo-caret { animation: none; opacity: 1; }
 }
 
 .auth__logo-accent { color: var(--color-primary); }

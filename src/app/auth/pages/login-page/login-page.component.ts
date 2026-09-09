@@ -5,6 +5,8 @@ import { finalize } from 'rxjs';
 
 import { defaultAreaFor } from '../../../core/auth/guards/role.guard';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { GoogleSignInButtonComponent } from '../../../shared/components/google-sign-in-button/google-sign-in-button.component';
+import { PasswordFieldComponent } from '../../../shared/components/password-field/password-field.component';
 
 /**
  * Formulario de inicio de sesión con correo y contraseña.
@@ -18,7 +20,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, PasswordFieldComponent, GoogleSignInButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login-page.component.html',
 })
@@ -50,6 +52,26 @@ export class LoginPageComponent {
 
     this.auth
       .login(this.form.getRawValue())
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: () => {
+          const target = this.resolveReturnUrl();
+          void this.router.navigateByUrl(target);
+        },
+        error: (err: Error) => this.errorMessage.set(err.message),
+      });
+  }
+
+  /**
+   * Recibe el ID token emitido por Google, lo intercambia con el
+   * backend por un JWT propio y redirige al área correspondiente.
+   */
+  protected loginWithGoogle(idToken: string): void {
+    if (this.submitting()) return;
+    this.errorMessage.set(null);
+    this.submitting.set(true);
+    this.auth
+      .loginWithGoogle({ idToken })
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: () => {

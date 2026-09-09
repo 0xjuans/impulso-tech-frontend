@@ -45,18 +45,38 @@
   color: inherit;
 }
 
-.nav__brand-mark {
+.nav__brand-name {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+  gap: 6px;
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+}
+
+.nav__brand-prompt {
+  color: var(--color-primary);
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.nav__brand-caret {
+  display: inline-block;
+  width: 9px;
+  height: 1.05em;
+  margin-left: 2px;
   background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  font-size: 20px;
-  line-height: 1;
-  box-shadow: 0 4px 12px rgba(255, 79, 0, 0.35);
+  border-radius: 1px;
+  animation: brand-caret-blink 1.05s steps(2, end) infinite;
+  transform: translateY(2px);
+}
+
+@keyframes brand-caret-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__brand-caret { animation: none; opacity: 1; }
 }
 
 .nav__brand-accent {
@@ -250,12 +270,12 @@
     transform: translateY(0);
   }
 
-  .nav__actions .nav__link--muted {
-    display: none;
-  }
-
   .code-menu {
     display: inline-block;
+  }
+
+  .nav__actions {
+    gap: var(--spacing-sm);
   }
 }
 
@@ -263,12 +283,23 @@
    principal para que conviva con el logo y el botón hamburguesa
    sin desbordar el ancho del viewport. */
 @media (max-width: 480px) {
-  .nav__inner { gap: var(--spacing-md); }
+  .nav__inner { gap: var(--spacing-sm); }
 
-  .nav__actions .btn--sm {
-    padding: 8px 12px;
-    font-size: 13px;
+  .nav__actions {
+    gap: 6px;
   }
 
-  .nav__brand { font-size: 18px; }
+  .nav__actions .btn--sm {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
+  .nav__actions .nav__link--muted {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .nav__brand { font-size: 16px; }
+
+  .nav__brand-caret { width: 7px; }
 }

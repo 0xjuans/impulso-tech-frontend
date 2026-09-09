@@ -15,6 +15,7 @@ import { startWith } from 'rxjs/operators';
 
 import { Notification } from '../../../core/api/notifications/notification.dto';
 import { NotificationsService } from '../../../core/api/notifications/notifications.service';
+import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 
 /**
  * Campana de notificaciones para el shell del estudiante (RF-026).
@@ -27,7 +28,7 @@ import { NotificationsService } from '../../../core/api/notifications/notificati
   selector: 'app-notifications-bell',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, AppIconComponent],
   templateUrl: './notifications-bell.component.html',
   styleUrl: './notifications-bell.component.scss',
 })

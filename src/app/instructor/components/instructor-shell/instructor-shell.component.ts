@@ -10,11 +10,12 @@ import { NgClass } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { AppIconComponent, AppIconName } from '../../../shared/components/app-icon/app-icon.component';
 
 /** Entrada del menú lateral del área del instructor. */
 interface NavItem {
   readonly path: string;
-  readonly icon: string;
+  readonly icon: AppIconName;
   readonly label: string;
 }
 
@@ -27,7 +28,7 @@ interface NavItem {
 @Component({
   selector: 'app-instructor-shell',
   standalone: true,
-  imports: [NgClass, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [NgClass, RouterLink, RouterLinkActive, RouterOutlet, AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-shell.component.html',
   styleUrl: './instructor-shell.component.scss',
@@ -54,8 +55,8 @@ export class InstructorShellComponent {
   protected readonly menuOpen = signal(false);
 
   protected readonly navItems: readonly NavItem[] = [
-    { path: 'dashboard', icon: '📊', label: 'Panel' },
-    { path: 'courses', icon: '📚', label: 'Cursos' },
+    { path: 'dashboard', icon: 'dashboard', label: 'Panel' },
+    { path: 'courses', icon: 'book', label: 'Cursos' },
   ];
 
   protected toggleMenu(): void {

@@ -22,7 +22,7 @@
         }
         <li><strong>Instructor:</strong> {{ c.instructorFullName }}</li>
         @if (c.generatesCertificate) {
-          <li class="course-detail__badge">🎓 Genera certificado</li>
+          <li class="course-detail__badge">Genera certificado</li>
         }
       </ul>
 
@@ -83,7 +83,9 @@
                       <li class="lesson" [class.lesson--done]="completedLessonIds().has(lesson.id)">
                         <a class="lesson__link" [routerLink]="['/student/lessons', lesson.id]">
                           <span class="lesson__check" aria-hidden="true">
-                            {{ completedLessonIds().has(lesson.id) ? '✓' : '○' }}
+                            @if (completedLessonIds().has(lesson.id)) {
+                              <app-icon name="check" [sizePx]="14" />
+                            }
                           </span>
                           <span class="lesson__title">{{ lesson.title }}</span>
                           @if (lesson.estimatedDurationMinutes) {

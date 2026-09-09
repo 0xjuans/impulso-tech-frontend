@@ -3,13 +3,14 @@ import { NgClass } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { AppIconComponent, AppIconName } from '../../../shared/components/app-icon/app-icon.component';
 import { MascotWidgetComponent } from '../mascot-widget/mascot-widget.component';
 import { NotificationsBellComponent } from '../notifications-bell/notifications-bell.component';
 
 /** Entrada del menú lateral del área del estudiante. */
 interface NavItem {
   readonly path: string;
-  readonly icon: string;
+  readonly icon: AppIconName;
   readonly label: string;
 }
 
@@ -32,6 +33,7 @@ interface NavItem {
     RouterOutlet,
     NotificationsBellComponent,
     MascotWidgetComponent,
+    AppIconComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './student-shell.component.html',
@@ -70,12 +72,12 @@ export class StudentShellComponent {
    * en esta fase del producto.
    */
   protected readonly navItems: readonly NavItem[] = [
-    { path: 'home', icon: '🏠', label: 'Inicio' },
-    { path: 'routes', icon: '🧭', label: 'Rutas' },
-    { path: 'courses', icon: '📚', label: 'Cursos' },
-    { path: 'messages', icon: '💬', label: 'Mensajes' },
-    { path: 'notifications', icon: '🔔', label: 'Notificaciones' },
-    { path: 'profile', icon: '👤', label: 'Mi perfil' },
+    { path: 'home', icon: 'home', label: 'Inicio' },
+    { path: 'routes', icon: 'route', label: 'Rutas' },
+    { path: 'courses', icon: 'book', label: 'Cursos' },
+    { path: 'messages', icon: 'chat', label: 'Mensajes' },
+    { path: 'notifications', icon: 'bell', label: 'Notificaciones' },
+    { path: 'profile', icon: 'user', label: 'Mi perfil' },
   ];
 
   protected toggleMenu(): void {

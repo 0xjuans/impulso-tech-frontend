@@ -46,9 +46,9 @@
           <footer class="course-card__foot">
             <div class="course-card__meta">
               @if (course.estimatedDurationHours) {
-                <span>⏱ {{ course.estimatedDurationHours }} h estimadas</span>
+                <span>{{ course.estimatedDurationHours }} h estimadas</span>
               }
-              <span>👤 {{ course.instructorFullName }}</span>
+              <span>{{ course.instructorFullName }}</span>
             </div>
             <a class="course-card__cta" [routerLink]="['/student/courses', course.id]">Ver curso</a>
           </footer>

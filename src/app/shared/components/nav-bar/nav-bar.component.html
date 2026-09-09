@@ -5,8 +5,11 @@
 <header class="nav" [ngClass]="{ 'nav--scrolled': scrolled(), 'nav--open': menuOpen() }">
   <div class="nav__inner container">
     <a class="nav__brand" routerLink="/" (click)="closeMenu()" aria-label="Impulso Tech — Inicio">
-      <span class="nav__brand-mark" aria-hidden="true">◐</span>
-      <span class="nav__brand-name">Impulso<span class="nav__brand-accent">.tech</span></span>
+      <span class="nav__brand-name">
+        <span class="nav__brand-prompt" aria-hidden="true">&gt;</span>
+        Impulso<span class="nav__brand-accent">.tech</span>
+        <span class="nav__brand-caret" aria-hidden="true"></span>
+      </span>
     </a>
 
     <nav class="nav__links" aria-label="Navegación principal">

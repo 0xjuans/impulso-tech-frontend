@@ -101,7 +101,14 @@ export class HeroComponent implements OnInit, AfterViewInit {
    */
   ngAfterViewInit(): void {
     const video = this.heroVideo?.nativeElement;
-    if (!video) {
+    if (!video || typeof window === 'undefined') {
+      return;
+    }
+    // En viewports pequeños o dispositivos táctiles no reproducimos el
+    // video: el hero muestra sólo el póster para ahorrar 17 MB de
+    // descarga y evitar el ícono nativo de reproducción de iOS/Android.
+    const isMobile = window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches;
+    if (isMobile) {
       return;
     }
     video.muted = true;

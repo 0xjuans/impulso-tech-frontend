@@ -1,0 +1,122 @@
+<!-- Gestión administrativa de usuarios -->
+<section class="mgmt">
+  <header class="mgmt__header">
+    <span class="mgmt__eyebrow">Administración</span>
+    <h1 class="mgmt__title">Gestión de usuarios</h1>
+    <p class="mgmt__lead">
+      Cambia el rol o el estado de cualquier cuenta y filtra por criterios comunes.
+    </p>
+  </header>
+
+  <div class="mgmt__filters">
+    <label class="filter">
+      <span>Buscar</span>
+      <input
+        type="search"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="apply()"
+        placeholder="Correo, usuario, nombre o apellido..." />
+    </label>
+    <label class="filter">
+      <span>Rol</span>
+      <select [ngModel]="roleFilter()" (ngModelChange)="roleFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (role of roles; track role) {
+          <option [value]="role">{{ role }}</option>
+        }
+      </select>
+    </label>
+    <label class="filter">
+      <span>Estado</span>
+      <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (status of statuses; track status) {
+          <option [value]="status">{{ status }}</option>
+        }
+      </select>
+    </label>
+    <button type="button" class="mgmt__secondary" (click)="apply()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="mgmt__placeholder">Cargando usuarios...</div>
+  } @else if (error()) {
+    <div class="mgmt__alert" role="alert">{{ error() }}</div>
+  } @else if (users().length === 0) {
+    <div class="mgmt__empty">
+      <h3>No hay usuarios que coincidan</h3>
+      <p>Ajusta los filtros para ver más resultados.</p>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Último acceso</th>
+            <th>Registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr [class.user-table__me]="user.id === meId">
+              <td>
+                <div class="user-cell">
+                  <div class="user-cell__avatar" aria-hidden="true">
+                    @if (user.profilePhotoUrl) {
+                      <img [src]="user.profilePhotoUrl" [alt]="user.username" />
+                    } @else {
+                      <span>{{ (user.firstName || user.username)[0] }}</span>
+                    }
+                  </div>
+                  <div>
+                    <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+                    <small>&#64;{{ user.username }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td>
+                <select
+                  class="inline-select"
+                  [ngModel]="user.role"
+                  (ngModelChange)="changeRole(user, $event)"
+                  [disabled]="user.id === meId"
+                  [attr.title]="user.id === meId ? 'No puedes cambiar tu propio rol' : null">
+                  @for (role of roles; track role) {
+                    <option [value]="role">{{ role }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <select
+                  class="inline-select"
+                  [attr.data-status]="user.status"
+                  [ngModel]="user.status"
+                  (ngModelChange)="changeStatus(user, $event)"
+                  [disabled]="user.id === meId"
+                  [attr.title]="user.id === meId ? 'No puedes cambiar tu propio estado' : null">
+                  @for (status of statuses; track status) {
+                    <option [value]="status">{{ status }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                @if (user.lastLoginAt) {
+                  {{ user.lastLoginAt | date: 'short' }}
+                } @else {
+                  <span class="muted">nunca</span>
+                }
+              </td>
+              <td>{{ user.createdAt | date: 'shortDate' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

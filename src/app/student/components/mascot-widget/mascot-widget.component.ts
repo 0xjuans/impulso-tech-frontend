@@ -13,11 +13,17 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
+import { AuthService } from '../../../core/auth/services/auth.service';
 import {
   MascotConversation,
   MascotMessage,
 } from '../../../core/api/mascot/mascot.dto';
 import { MascotService } from '../../../core/api/mascot/mascot.service';
+import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
+import {
+  MascotAvatarComponent,
+  MascotState,
+} from '../../../shared/components/mascot-avatar/mascot-avatar.component';
 
 /**
  * Widget flotante de la mascota IA (RF-017).
@@ -31,18 +37,34 @@ import { MascotService } from '../../../core/api/mascot/mascot.service';
 @Component({
   selector: 'app-mascot-widget',
   standalone: true,
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, FormsModule, AppIconComponent, MascotAvatarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './mascot-widget.component.html',
   styleUrl: './mascot-widget.component.scss',
 })
 export class MascotWidgetComponent implements AfterViewChecked {
   private readonly service = inject(MascotService);
+  private readonly auth = inject(AuthService);
+
+  /** Nombre corto del usuario autenticado, usado en el saludo. */
+  protected readonly userFirstName = computed(
+    () => this.auth.currentUser()?.firstName ?? '',
+  );
+
+  /** Saludo dependiente de la hora del día. */
+  protected readonly greeting = computed(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return '¡Buenos días';
+    if (hour < 19) return '¡Buenas tardes';
+    return '¡Buenas noches';
+  });
 
   @ViewChild('thread') private threadRef?: ElementRef<HTMLDivElement>;
 
   protected readonly open = signal(false);
   protected readonly initializing = signal(false);
+  /** Controla la visibilidad de la burbuja de saludo flotante. */
+  protected readonly greetingOpen = signal(true);
   protected readonly initError = signal<string | null>(null);
   protected readonly sending = signal(false);
   protected readonly sendError = signal<string | null>(null);
@@ -58,6 +80,16 @@ export class MascotWidgetComponent implements AfterViewChecked {
     'Motívame a seguir aprendiendo.',
   ];
 
+  /** Estado semántico de la mascota que la animación consume. */
+  protected readonly mascotState = computed<MascotState>(() => {
+    if (this.sending()) return 'thinking';
+    const last = this.messages()[this.messages().length - 1];
+    if (last && last.role === 'ASSISTANT' && !this.sending()) {
+      return 'talking';
+    }
+    return 'idle';
+  });
+
   /** Deshabilita el botón cuando no hay contenido o el envío está en curso. */
   protected readonly canSend = computed(
     () =>
@@ -72,11 +104,31 @@ export class MascotWidgetComponent implements AfterViewChecked {
   protected toggle(): void {
     const next = !this.open();
     this.open.set(next);
+    if (next) {
+      // Al abrir el chat, ocultamos la burbuja flotante para no
+      // duplicar el saludo dentro del panel.
+      this.greetingOpen.set(false);
+    }
     if (next && this.conversation() === null && !this.initializing()) {
       this.initializeConversation();
     }
     if (next) {
       this.shouldScroll = true;
+    }
+  }
+
+  /** Cierra manualmente la burbuja de saludo flotante. */
+  protected dismissGreeting(event: Event): void {
+    event.stopPropagation();
+    this.greetingOpen.set(false);
+  }
+
+  /** Abre el chat directamente desde el CTA de la burbuja de saludo. */
+  protected openFromGreeting(event: Event): void {
+    event.stopPropagation();
+    this.greetingOpen.set(false);
+    if (!this.open()) {
+      this.toggle();
     }
   }
 

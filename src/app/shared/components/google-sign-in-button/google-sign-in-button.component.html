@@ -1,0 +1,9 @@
+<div class="gsi">
+  @if (configured()) {
+    <div class="gsi__container" #container></div>
+  } @else {
+    <button type="button" class="gsi__unavailable" disabled>
+      Google Sign-In no está configurado
+    </button>
+  }
+</div>

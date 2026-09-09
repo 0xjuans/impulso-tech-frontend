@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { PasswordFieldComponent } from '../../../shared/components/password-field/password-field.component';
 
 /**
  * Formulario para establecer una nueva contraseña a partir del token
@@ -16,7 +17,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 @Component({
   selector: 'app-reset-password-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, PasswordFieldComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reset-password-page.component.html',
 })
