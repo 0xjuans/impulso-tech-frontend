@@ -2,8 +2,9 @@
 <div class="shell" [ngClass]="{ 'shell--menu-open': menuOpen() }">
   <aside class="shell__side" aria-label="Navegación del instructor">
     <a class="shell__brand" routerLink="/instructor/dashboard" (click)="closeMenu()">
-      <span class="shell__brand-mark" aria-hidden="true">◐</span>
+      <span class="shell__brand-prompt" aria-hidden="true">&gt;</span>
       <span>Impulso<span class="shell__brand-accent">.tech</span></span>
+      <span class="shell__brand-caret" aria-hidden="true"></span>
     </a>
 
     <span class="shell__role">Panel del instructor</span>
