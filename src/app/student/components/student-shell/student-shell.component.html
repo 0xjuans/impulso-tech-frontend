@@ -14,14 +14,16 @@
           [routerLink]="item.path"
           routerLinkActive="is-active"
           (click)="closeMenu()">
-          <span class="shell__link-icon" aria-hidden="true">{{ item.icon }}</span>
+          <span class="shell__link-icon">
+            <app-icon [name]="item.icon" [sizePx]="18" />
+          </span>
           <span class="shell__link-label">{{ item.label }}</span>
         </a>
       }
     </nav>
 
     <button type="button" class="shell__logout" (click)="logout()">
-      <span aria-hidden="true">⎋</span>
+      <app-icon name="logout" [sizePx]="16" />
       Cerrar sesión
     </button>
   </aside>

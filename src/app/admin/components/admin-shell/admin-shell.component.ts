@@ -10,11 +10,12 @@ import { NgClass } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { AppIconComponent, AppIconName } from '../../../shared/components/app-icon/app-icon.component';
 
 /** Entrada del menú lateral del área administrativa. */
 interface NavItem {
   readonly path: string;
-  readonly icon: string;
+  readonly icon: AppIconName;
   readonly label: string;
 }
 
@@ -28,7 +29,7 @@ interface NavItem {
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
-  imports: [NgClass, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [NgClass, RouterLink, RouterLinkActive, RouterOutlet, AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-shell.component.html',
   styleUrl: './admin-shell.component.scss',
@@ -55,9 +56,9 @@ export class AdminShellComponent {
   protected readonly menuOpen = signal(false);
 
   protected readonly navItems: readonly NavItem[] = [
-    { path: 'dashboard', icon: '📊', label: 'Panel' },
-    { path: 'users', icon: '👥', label: 'Usuarios' },
-    { path: 'support', icon: '🛠️', label: 'Soporte' },
+    { path: 'dashboard', icon: 'dashboard', label: 'Panel' },
+    { path: 'users', icon: 'users', label: 'Usuarios' },
+    { path: 'support', icon: 'life-ring', label: 'Soporte' },
   ];
 
   protected toggleMenu(): void {
