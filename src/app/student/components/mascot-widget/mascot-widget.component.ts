@@ -18,6 +18,7 @@ import {
   MascotMessage,
 } from '../../../core/api/mascot/mascot.dto';
 import { MascotService } from '../../../core/api/mascot/mascot.service';
+import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 
 /**
  * Widget flotante de la mascota IA (RF-017).
@@ -31,7 +32,7 @@ import { MascotService } from '../../../core/api/mascot/mascot.service';
 @Component({
   selector: 'app-mascot-widget',
   standalone: true,
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, FormsModule, AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './mascot-widget.component.html',
   styleUrl: './mascot-widget.component.scss',

@@ -10,6 +10,7 @@ import { finalize } from 'rxjs';
 
 import { Notification } from '../../../core/api/notifications/notification.dto';
 import { NotificationsService } from '../../../core/api/notifications/notifications.service';
+import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 
 /**
  * Página con el listado completo de notificaciones del estudiante
@@ -18,7 +19,7 @@ import { NotificationsService } from '../../../core/api/notifications/notificati
 @Component({
   selector: 'app-notifications-page',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './notifications-page.component.html',
   styleUrl: './notifications-page.component.scss',

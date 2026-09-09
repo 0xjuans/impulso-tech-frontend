@@ -23,7 +23,12 @@ export type AppIconName =
   | 'logout'
   | 'menu'
   | 'close'
-  | 'home';
+  | 'home'
+  | 'check'
+  | 'beaker'
+  | 'target'
+  | 'sparkles'
+  | 'trophy';
 
 /**
  * Componente que renderiza un icono SVG monocromático usando el
@@ -63,6 +68,11 @@ export type AppIconName =
         @case ('menu') { <path d="M4 6h16M4 12h16M4 18h16" /> }
         @case ('close') { <path d="M6 6l12 12M18 6 6 18" /> }
         @case ('home') { <path d="M3 12l9-9 9 9M5 10v10h14V10" /> }
+        @case ('check') { <path d="M5 12l5 5L20 7" /> }
+        @case ('beaker') { <path d="M9 3h6M10 3v6l-5 10a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-10V3M7 15h10" /> }
+        @case ('target') { <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" /> }
+        @case ('sparkles') { <path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.5 5.5l2 2m9 9 2 2m0-13-2 2m-9 9-2 2" /> }
+        @case ('trophy') { <path d="M8 21h8M12 17v4M6 3h12v6a6 6 0 0 1-12 0V3zM6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3" /> }
       }
     </svg>
   `,

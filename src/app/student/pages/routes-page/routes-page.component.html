@@ -49,9 +49,9 @@
           <footer class="route-card__foot">
             <div class="route-card__meta">
               @if (route.estimatedDurationHours) {
-                <span>⏱ {{ route.estimatedDurationHours }} h estimadas</span>
+                <span>{{ route.estimatedDurationHours }} h estimadas</span>
               }
-              <span>👤 {{ route.instructorFullName }}</span>
+              <span>{{ route.instructorFullName }}</span>
             </div>
             <!-- El detalle y la inscripción se conectarán al implementar RF-011. -->
             <button type="button" class="route-card__cta" disabled>Ver ruta (próximamente)</button>

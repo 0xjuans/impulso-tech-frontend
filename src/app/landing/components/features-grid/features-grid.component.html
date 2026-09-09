@@ -16,7 +16,9 @@
     <div class="features__grid" role="list">
       @for (feature of features; track feature.title) {
         <article class="feature" [attr.data-accent]="feature.accent" role="listitem">
-          <div class="feature__icon" aria-hidden="true">{{ feature.icon }}</div>
+          <div class="feature__icon" aria-hidden="true">
+            <app-icon [name]="feature.icon" [sizePx]="28" />
+          </div>
           <h3 class="feature__title">{{ feature.title }}</h3>
           <p class="feature__description">{{ feature.description }}</p>
         </article>

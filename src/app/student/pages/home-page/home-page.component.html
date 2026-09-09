@@ -113,7 +113,7 @@
                   @if (item.badge.iconUrl) {
                     <img [src]="item.badge.iconUrl" [alt]="item.badge.name" />
                   } @else {
-                    <span>🏅</span>
+                    <span>{{ item.badge.name[0] }}</span>
                   }
                 </div>
                 <div class="badge__body">
