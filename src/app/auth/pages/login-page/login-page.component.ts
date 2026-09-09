@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 
 import { defaultAreaFor } from '../../../core/auth/guards/role.guard';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { PasswordFieldComponent } from '../../../shared/components/password-field/password-field.component';
 
 /**
  * Formulario de inicio de sesión con correo y contraseña.
@@ -18,7 +19,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, PasswordFieldComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login-page.component.html',
 })

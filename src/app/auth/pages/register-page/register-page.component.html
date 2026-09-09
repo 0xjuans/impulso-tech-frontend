@@ -100,13 +100,12 @@
 
     <div class="auth-form__group">
       <label class="auth-form__label" for="reg-password">Contraseña</label>
-      <input
+      <app-password-field
         id="reg-password"
-        class="auth-form__input"
-        type="password"
         autocomplete="new-password"
+        placeholder="Mínimo 8 caracteres, letra y número"
         formControlName="password"
-        [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched" />
+        [ariaInvalid]="form.controls.password.invalid && form.controls.password.touched" />
       @if (form.controls.password.touched && form.controls.password.hasError('required')) {
         <span class="auth-form__error">Crea una contraseña.</span>
       } @else if (

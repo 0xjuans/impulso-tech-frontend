@@ -32,14 +32,12 @@
 
   <div class="auth-form__group">
     <label class="auth-form__label" for="login-password">Contraseña</label>
-    <input
+    <app-password-field
       id="login-password"
-      class="auth-form__input"
-      type="password"
       autocomplete="current-password"
       placeholder="Tu contraseña"
       formControlName="password"
-      [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched" />
+      [ariaInvalid]="form.controls.password.invalid && form.controls.password.touched" />
     @if (form.controls.password.touched && form.controls.password.hasError('required')) {
       <span class="auth-form__error">Ingresa tu contraseña.</span>
     }
