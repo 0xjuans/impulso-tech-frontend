@@ -56,6 +56,8 @@ export class AdminShellComponent {
 
   protected readonly navItems: readonly NavItem[] = [
     { path: 'dashboard', icon: '📊', label: 'Panel' },
+    { path: 'users', icon: '👥', label: 'Usuarios' },
+    { path: 'support', icon: '🛠️', label: 'Soporte' },
   ];
 
   protected toggleMenu(): void {
