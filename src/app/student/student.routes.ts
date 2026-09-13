@@ -56,6 +56,14 @@ export const studentRoutes: Routes = [
         title: 'Lección · Impulso Tech',
       },
       {
+        path: 'resources',
+        loadComponent: () =>
+          import('./pages/resources-page/resources-page.component').then(
+            (m) => m.ResourcesPageComponent,
+          ),
+        title: 'Recursos · Impulso Tech',
+      },
+      {
         path: 'notifications',
         loadComponent: () =>
           import('./pages/notifications-page/notifications-page.component').then(
