@@ -95,11 +95,25 @@ export class GoogleSignInButtonComponent implements AfterViewInit {
   /** URL del SDK oficial de Google Identity Services. */
   private static readonly SCRIPT_SRC = 'https://accounts.google.com/gsi/client';
 
+  /**
+   * Evita que `initialize` y `renderButton` se ejecuten más de una vez
+   * por instancia del componente. Sin esta guarda, Angular en modo dev
+   * puede disparar `ngAfterViewInit` dos veces y ambas iniciarian GSI
+   * en paralelo, produciendo el warning
+   * "google.accounts.id.initialize() is called multiple times" y, en
+   * ocasiones, un botón que nunca termina de pintarse.
+   */
+  private rendered = false;
+
   ngAfterViewInit(): void {
+    if (this.rendered) {
+      return;
+    }
     if (!environment.googleClientId) {
       this.configured.set(false);
       return;
     }
+    this.rendered = true;
     this.loadScript()
       .then(() => this.render())
       .catch(() => this.errored.emit('No pudimos cargar Google Sign-In.'));

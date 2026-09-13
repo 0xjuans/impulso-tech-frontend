@@ -1,0 +1,111 @@
+<!-- Biblioteca de recursos educativos -->
+<section class="resources">
+  <header class="resources__header">
+    <span class="resources__eyebrow">Biblioteca</span>
+    <h1 class="resources__title">Recursos educativos</h1>
+    <p class="resources__lead">
+      Lecturas, guías, videos y ejemplos de código que refuerzan lo que aprendes en las rutas.
+    </p>
+  </header>
+
+  <div class="resources__filters">
+    <label class="filter">
+      <span>Buscar</span>
+      <input
+        type="search"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="apply()"
+        placeholder="Nombre, tema, autor..." />
+    </label>
+    <label class="filter">
+      <span>Tipo</span>
+      <select [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (t of types; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+    </label>
+    <label class="filter">
+      <span>Dificultad</span>
+      <select [ngModel]="difficultyFilter()" (ngModelChange)="difficultyFilter.set($event); apply()">
+        <option value="">Todas</option>
+        @for (d of difficulties; track d) {
+          <option [value]="d">{{ d }}</option>
+        }
+      </select>
+    </label>
+    <label class="filter filter--check">
+      <input
+        type="checkbox"
+        [ngModel]="onlyFavorites()"
+        (ngModelChange)="onlyFavorites.set($event)" />
+      <span>Solo favoritos</span>
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="resources__placeholder">Cargando recursos...</div>
+  } @else if (error()) {
+    <div class="resources__alert" role="alert">{{ error() }}</div>
+  } @else if (visibleResources().length === 0) {
+    <div class="resources__empty">
+      <h3>No hay recursos que coincidan</h3>
+      <p>Prueba a limpiar los filtros o desactivar el modo "solo favoritos".</p>
+    </div>
+  } @else {
+    <ul class="resource-grid">
+      @for (resource of visibleResources(); track resource.id) {
+        <li class="resource" [attr.data-type]="resource.type">
+          <div class="resource__head">
+            <span class="resource__type">{{ resource.type }}</span>
+            <button
+              type="button"
+              class="resource__fav"
+              [class.is-active]="isFavorite(resource)"
+              (click)="toggleFavorite(resource, $event)"
+              [attr.aria-label]="isFavorite(resource) ? 'Quitar de favoritos' : 'Agregar a favoritos'">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                <path
+                  d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"
+                  [attr.fill]="isFavorite(resource) ? 'currentColor' : 'none'"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+
+          <h2 class="resource__name">{{ resource.name }}</h2>
+          @if (resource.description) {
+            <p class="resource__desc">{{ resource.description }}</p>
+          }
+
+          <ul class="resource__tags">
+            @if (resource.difficulty) { <li>{{ resource.difficulty }}</li> }
+            @if (resource.technology) { <li>{{ resource.technology }}</li> }
+            @if (resource.topic) { <li>{{ resource.topic }}</li> }
+          </ul>
+
+          <footer class="resource__foot">
+            @if (resource.author) {
+              <span class="resource__author">por {{ resource.author }}</span>
+            }
+            <a
+              class="resource__open"
+              [href]="resource.resourceUrl"
+              target="_blank"
+              rel="noopener noreferrer">
+              Abrir
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M14 4h6v6M20 4L10 14M5 6h5M5 12h3M5 18h13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </footer>
+        </li>
+      }
+    </ul>
+  }
+</section>

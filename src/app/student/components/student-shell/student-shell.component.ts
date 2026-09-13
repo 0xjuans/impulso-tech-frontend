@@ -75,6 +75,7 @@ export class StudentShellComponent {
     { path: 'home', icon: 'home', label: 'Inicio' },
     { path: 'routes', icon: 'route', label: 'Rutas' },
     { path: 'courses', icon: 'book', label: 'Cursos' },
+    { path: 'resources', icon: 'beaker', label: 'Recursos' },
     { path: 'messages', icon: 'chat', label: 'Mensajes' },
     { path: 'notifications', icon: 'bell', label: 'Notificaciones' },
     { path: 'profile', icon: 'user', label: 'Mi perfil' },
