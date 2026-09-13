@@ -64,6 +64,22 @@ export const studentRoutes: Routes = [
         title: 'Recursos · Impulso Tech',
       },
       {
+        path: 'community',
+        loadComponent: () =>
+          import('./pages/community-page/community-page.component').then(
+            (m) => m.CommunityPageComponent,
+          ),
+        title: 'Comunidad · Impulso Tech',
+      },
+      {
+        path: 'community/:id',
+        loadComponent: () =>
+          import('./pages/community-post-page/community-post-page.component').then(
+            (m) => m.CommunityPostPageComponent,
+          ),
+        title: 'Publicación · Impulso Tech',
+      },
+      {
         path: 'notifications',
         loadComponent: () =>
           import('./pages/notifications-page/notifications-page.component').then(

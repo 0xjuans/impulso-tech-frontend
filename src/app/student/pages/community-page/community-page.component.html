@@ -1,0 +1,154 @@
+<!-- Foro de comunidad para estudiantes -->
+<section class="community">
+  <header class="community__header">
+    <div>
+      <span class="community__eyebrow">Comunidad</span>
+      <h1 class="community__title">Foro de aprendizaje</h1>
+      <p class="community__lead">
+        Comparte dudas, muestra tu progreso y ayuda a otros estudiantes. Toda la comunidad puede
+        responder y marcar respuestas útiles.
+      </p>
+    </div>
+    <button type="button" class="community__cta" (click)="toggleComposer()">
+      {{ composerOpen() ? 'Cancelar' : 'Nueva publicación' }}
+    </button>
+  </header>
+
+  @if (composerOpen()) {
+    <form class="composer" (ngSubmit)="submit()">
+      <span class="composer__command">
+        <span class="composer__prompt">></span>
+        <span class="composer__command-text">impulso community --new</span>
+      </span>
+      <label class="composer__field">
+        <span>Título</span>
+        <input
+          type="text"
+          maxlength="140"
+          placeholder="¿Cuál es tu duda o aporte en una línea?"
+          [ngModel]="newTitle()"
+          (ngModelChange)="newTitle.set($event)"
+          name="title" />
+      </label>
+      <label class="composer__field">
+        <span>Descripción</span>
+        <textarea
+          rows="4"
+          placeholder="Explica el contexto, qué intentaste y qué error o resultado obtuviste."
+          [ngModel]="newDescription()"
+          (ngModelChange)="newDescription.set($event)"
+          name="description"></textarea>
+      </label>
+      <label class="composer__field">
+        <span>Fragmento de código (opcional)</span>
+        <textarea
+          rows="4"
+          class="composer__code"
+          placeholder="Pega aquí el fragmento que estás depurando..."
+          [ngModel]="newCodeSnippet()"
+          (ngModelChange)="newCodeSnippet.set($event)"
+          name="codeSnippet"></textarea>
+      </label>
+      <div class="composer__row">
+        <label class="composer__field composer__field--grow">
+          <span>Etiquetas (separadas por coma)</span>
+          <input
+            type="text"
+            placeholder="ej: angular, http, bug"
+            [ngModel]="newTags()"
+            (ngModelChange)="newTags.set($event)"
+            name="tags" />
+        </label>
+        <label class="composer__field">
+          <span>Relacionado con</span>
+          <select
+            [ngModel]="newRelatedType()"
+            (ngModelChange)="newRelatedType.set($event)"
+            name="relatedType">
+            <option value="">Ninguno</option>
+            @for (t of relatedTypes; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </label>
+      </div>
+      @if (submitError()) {
+        <p class="composer__error" role="alert">{{ submitError() }}</p>
+      }
+      <div class="composer__actions">
+        <button type="button" class="composer__ghost" (click)="toggleComposer()">Cancelar</button>
+        <button type="submit" class="composer__submit" [disabled]="!canSubmit() || submitting()">
+          @if (submitting()) {
+            <span class="composer__dots" aria-hidden="true"></span>
+            Publicando
+          } @else {
+            Publicar
+          }
+        </button>
+      </div>
+    </form>
+  }
+
+  <div class="community__filters">
+    <label class="filter filter--grow">
+      <span>Buscar</span>
+      <input
+        type="search"
+        placeholder="Palabra clave, tema, autor..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <label class="filter">
+      <span>Contenido relacionado</span>
+      <select
+        [ngModel]="relatedTypeFilter()"
+        (ngModelChange)="relatedTypeFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (t of relatedTypes; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="community__placeholder">Cargando publicaciones...</div>
+  } @else if (error()) {
+    <div class="community__alert" role="alert">{{ error() }}</div>
+  } @else if (posts().length === 0) {
+    <div class="community__empty">
+      <h3>Aún no hay publicaciones</h3>
+      <p>Sé el primero en abrir una conversación con la comunidad.</p>
+    </div>
+  } @else {
+    <ul class="post-list">
+      @for (post of posts(); track post.id) {
+        <li class="post">
+          <a class="post__link" [routerLink]="['/student/community', post.id]">
+            <div class="post__head">
+              <h2 class="post__title">{{ post.title }}</h2>
+              @if (post.acceptedReplyId) {
+                <span class="post__badge">Resuelta</span>
+              }
+            </div>
+            <p class="post__desc">{{ post.description }}</p>
+            <ul class="post__tags">
+              @for (tag of tagList(post); track tag) {
+                <li>{{ tag }}</li>
+              }
+              @if (post.relatedType) {
+                <li class="post__tag--related">{{ post.relatedType }}</li>
+              }
+            </ul>
+            <footer class="post__foot">
+              <span class="post__author">por {{ post.authorName }}</span>
+              <time class="post__date">{{ post.createdAt | date: 'mediumDate' }}</time>
+            </footer>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

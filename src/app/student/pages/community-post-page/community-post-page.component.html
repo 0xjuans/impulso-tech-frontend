@@ -1,0 +1,113 @@
+<!-- Detalle de publicación del foro -->
+<section class="post-detail">
+  <a class="post-detail__back" routerLink="/student/community">← Volver al foro</a>
+
+  @if (loading()) {
+    <div class="post-detail__placeholder">Cargando publicación...</div>
+  } @else if (error() || !post()) {
+    <div class="post-detail__alert" role="alert">
+      {{ error() ?? 'No pudimos cargar la publicación.' }}
+    </div>
+  } @else {
+    <article class="post-detail__card">
+      <header class="post-detail__head">
+        <div>
+          <h1 class="post-detail__title">{{ post()!.title }}</h1>
+          <p class="post-detail__meta">
+            por <strong>{{ post()!.authorName }}</strong>
+            · {{ post()!.createdAt | date: 'mediumDate' }}
+            @if (post()!.relatedType) {
+              · <span class="post-detail__related">{{ post()!.relatedType }}</span>
+            }
+          </p>
+        </div>
+        @if (isPostAuthor()) {
+          <button type="button" class="post-detail__delete" (click)="deletePost()">
+            Eliminar publicación
+          </button>
+        }
+      </header>
+
+      <p class="post-detail__body">{{ post()!.description }}</p>
+
+      @if (post()!.codeSnippet) {
+        <pre class="post-detail__code"><code>{{ post()!.codeSnippet }}</code></pre>
+      }
+
+      @if (post()!.tags) {
+        <ul class="post-detail__tags">
+          @for (tag of post()!.tags!.split(','); track tag) {
+            <li>{{ tag.trim() }}</li>
+          }
+        </ul>
+      }
+    </article>
+
+    <div class="replies__header">
+      <h2 class="replies__title">
+        Respuestas
+        <span class="replies__count">({{ detail()!.replies.length }})</span>
+      </h2>
+    </div>
+
+    @if (orderedReplies().length === 0) {
+      <p class="replies__empty">Sé el primero en responder.</p>
+    } @else {
+      <ul class="reply-list">
+        @for (reply of orderedReplies(); track reply.id) {
+          <li class="reply" [class.reply--accepted]="reply.accepted">
+            <header class="reply__head">
+              <span class="reply__author">{{ reply.authorName }}</span>
+              <time class="reply__date">{{ reply.createdAt | date: 'mediumDate' }}</time>
+              @if (reply.accepted) {
+                <span class="reply__badge">Respuesta aceptada</span>
+              }
+            </header>
+            <p class="reply__body">{{ reply.content }}</p>
+            @if (reply.codeSnippet) {
+              <pre class="reply__code"><code>{{ reply.codeSnippet }}</code></pre>
+            }
+            <footer class="reply__foot">
+              <button type="button" class="reply__helpful" (click)="toggleHelpful(reply)">
+                👍 Útil ({{ reply.helpfulCount }})
+              </button>
+              @if (isPostAuthor()) {
+                <button type="button" class="reply__accept" (click)="toggleAccepted(reply)">
+                  {{ reply.accepted ? 'Quitar aceptación' : 'Aceptar respuesta' }}
+                </button>
+              }
+              @if (isReplyAuthor(reply)) {
+                <button type="button" class="reply__delete" (click)="deleteReply(reply)">
+                  Eliminar
+                </button>
+              }
+            </footer>
+          </li>
+        }
+      </ul>
+    }
+
+    <form class="reply-composer" (ngSubmit)="submitReply()">
+      <h3 class="reply-composer__title">Publicar una respuesta</h3>
+      <textarea
+        rows="4"
+        placeholder="Comparte tu solución, sugerencia o pregunta adicional..."
+        [ngModel]="replyContent()"
+        (ngModelChange)="replyContent.set($event)"
+        name="content"></textarea>
+      <textarea
+        rows="3"
+        class="reply-composer__code"
+        placeholder="Fragmento de código (opcional)"
+        [ngModel]="replyCode()"
+        (ngModelChange)="replyCode.set($event)"
+        name="code"></textarea>
+      @if (submitError()) {
+        <p class="reply-composer__error" role="alert">{{ submitError() }}</p>
+      }
+      <button type="submit" class="reply-composer__submit" [disabled]="!canSubmit() || submitting()">
+        {{ submitting() ? 'Publicando...' : 'Publicar respuesta' }}
+      </button>
+    </form>
+  }
+</section>
