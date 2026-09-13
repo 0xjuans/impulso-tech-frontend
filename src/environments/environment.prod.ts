@@ -13,5 +13,5 @@ export const environment = {
    * Debe coincidir con el {@code GOOGLE_CLIENT_ID} configurado en
    * Fly.io para que el backend pueda validar el ID token.
    */
-  googleClientId: '',
+  googleClientId: '94974073717-l5kg8opjtf8rp3cl10ksavgnlq309381.apps.googleusercontent.com',
 } as const;
