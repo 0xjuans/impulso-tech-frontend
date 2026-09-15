@@ -30,15 +30,15 @@
           (ngModelChange)="newTitle.set($event)"
           name="title" />
       </label>
-      <label class="composer__field">
+      <div class="composer__field">
         <span>Descripción</span>
-        <textarea
-          rows="4"
+        <app-rich-text-editor
           placeholder="Explica el contexto, qué intentaste y qué error o resultado obtuviste."
+          [minHeight]="140"
           [ngModel]="newDescription()"
           (ngModelChange)="newDescription.set($event)"
-          name="description"></textarea>
-      </label>
+          name="description" />
+      </div>
       <label class="composer__field">
         <span>Fragmento de código (opcional)</span>
         <textarea
@@ -133,7 +133,7 @@
                 <span class="post__badge">Resuelta</span>
               }
             </div>
-            <p class="post__desc">{{ post.description }}</p>
+            <div class="post__desc rich-html" [innerHTML]="post.description"></div>
             <ul class="post__tags">
               @for (tag of tagList(post); track tag) {
                 <li>{{ tag }}</li>

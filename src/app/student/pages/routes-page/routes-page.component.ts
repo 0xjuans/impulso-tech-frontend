@@ -3,6 +3,7 @@ import { finalize } from 'rxjs';
 
 import { LearningRoute } from '../../../core/api/learning-routes/learning-route.dto';
 import { LearningRoutesService } from '../../../core/api/learning-routes/learning-routes.service';
+import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 
 /**
  * Página que muestra el catálogo de rutas de aprendizaje publicadas por
@@ -16,6 +17,7 @@ import { LearningRoutesService } from '../../../core/api/learning-routes/learnin
 @Component({
   selector: 'app-routes-page',
   standalone: true,
+  imports: [StripHtmlPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './routes-page.component.html',
   styleUrl: './routes-page.component.scss',
@@ -29,7 +31,7 @@ export class RoutesPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.routesService
-      .listPublished(0, 24)
+      .listPublished({ page: 0, size: 24 })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (page) => this.routes.set(page.content),

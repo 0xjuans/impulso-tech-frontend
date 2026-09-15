@@ -11,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 
+import { RichTextEditorComponent } from '../../../shared/components/rich-text-editor/rich-text-editor.component';
+
 import { AuthService } from '../../../core/auth/services/auth.service';
 import {
   CommunityPostDetail,
@@ -30,7 +32,7 @@ import { CommunityService } from '../../../core/api/community/community.service'
 @Component({
   selector: 'app-community-post-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe],
+  imports: [FormsModule, RouterLink, DatePipe, RichTextEditorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './community-post-page.component.html',
   styleUrl: './community-post-page.component.scss',

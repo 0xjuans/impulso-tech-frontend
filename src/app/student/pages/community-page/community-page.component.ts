@@ -9,6 +9,8 @@ import {
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+
+import { RichTextEditorComponent } from '../../../shared/components/rich-text-editor/rich-text-editor.component';
 import { catchError, finalize, of } from 'rxjs';
 
 import {
@@ -30,7 +32,7 @@ import { CommunityService } from '../../../core/api/community/community.service'
 @Component({
   selector: 'app-community-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe],
+  imports: [FormsModule, RouterLink, DatePipe, RichTextEditorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './community-page.component.html',
   styleUrl: './community-page.component.scss',

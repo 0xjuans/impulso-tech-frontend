@@ -69,7 +69,7 @@
                 <div>
                   <h3 class="module__name">{{ module.name }}</h3>
                   @if (module.description) {
-                    <p class="module__description">{{ module.description }}</p>
+                    <p class="module__description">{{ module.description | stripHtml }}</p>
                   }
                 </div>
               </header>

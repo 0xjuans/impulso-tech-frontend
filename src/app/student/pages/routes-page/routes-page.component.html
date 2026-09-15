@@ -35,7 +35,7 @@
 
           <div class="route-card__body">
             <h2 class="route-card__name">{{ route.name }}</h2>
-            <p class="route-card__description">{{ route.description }}</p>
+            <p class="route-card__description">{{ route.description | stripHtml }}</p>
 
             @if (splitTechnologies(route.technologies).length > 0) {
               <ul class="route-card__tags" aria-label="Tecnologías">

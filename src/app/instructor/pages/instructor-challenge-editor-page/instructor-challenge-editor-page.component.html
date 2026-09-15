@@ -1,0 +1,172 @@
+<!-- Editor de reto del instructor -->
+<section class="editor">
+  <a class="editor__back" routerLink="/instructor/challenges">← Volver a retos</a>
+
+  <header class="editor__header">
+    <span class="editor__eyebrow">{{ isEditing() ? 'Editar reto' : 'Nuevo reto' }}</span>
+    <h1 class="editor__title">
+      @if (isEditing() && loaded()) {
+        {{ loaded()!.name }}
+      } @else {
+        Crea un reto
+      }
+    </h1>
+    @if (isEditing() && loaded()) {
+      <p class="editor__meta">
+        Estado actual: <strong>{{ loaded()!.status }}</strong> · {{ loaded()!.xpReward }} XP
+      </p>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="editor__placeholder">Cargando reto...</div>
+  } @else if (error()) {
+    <div class="editor__alert" role="alert">{{ error() }}</div>
+  } @else {
+    <form class="editor__form" (ngSubmit)="submit()">
+      <label class="field">
+        <span>Nombre *</span>
+        <input type="text" maxlength="180"
+          placeholder="Ej: Suma de dos enteros"
+          [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" />
+      </label>
+
+      <div class="field">
+        <span class="field__label">Descripción *</span>
+        <app-rich-text-editor
+          placeholder="Describe el problema en términos generales."
+          [minHeight]="120"
+          [ngModel]="description()"
+          (ngModelChange)="description.set($event)"
+          name="description" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Objetivo (opcional)</span>
+        <app-rich-text-editor
+          placeholder="Qué habilidad se busca desarrollar con el reto."
+          [minHeight]="90"
+          [ngModel]="objective()"
+          (ngModelChange)="objective.set($event)"
+          name="objective" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Instrucciones detalladas</span>
+        <app-rich-text-editor
+          placeholder="Explicación paso a paso del enunciado. Usa listas, negritas y bloques de código para estructurar."
+          [minHeight]="200"
+          [ngModel]="instructions()"
+          (ngModelChange)="instructions.set($event)"
+          name="instructions" />
+      </div>
+
+      <div class="editor__row">
+        <label class="field">
+          <span>Dificultad *</span>
+          <select [ngModel]="difficulty()" (ngModelChange)="difficulty.set($event)" name="difficulty">
+            <option value="">Selecciona...</option>
+            @for (d of difficulties; track d) {
+              <option [value]="d">{{ d }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Lenguajes permitidos * (CSV)</span>
+          <input type="text" maxlength="300"
+            placeholder="python, javascript"
+            [ngModel]="allowedLanguages()" (ngModelChange)="allowedLanguages.set($event)" name="langs" />
+        </label>
+      </div>
+
+      <div class="editor__row">
+        <label class="field">
+          <span>Recompensa (XP)</span>
+          <input type="number" min="0"
+            placeholder="0"
+            [ngModel]="xpReward()" (ngModelChange)="xpReward.set($event)" name="xp" />
+        </label>
+
+        <label class="field">
+          <span>Tiempo estimado (minutos)</span>
+          <input type="number" min="1"
+            placeholder="30"
+            [ngModel]="estimatedMinutes()" (ngModelChange)="estimatedMinutes.set($event)" name="minutes" />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Ejemplos de entrada / salida</span>
+        <textarea rows="4" class="editor__mono"
+          placeholder="entrada: 2 3&#10;salida: 5"
+          [ngModel]="ioExamples()" (ngModelChange)="ioExamples.set($event)" name="io"></textarea>
+      </label>
+
+      <div class="field">
+        <span class="field__label">Restricciones (opcional)</span>
+        <app-rich-text-editor
+          placeholder="Límites de tiempo, memoria, tamaño de entrada..."
+          [minHeight]="90"
+          [ngModel]="restrictions()"
+          (ngModelChange)="restrictions.set($event)"
+          name="restr" />
+      </div>
+
+      <label class="field">
+        <span>Casos de prueba públicos</span>
+        <textarea rows="4" class="editor__mono"
+          placeholder="Uno por línea o en formato JSON."
+          [ngModel]="publicTestCases()" (ngModelChange)="publicTestCases.set($event)" name="pubTests"></textarea>
+      </label>
+
+      <label class="field">
+        <span>Casos de prueba ocultos</span>
+        <textarea rows="4" class="editor__mono"
+          placeholder="Solo el instructor los ve; se ejecutan en la evaluación."
+          [ngModel]="hiddenTestCases()" (ngModelChange)="hiddenTestCases.set($event)" name="hidTests"></textarea>
+      </label>
+
+      <div class="editor__row editor__row--four">
+        <label class="field">
+          <span>Ruta relacionada (id)</span>
+          <input type="number" min="1"
+            [ngModel]="learningRouteId()" (ngModelChange)="learningRouteId.set($event)" name="routeId" />
+        </label>
+        <label class="field">
+          <span>Curso (id)</span>
+          <input type="number" min="1"
+            [ngModel]="courseId()" (ngModelChange)="courseId.set($event)" name="courseId" />
+        </label>
+        <label class="field">
+          <span>Módulo (id)</span>
+          <input type="number" min="1"
+            [ngModel]="moduleId()" (ngModelChange)="moduleId.set($event)" name="moduleId" />
+        </label>
+        <label class="field">
+          <span>Lección (id)</span>
+          <input type="number" min="1"
+            [ngModel]="lessonId()" (ngModelChange)="lessonId.set($event)" name="lessonId" />
+        </label>
+      </div>
+
+      @if (saveError()) {
+        <p class="editor__error" role="alert">{{ saveError() }}</p>
+      }
+
+      <div class="editor__actions">
+        <a class="editor__ghost" routerLink="/instructor/challenges">Cancelar</a>
+        @if (isEditing()) {
+          <a class="editor__ghost" [routerLink]="['/instructor/challenges', challengeId(), 'attempts']">Ver intentos</a>
+        }
+        <button type="submit" class="editor__submit" [disabled]="!canSubmit() || saving()">
+          @if (saving()) {
+            Guardando...
+          } @else {
+            {{ isEditing() ? 'Guardar cambios' : 'Crear reto' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</section>

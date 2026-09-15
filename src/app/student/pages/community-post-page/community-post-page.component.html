@@ -28,7 +28,7 @@
         }
       </header>
 
-      <p class="post-detail__body">{{ post()!.description }}</p>
+      <div class="post-detail__body rich-html" [innerHTML]="post()!.description"></div>
 
       @if (post()!.codeSnippet) {
         <pre class="post-detail__code"><code>{{ post()!.codeSnippet }}</code></pre>
@@ -63,7 +63,7 @@
                 <span class="reply__badge">Respuesta aceptada</span>
               }
             </header>
-            <p class="reply__body">{{ reply.content }}</p>
+            <div class="reply__body rich-html" [innerHTML]="reply.content"></div>
             @if (reply.codeSnippet) {
               <pre class="reply__code"><code>{{ reply.codeSnippet }}</code></pre>
             }
@@ -89,12 +89,12 @@
 
     <form class="reply-composer" (ngSubmit)="submitReply()">
       <h3 class="reply-composer__title">Publicar una respuesta</h3>
-      <textarea
-        rows="4"
+      <app-rich-text-editor
         placeholder="Comparte tu solución, sugerencia o pregunta adicional..."
+        [minHeight]="120"
         [ngModel]="replyContent()"
         (ngModelChange)="replyContent.set($event)"
-        name="content"></textarea>
+        name="content" />
       <textarea
         rows="3"
         class="reply-composer__code"
