@@ -1,0 +1,145 @@
+<!-- Editor de proyecto del instructor -->
+<section class="editor">
+  <a class="editor__back" routerLink="/instructor/projects">← Volver a proyectos</a>
+
+  <header class="editor__header">
+    <span class="editor__eyebrow">{{ isEditing() ? 'Editar proyecto' : 'Nuevo proyecto' }}</span>
+    <h1 class="editor__title">
+      @if (isEditing() && loaded()) { {{ loaded()!.name }} } @else { Crea un proyecto }
+    </h1>
+    @if (isEditing() && loaded()) {
+      <p class="editor__meta">
+        Estado: <strong>{{ loaded()!.status }}</strong> · Máx. {{ loaded()!.maxScore }} pts · {{ loaded()!.xpReward }} XP
+      </p>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="editor__placeholder">Cargando proyecto...</div>
+  } @else if (error()) {
+    <div class="editor__alert" role="alert">{{ error() }}</div>
+  } @else {
+    <form class="editor__form" (ngSubmit)="submit()">
+      <div class="field">
+        <span class="field__label">Nombre *</span>
+        <input type="text" maxlength="180"
+          placeholder="Ej: Portafolio personal"
+          [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Descripción *</span>
+        <app-rich-text-editor
+          placeholder="¿En qué consiste el proyecto y qué debe entregar el estudiante?"
+          [minHeight]="140"
+          [ngModel]="description()" (ngModelChange)="description.set($event)" name="description" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Objetivo (opcional)</span>
+        <app-rich-text-editor
+          placeholder="Qué habilidad se busca desarrollar con el proyecto."
+          [minHeight]="90"
+          [ngModel]="objective()" (ngModelChange)="objective.set($event)" name="objective" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Instrucciones detalladas</span>
+        <app-rich-text-editor
+          placeholder="Paso a paso o guía completa para el estudiante."
+          [minHeight]="180"
+          [ngModel]="instructions()" (ngModelChange)="instructions.set($event)" name="instructions" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Requisitos</span>
+        <app-rich-text-editor
+          placeholder="Lista de requisitos mínimos que debe cumplir la entrega."
+          [minHeight]="120"
+          [ngModel]="requirements()" (ngModelChange)="requirements.set($event)" name="requirements" />
+      </div>
+
+      <div class="editor__row">
+        <label class="field">
+          <span>Dificultad *</span>
+          <select [ngModel]="difficulty()" (ngModelChange)="difficulty.set($event)" name="difficulty">
+            <option value="">Selecciona...</option>
+            @for (d of difficulties; track d) { <option [value]="d">{{ d }}</option> }
+          </select>
+        </label>
+        <label class="field">
+          <span>Tecnologías (CSV)</span>
+          <input type="text" maxlength="300"
+            placeholder="HTML, CSS, JavaScript"
+            [ngModel]="technologies()" (ngModelChange)="technologies.set($event)" name="tech" />
+        </label>
+      </div>
+
+      <div class="editor__row">
+        <label class="field">
+          <span>Puntaje máximo</span>
+          <input type="number" min="1"
+            [ngModel]="maxScore()" (ngModelChange)="maxScore.set($event)" name="max" />
+        </label>
+        <label class="field">
+          <span>Recompensa XP</span>
+          <input type="number" min="0"
+            [ngModel]="xpReward()" (ngModelChange)="xpReward.set($event)" name="xp" />
+        </label>
+        <label class="field">
+          <span>Fecha límite</span>
+          <input type="datetime-local"
+            [ngModel]="deadlineAt()" (ngModelChange)="deadlineAt.set($event)" name="deadline" />
+        </label>
+      </div>
+
+      <div class="field">
+        <span class="field__label">Recursos (opcional)</span>
+        <app-rich-text-editor
+          placeholder="Enlaces, materiales de apoyo o referencias útiles."
+          [minHeight]="100"
+          [ngModel]="resources()" (ngModelChange)="resources.set($event)" name="resources" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Criterios de evaluación</span>
+        <app-rich-text-editor
+          placeholder="Cómo se calificará: ponderaciones, rúbrica, criterios específicos."
+          [minHeight]="140"
+          [ngModel]="evaluationCriteria()" (ngModelChange)="evaluationCriteria.set($event)" name="criteria" />
+      </div>
+
+      <div class="editor__row editor__row--three">
+        <label class="field">
+          <span>Ruta relacionada (id)</span>
+          <input type="number" min="1"
+            [ngModel]="learningRouteId()" (ngModelChange)="learningRouteId.set($event)" name="routeId" />
+        </label>
+        <label class="field">
+          <span>Curso (id)</span>
+          <input type="number" min="1"
+            [ngModel]="courseId()" (ngModelChange)="courseId.set($event)" name="courseId" />
+        </label>
+        <label class="field">
+          <span>Módulo (id)</span>
+          <input type="number" min="1"
+            [ngModel]="moduleId()" (ngModelChange)="moduleId.set($event)" name="moduleId" />
+        </label>
+      </div>
+
+      @if (saveError()) {
+        <p class="editor__error" role="alert">{{ saveError() }}</p>
+      }
+
+      <div class="editor__actions">
+        <a class="editor__ghost" routerLink="/instructor/projects">Cancelar</a>
+        @if (isEditing()) {
+          <a class="editor__ghost" [routerLink]="['/instructor/projects', projectId(), 'submissions']">Ver entregas</a>
+        }
+        <button type="submit" class="editor__submit" [disabled]="!canSubmit() || saving()">
+          @if (saving()) { Guardando... } @else { {{ isEditing() ? 'Guardar cambios' : 'Crear proyecto' }} }
+        </button>
+      </div>
+    </form>
+  }
+</section>

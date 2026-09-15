@@ -84,6 +84,38 @@ export const instructorRoutes: Routes = [
         title: 'Intentos del reto · Impulso Tech',
       },
       {
+        path: 'projects',
+        loadComponent: () =>
+          import(
+            './pages/instructor-projects-page/instructor-projects-page.component'
+          ).then((m) => m.InstructorProjectsPageComponent),
+        title: 'Proyectos · Impulso Tech',
+      },
+      {
+        path: 'projects/new',
+        loadComponent: () =>
+          import(
+            './pages/instructor-project-editor-page/instructor-project-editor-page.component'
+          ).then((m) => m.InstructorProjectEditorPageComponent),
+        title: 'Nuevo proyecto · Impulso Tech',
+      },
+      {
+        path: 'projects/:id',
+        loadComponent: () =>
+          import(
+            './pages/instructor-project-editor-page/instructor-project-editor-page.component'
+          ).then((m) => m.InstructorProjectEditorPageComponent),
+        title: 'Editar proyecto · Impulso Tech',
+      },
+      {
+        path: 'projects/:id/submissions',
+        loadComponent: () =>
+          import(
+            './pages/instructor-project-submissions-page/instructor-project-submissions-page.component'
+          ).then((m) => m.InstructorProjectSubmissionsPageComponent),
+        title: 'Entregas del proyecto · Impulso Tech',
+      },
+      {
         path: 'courses',
         loadComponent: () =>
           import(
