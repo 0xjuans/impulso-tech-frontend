@@ -45,3 +45,7 @@ Thumbs.db
 CLAUDE.md
 zapier-inspired-DESIGN.md
 /.claudetmp-req/
+
+# Scratchpads locales y config personal de Claude Code
+.claude/
+tmp-req/
