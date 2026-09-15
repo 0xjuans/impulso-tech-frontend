@@ -34,3 +34,29 @@ export interface PagedResponse<T> {
   readonly totalElements: number;
   readonly totalPages: number;
 }
+
+/**
+ * Payload para crear una ruta de aprendizaje. El estado inicial y el
+ * instructor propietario los asigna el backend en función del usuario
+ * autenticado.
+ */
+export interface CreateLearningRouteRequest {
+  readonly name: string;
+  readonly description: string;
+  readonly objective?: string | null;
+  readonly coverImageUrl?: string | null;
+  readonly difficulty?: DifficultyLevel | null;
+  readonly estimatedDurationHours?: number | null;
+  readonly technologies?: string | null;
+}
+
+/**
+ * Payload de actualización parcial de una ruta. Todos los campos son
+ * opcionales; los omitidos conservan su valor actual en el backend.
+ */
+export type UpdateLearningRouteRequest = Partial<CreateLearningRouteRequest>;
+
+/** Payload para el cambio de estado de una ruta. */
+export interface UpdateContentStatusRequest {
+  readonly status: ContentStatus;
+}

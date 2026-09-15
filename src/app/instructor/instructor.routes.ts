@@ -28,6 +28,62 @@ export const instructorRoutes: Routes = [
         title: 'Panel del instructor · Impulso Tech',
       },
       {
+        path: 'routes',
+        loadComponent: () =>
+          import(
+            './pages/instructor-routes-page/instructor-routes-page.component'
+          ).then((m) => m.InstructorRoutesPageComponent),
+        title: 'Rutas de aprendizaje · Impulso Tech',
+      },
+      {
+        path: 'routes/new',
+        loadComponent: () =>
+          import(
+            './pages/instructor-route-editor-page/instructor-route-editor-page.component'
+          ).then((m) => m.InstructorRouteEditorPageComponent),
+        title: 'Nueva ruta · Impulso Tech',
+      },
+      {
+        path: 'routes/:id',
+        loadComponent: () =>
+          import(
+            './pages/instructor-route-editor-page/instructor-route-editor-page.component'
+          ).then((m) => m.InstructorRouteEditorPageComponent),
+        title: 'Editar ruta · Impulso Tech',
+      },
+      {
+        path: 'challenges',
+        loadComponent: () =>
+          import(
+            './pages/instructor-challenges-page/instructor-challenges-page.component'
+          ).then((m) => m.InstructorChallengesPageComponent),
+        title: 'Retos · Impulso Tech',
+      },
+      {
+        path: 'challenges/new',
+        loadComponent: () =>
+          import(
+            './pages/instructor-challenge-editor-page/instructor-challenge-editor-page.component'
+          ).then((m) => m.InstructorChallengeEditorPageComponent),
+        title: 'Nuevo reto · Impulso Tech',
+      },
+      {
+        path: 'challenges/:id',
+        loadComponent: () =>
+          import(
+            './pages/instructor-challenge-editor-page/instructor-challenge-editor-page.component'
+          ).then((m) => m.InstructorChallengeEditorPageComponent),
+        title: 'Editar reto · Impulso Tech',
+      },
+      {
+        path: 'challenges/:id/attempts',
+        loadComponent: () =>
+          import(
+            './pages/instructor-challenge-attempts-page/instructor-challenge-attempts-page.component'
+          ).then((m) => m.InstructorChallengeAttemptsPageComponent),
+        title: 'Intentos del reto · Impulso Tech',
+      },
+      {
         path: 'courses',
         loadComponent: () =>
           import(
