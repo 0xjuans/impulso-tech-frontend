@@ -116,6 +116,30 @@ export const instructorRoutes: Routes = [
         title: 'Entregas del proyecto · Impulso Tech',
       },
       {
+        path: 'evaluations',
+        loadComponent: () =>
+          import(
+            './pages/instructor-evaluations-page/instructor-evaluations-page.component'
+          ).then((m) => m.InstructorEvaluationsPageComponent),
+        title: 'Evaluaciones · Impulso Tech',
+      },
+      {
+        path: 'evaluations/lessons/:lessonId/new',
+        loadComponent: () =>
+          import(
+            './pages/instructor-evaluation-editor-page/instructor-evaluation-editor-page.component'
+          ).then((m) => m.InstructorEvaluationEditorPageComponent),
+        title: 'Nueva evaluación · Impulso Tech',
+      },
+      {
+        path: 'evaluations/:id',
+        loadComponent: () =>
+          import(
+            './pages/instructor-evaluation-editor-page/instructor-evaluation-editor-page.component'
+          ).then((m) => m.InstructorEvaluationEditorPageComponent),
+        title: 'Editar evaluación · Impulso Tech',
+      },
+      {
         path: 'courses',
         loadComponent: () =>
           import(

@@ -60,6 +60,7 @@ export class InstructorShellComponent {
     { path: 'courses', icon: 'book', label: 'Cursos' },
     { path: 'challenges', icon: 'target', label: 'Retos' },
     { path: 'projects', icon: 'trophy', label: 'Proyectos' },
+    { path: 'evaluations', icon: 'check', label: 'Evaluaciones' },
   ];
 
   protected toggleMenu(): void {
