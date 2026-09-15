@@ -60,10 +60,22 @@ describe('InstructorProjectEditorPageComponent', () => {
 
   afterEach(() => http.verify());
 
+  /** Responde a las requests del picker de contexto que ocurren cuando
+   *  se renderiza el editor (rutas y cursos gestionados). */
+  function flushPickerBoot(): void {
+    http.expectOne((r) => r.url === `${baseUrl}/learning-routes/manage`).flush({
+      content: [], page: 0, size: 200, totalElements: 0, totalPages: 0,
+    });
+    http.expectOne((r) => r.url === `${baseUrl}/courses/manage`).flush({
+      content: [], page: 0, size: 200, totalElements: 0, totalPages: 0,
+    });
+  }
+
   describe('creación', () => {
     it('no permite enviar sin nombre, descripción y dificultad', async () => {
       await setup(null);
       fixture.detectChanges();
+      flushPickerBoot();
       component['name'].set('X');
       component['description'].set('Y');
       expect(component['canSubmit']()).toBeFalse();
@@ -74,6 +86,7 @@ describe('InstructorProjectEditorPageComponent', () => {
     it('envía POST y redirige al id devuelto', async () => {
       await setup(null);
       fixture.detectChanges();
+      flushPickerBoot();
       const nav = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
       component['name'].set('Nuevo');
       component['description'].set('Desc');
@@ -94,8 +107,11 @@ describe('InstructorProjectEditorPageComponent', () => {
     it('carga el proyecto e hidrata los campos', async () => {
       await setup('7');
       fixture.detectChanges();
-      const req = http.expectOne(`${baseUrl}/projects/7`);
-      req.flush(existing);
+      // El picker solo se renderiza tras la carga inicial, así que el
+      // GET del proyecto se atiende antes que las requests del picker.
+      http.expectOne(`${baseUrl}/projects/7`).flush(existing);
+      fixture.detectChanges();
+      flushPickerBoot();
       expect(component['name']()).toBe('API de tareas');
       expect(component['difficulty']()).toBe('INTERMEDIO');
       expect(component['maxScore']()).toBe(100);
@@ -112,6 +128,8 @@ describe('InstructorProjectEditorPageComponent', () => {
       await setup('7');
       fixture.detectChanges();
       http.expectOne(`${baseUrl}/projects/7`).flush(existing);
+      fixture.detectChanges();
+      flushPickerBoot();
       component['name'].set('API renombrada');
       component['submit']();
       const req = http.expectOne(`${baseUrl}/projects/7`);
@@ -125,6 +143,8 @@ describe('InstructorProjectEditorPageComponent', () => {
       await setup('7');
       fixture.detectChanges();
       http.expectOne(`${baseUrl}/projects/7`).flush(existing);
+      fixture.detectChanges();
+      flushPickerBoot();
       component['submit']();
       const req = http.expectOne(`${baseUrl}/projects/7`);
       req.flush({ message: 'La descripción es obligatoria.' }, { status: 400, statusText: 'Bad Request' });

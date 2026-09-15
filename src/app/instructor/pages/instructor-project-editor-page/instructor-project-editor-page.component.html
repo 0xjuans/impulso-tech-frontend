@@ -109,23 +109,11 @@
           [ngModel]="evaluationCriteria()" (ngModelChange)="evaluationCriteria.set($event)" name="criteria" />
       </div>
 
-      <div class="editor__row editor__row--three">
-        <label class="field">
-          <span>Ruta relacionada (id)</span>
-          <input type="number" min="1"
-            [ngModel]="learningRouteId()" (ngModelChange)="learningRouteId.set($event)" name="routeId" />
-        </label>
-        <label class="field">
-          <span>Curso (id)</span>
-          <input type="number" min="1"
-            [ngModel]="courseId()" (ngModelChange)="courseId.set($event)" name="courseId" />
-        </label>
-        <label class="field">
-          <span>Módulo (id)</span>
-          <input type="number" min="1"
-            [ngModel]="moduleId()" (ngModelChange)="moduleId.set($event)" name="moduleId" />
-        </label>
-      </div>
+      <app-content-context-picker
+        label="Contexto educativo (opcional)"
+        [showLesson]="false"
+        [value]="contextValue()"
+        (valueChange)="onContextChange($event)" />
 
       @if (saveError()) {
         <p class="editor__error" role="alert">{{ saveError() }}</p>

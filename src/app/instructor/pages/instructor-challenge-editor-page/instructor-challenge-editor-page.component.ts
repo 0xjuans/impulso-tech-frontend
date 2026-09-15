@@ -10,6 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import {
+  ContentContextPickerComponent,
+  ContentContextValue,
+} from '../../../shared/components/content-context-picker/content-context-picker.component';
 import { RichTextEditorComponent } from '../../../shared/components/rich-text-editor/rich-text-editor.component';
 
 import {
@@ -31,7 +35,7 @@ import { DifficultyLevel } from '../../../core/api/learning-routes/learning-rout
 @Component({
   selector: 'app-instructor-challenge-editor-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, RichTextEditorComponent],
+  imports: [FormsModule, RouterLink, RichTextEditorComponent, ContentContextPickerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-challenge-editor-page.component.html',
   styleUrl: './instructor-challenge-editor-page.component.scss',
@@ -64,6 +68,21 @@ export class InstructorChallengeEditorPageComponent implements OnInit {
   protected readonly courseId = signal<number | null>(null);
   protected readonly moduleId = signal<number | null>(null);
   protected readonly lessonId = signal<number | null>(null);
+
+  /** Vista agregada del contexto para el picker reutilizable. */
+  protected readonly contextValue = computed<ContentContextValue>(() => ({
+    learningRouteId: this.learningRouteId(),
+    courseId: this.courseId(),
+    moduleId: this.moduleId(),
+    lessonId: this.lessonId(),
+  }));
+
+  protected onContextChange(value: ContentContextValue): void {
+    this.learningRouteId.set(value.learningRouteId);
+    this.courseId.set(value.courseId);
+    this.moduleId.set(value.moduleId);
+    this.lessonId.set(value.lessonId);
+  }
 
   protected readonly difficulties: readonly DifficultyLevel[] = [
     'PRINCIPIANTE',

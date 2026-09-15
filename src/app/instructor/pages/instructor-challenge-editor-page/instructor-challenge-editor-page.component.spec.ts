@@ -65,10 +65,21 @@ describe('InstructorChallengeEditorPageComponent', () => {
 
   afterEach(() => http.verify());
 
+  /** Consume las requests que dispara el picker de contexto al montar. */
+  function flushPickerBoot(): void {
+    http.expectOne((r) => r.url === `${baseUrl}/learning-routes/manage`).flush({
+      content: [], page: 0, size: 200, totalElements: 0, totalPages: 0,
+    });
+    http.expectOne((r) => r.url === `${baseUrl}/courses/manage`).flush({
+      content: [], page: 0, size: 200, totalElements: 0, totalPages: 0,
+    });
+  }
+
   describe('creación', () => {
     it('no permite enviar sin dificultad ni lenguajes', async () => {
       await setup(null);
       fixture.detectChanges();
+      flushPickerBoot();
       component['name'].set('X');
       component['description'].set('Y');
       expect(component['canSubmit']()).toBeFalse();
@@ -81,6 +92,7 @@ describe('InstructorChallengeEditorPageComponent', () => {
     it('envía POST y redirige al id devuelto', async () => {
       await setup(null);
       fixture.detectChanges();
+      flushPickerBoot();
       const nav = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
       component['name'].set('Nuevo');
       component['description'].set('Desc');
@@ -103,8 +115,11 @@ describe('InstructorChallengeEditorPageComponent', () => {
     it('carga el reto e hidrata todos los campos', async () => {
       await setup('7');
       fixture.detectChanges();
-      const req = http.expectOne(`${baseUrl}/challenges/7`);
-      req.flush(existing);
+      // El picker solo aparece cuando termina el load, por eso se
+      // consume el GET del reto ANTES que sus requests.
+      http.expectOne(`${baseUrl}/challenges/7`).flush(existing);
+      fixture.detectChanges();
+      flushPickerBoot();
       expect(component['name']()).toBe('Suma');
       expect(component['difficulty']()).toBe('PRINCIPIANTE');
       expect(component['allowedLanguages']()).toBe('python');
@@ -122,6 +137,8 @@ describe('InstructorChallengeEditorPageComponent', () => {
       await setup('7');
       fixture.detectChanges();
       http.expectOne(`${baseUrl}/challenges/7`).flush(existing);
+      fixture.detectChanges();
+      flushPickerBoot();
       component['name'].set('Suma binaria');
       component['submit']();
       const req = http.expectOne(`${baseUrl}/challenges/7`);
@@ -135,6 +152,8 @@ describe('InstructorChallengeEditorPageComponent', () => {
       await setup('7');
       fixture.detectChanges();
       http.expectOne(`${baseUrl}/challenges/7`).flush(existing);
+      fixture.detectChanges();
+      flushPickerBoot();
       component['submit']();
       const req = http.expectOne(`${baseUrl}/challenges/7`);
       req.flush({ message: 'La descripción es obligatoria.' }, { status: 400, statusText: 'Bad Request' });

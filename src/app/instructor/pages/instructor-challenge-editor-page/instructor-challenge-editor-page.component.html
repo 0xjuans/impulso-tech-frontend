@@ -127,28 +127,11 @@
           [ngModel]="hiddenTestCases()" (ngModelChange)="hiddenTestCases.set($event)" name="hidTests"></textarea>
       </label>
 
-      <div class="editor__row editor__row--four">
-        <label class="field">
-          <span>Ruta relacionada (id)</span>
-          <input type="number" min="1"
-            [ngModel]="learningRouteId()" (ngModelChange)="learningRouteId.set($event)" name="routeId" />
-        </label>
-        <label class="field">
-          <span>Curso (id)</span>
-          <input type="number" min="1"
-            [ngModel]="courseId()" (ngModelChange)="courseId.set($event)" name="courseId" />
-        </label>
-        <label class="field">
-          <span>Módulo (id)</span>
-          <input type="number" min="1"
-            [ngModel]="moduleId()" (ngModelChange)="moduleId.set($event)" name="moduleId" />
-        </label>
-        <label class="field">
-          <span>Lección (id)</span>
-          <input type="number" min="1"
-            [ngModel]="lessonId()" (ngModelChange)="lessonId.set($event)" name="lessonId" />
-        </label>
-      </div>
+      <app-content-context-picker
+        label="Contexto educativo (opcional)"
+        [showLesson]="true"
+        [value]="contextValue()"
+        (valueChange)="onContextChange($event)" />
 
       @if (saveError()) {
         <p class="editor__error" role="alert">{{ saveError() }}</p>
