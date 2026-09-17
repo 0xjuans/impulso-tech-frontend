@@ -1,0 +1,114 @@
+<!-- Detalle de reto y envío de intento -->
+<section class="challenge">
+  <a class="challenge__back" routerLink="/student/challenges">← Volver a retos</a>
+
+  @if (loading()) {
+    <div class="challenge__placeholder">Cargando reto...</div>
+  } @else if (error() || !challenge()) {
+    <div class="challenge__alert" role="alert">{{ error() ?? 'No pudimos cargar el reto.' }}</div>
+  } @else {
+    @let c = challenge()!;
+
+    <header class="challenge__header">
+      <div class="challenge__meta">
+        <span class="challenge__difficulty" [attr.data-level]="c.difficulty">{{ c.difficulty }}</span>
+        <span class="challenge__xp">+{{ c.xpReward }} XP</span>
+        @if (c.estimatedMinutes) { <span class="challenge__time">{{ c.estimatedMinutes }} min</span> }
+      </div>
+      <h1 class="challenge__title">{{ c.name }}</h1>
+      <div class="challenge__desc rich-html" [innerHTML]="c.description"></div>
+    </header>
+
+    @if (c.objective) {
+      <div class="section">
+        <h2 class="section__title">Objetivo</h2>
+        <div class="rich-html" [innerHTML]="c.objective"></div>
+      </div>
+    }
+
+    @if (c.instructions) {
+      <div class="section">
+        <h2 class="section__title">Instrucciones</h2>
+        <div class="rich-html" [innerHTML]="c.instructions"></div>
+      </div>
+    }
+
+    @if (c.ioExamples) {
+      <div class="section">
+        <h2 class="section__title">Ejemplos de entrada / salida</h2>
+        <pre class="section__code"><code>{{ c.ioExamples }}</code></pre>
+      </div>
+    }
+
+    @if (c.publicTestCases) {
+      <div class="section">
+        <h2 class="section__title">Casos de prueba públicos</h2>
+        <pre class="section__code"><code>{{ c.publicTestCases }}</code></pre>
+      </div>
+    }
+
+    @if (c.restrictions) {
+      <div class="section">
+        <h2 class="section__title">Restricciones</h2>
+        <div class="rich-html" [innerHTML]="c.restrictions"></div>
+      </div>
+    }
+
+    <!-- COMPOSER DE INTENTO ---------------------------------------------- -->
+    <form class="composer" (ngSubmit)="submit()">
+      <h2 class="composer__title">Enviar tu solución</h2>
+      <div class="composer__row">
+        <label class="composer__field">
+          <span>Lenguaje</span>
+          <select [ngModel]="language()" (ngModelChange)="language.set($event)" name="lang">
+            @for (opt of languageOptions(); track opt) { <option [value]="opt">{{ opt }}</option> }
+          </select>
+        </label>
+      </div>
+      <label class="composer__field">
+        <span>Código</span>
+        <textarea rows="14" class="composer__code"
+          placeholder="Pega tu solución aquí..."
+          [ngModel]="code()"
+          (ngModelChange)="code.set($event)"
+          name="code"></textarea>
+      </label>
+      @if (submitError()) {
+        <p class="composer__error" role="alert">{{ submitError() }}</p>
+      }
+      @if (submitOk()) {
+        <p class="composer__success" role="status">{{ submitOk() }}</p>
+      }
+      <div class="composer__actions">
+        <button type="submit" class="composer__submit" [disabled]="!canSubmit() || submitting()">
+          @if (submitting()) { Enviando... } @else { Enviar intento }
+        </button>
+      </div>
+    </form>
+
+    <!-- HISTORIAL DE INTENTOS -------------------------------------------- -->
+    @if (sortedAttempts().length > 0) {
+      <div class="section">
+        <h2 class="section__title">Mis intentos ({{ sortedAttempts().length }})</h2>
+        <ul class="attempts">
+          @for (attempt of sortedAttempts(); track attempt.id) {
+            <li class="attempt" [attr.data-status]="attempt.status">
+              <header class="attempt__head">
+                <span class="attempt__num">Intento #{{ attempt.attemptNumber }}</span>
+                <span class="attempt__badge">{{ attempt.status }}</span>
+                <time class="attempt__date">{{ attempt.submittedAt | date: 'medium' }}</time>
+              </header>
+              <pre class="attempt__code"><code>{{ attempt.code }}</code></pre>
+              @if (attempt.feedback) {
+                <div class="attempt__feedback">
+                  <span class="attempt__feedback-label">Retroalimentación:</span>
+                  <p>{{ attempt.feedback }}</p>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  }
+</section>

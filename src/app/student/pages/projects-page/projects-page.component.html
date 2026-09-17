@@ -1,0 +1,60 @@
+<!-- Catálogo de proyectos publicados para el estudiante -->
+<section class="projects">
+  <header class="projects__header">
+    <span class="projects__eyebrow">Portafolio</span>
+    <h1 class="projects__title">Proyectos</h1>
+    <p class="projects__lead">
+      Aplica lo aprendido construyendo entregas evaluables que puedes mostrar en tu portafolio.
+    </p>
+  </header>
+
+  <div class="projects__filters">
+    <label class="filter filter--grow">
+      <span>Buscar</span>
+      <input type="search"
+        placeholder="Palabra clave, tecnología..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <label class="filter">
+      <span>Dificultad</span>
+      <select [ngModel]="difficultyFilter()" (ngModelChange)="difficultyFilter.set($event); apply()">
+        <option value="">Todas</option>
+        @for (d of difficulties; track d) { <option [value]="d">{{ d }}</option> }
+      </select>
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="projects__placeholder">Cargando proyectos...</div>
+  } @else if (error()) {
+    <div class="projects__alert" role="alert">{{ error() }}</div>
+  } @else if (projects().length === 0) {
+    <div class="projects__empty">
+      <h3>No hay proyectos que coincidan</h3>
+      <p>Prueba con otros filtros o quítalos para ver todos los proyectos publicados.</p>
+    </div>
+  } @else {
+    <ul class="project-grid">
+      @for (project of projects(); track project.id) {
+        <li class="project" [attr.data-difficulty]="project.difficulty">
+          <a class="project__link" [routerLink]="['/student/projects', project.id]">
+            <header class="project__head">
+              <span class="project__difficulty">{{ project.difficulty }}</span>
+              <span class="project__xp">+{{ project.xpReward }} XP</span>
+            </header>
+            <h2 class="project__title">{{ project.name }}</h2>
+            <p class="project__desc">{{ project.description | stripHtml }}</p>
+            <ul class="project__meta">
+              @if (project.technologies) { <li>{{ project.technologies }}</li> }
+              <li>hasta {{ project.maxScore }} pts</li>
+              @if (project.deadlineAt) { <li>vence {{ project.deadlineAt | date: 'mediumDate' }}</li> }
+            </ul>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

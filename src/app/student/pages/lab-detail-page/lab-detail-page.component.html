@@ -1,0 +1,129 @@
+<!-- Detalle de laboratorio con sandbox de ejecución -->
+<section class="lab">
+  <a class="lab__back" routerLink="/student/labs">← Volver a laboratorios</a>
+
+  @if (loading()) {
+    <div class="lab__placeholder">Cargando laboratorio...</div>
+  } @else if (error() || !lab()) {
+    <div class="lab__alert" role="alert">{{ error() ?? 'No pudimos cargar el laboratorio.' }}</div>
+  } @else {
+    @let l = lab()!;
+
+    <header class="lab__header">
+      <span class="lab__lang">{{ l.language }}</span>
+      <h1 class="lab__title">{{ l.title }}</h1>
+      <div class="lab__desc rich-html" [innerHTML]="l.description"></div>
+    </header>
+
+    <div class="section">
+      <h2 class="section__title">Instrucciones</h2>
+      <div class="rich-html" [innerHTML]="l.instructions"></div>
+    </div>
+
+    @if (l.expectedOutput) {
+      <div class="section">
+        <h2 class="section__title">Salida esperada</h2>
+        <pre class="section__code"><code>{{ l.expectedOutput }}</code></pre>
+      </div>
+    }
+
+    <!-- SANDBOX ---------------------------------------------------------- -->
+    <div class="sandbox">
+      <h2 class="sandbox__title">Tu solución</h2>
+      <label class="sandbox__field">
+        <span>Código</span>
+        <textarea rows="16" class="sandbox__code"
+          spellcheck="false"
+          [ngModel]="code()"
+          (ngModelChange)="code.set($event)"
+          name="code"></textarea>
+      </label>
+
+      <label class="sandbox__field">
+        <span>Entrada estándar (opcional)</span>
+        <textarea rows="3" class="sandbox__stdin"
+          placeholder="Datos que se pasarán a stdin del programa."
+          [ngModel]="stdin()"
+          (ngModelChange)="stdin.set($event)"
+          name="stdin"></textarea>
+      </label>
+
+      <div class="sandbox__actions">
+        <button type="button" class="sandbox__run"
+          [disabled]="!canRun() || running()"
+          (click)="tryExecute()">
+          @if (running()) { Ejecutando... } @else { ▶ Probar }
+        </button>
+        <button type="button" class="sandbox__submit"
+          [disabled]="!canRun() || submitting()"
+          (click)="submit()">
+          @if (submitting()) { Enviando... } @else { Enviar entrega }
+        </button>
+      </div>
+
+      @if (runError()) { <p class="sandbox__error" role="alert">{{ runError() }}</p> }
+      @if (submitError()) { <p class="sandbox__error" role="alert">{{ submitError() }}</p> }
+      @if (submitOk()) { <p class="sandbox__success" role="status">{{ submitOk() }}</p> }
+
+      @if (runResult(); as r) {
+        <div class="result" [attr.data-ok]="(r.exitCode === 0).toString()">
+          <div class="result__meta">
+            <span class="result__label">Salida de la ejecución</span>
+            <span class="result__badge">exit {{ r.exitCode ?? '-' }}</span>
+            @if (r.executionTimeMs != null) {
+              <span class="result__time">{{ r.executionTimeMs }} ms</span>
+            }
+          </div>
+          @if (r.stdout) {
+            <div class="result__block">
+              <span class="result__block-label">stdout</span>
+              <pre><code>{{ r.stdout }}</code></pre>
+            </div>
+          }
+          @if (r.stderr) {
+            <div class="result__block result__block--err">
+              <span class="result__block-label">stderr</span>
+              <pre><code>{{ r.stderr }}</code></pre>
+            </div>
+          }
+          @if (r.message) {
+            <p class="result__message">{{ r.message }}</p>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- HISTORIAL --------------------------------------------------------- -->
+    @if (sortedSubmissions().length > 0) {
+      <div class="section">
+        <h2 class="section__title">Mis entregas ({{ sortedSubmissions().length }})</h2>
+        <ul class="submissions">
+          @for (submission of sortedSubmissions(); track submission.id) {
+            <li class="submission" [attr.data-ok]="(submission.exitCode === 0).toString()">
+              <header class="submission__head">
+                <time class="submission__date">{{ submission.submittedAt | date: 'medium' }}</time>
+                <span class="submission__badge">exit {{ submission.exitCode ?? '-' }}</span>
+                @if (submission.executionTimeMs != null) {
+                  <span class="submission__time">{{ submission.executionTimeMs }} ms</span>
+                }
+              </header>
+              <pre class="submission__code"><code>{{ submission.code }}</code></pre>
+              @if (submission.stdout) {
+                <div class="submission__io">
+                  <span class="submission__io-label">stdout</span>
+                  <pre><code>{{ submission.stdout }}</code></pre>
+                </div>
+              }
+              @if (submission.stderr) {
+                <div class="submission__io submission__io--err">
+                  <span class="submission__io-label">stderr</span>
+                  <pre><code>{{ submission.stderr }}</code></pre>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  }
+</section>

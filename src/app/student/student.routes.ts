@@ -56,6 +56,54 @@ export const studentRoutes: Routes = [
         title: 'Lección · Impulso Tech',
       },
       {
+        path: 'challenges',
+        loadComponent: () =>
+          import('./pages/challenges-page/challenges-page.component').then(
+            (m) => m.ChallengesPageComponent,
+          ),
+        title: 'Retos · Impulso Tech',
+      },
+      {
+        path: 'challenges/:id',
+        loadComponent: () =>
+          import('./pages/challenge-detail-page/challenge-detail-page.component').then(
+            (m) => m.ChallengeDetailPageComponent,
+          ),
+        title: 'Detalle del reto · Impulso Tech',
+      },
+      {
+        path: 'projects',
+        loadComponent: () =>
+          import('./pages/projects-page/projects-page.component').then(
+            (m) => m.ProjectsPageComponent,
+          ),
+        title: 'Proyectos · Impulso Tech',
+      },
+      {
+        path: 'projects/:id',
+        loadComponent: () =>
+          import('./pages/project-detail-page/project-detail-page.component').then(
+            (m) => m.ProjectDetailPageComponent,
+          ),
+        title: 'Detalle del proyecto · Impulso Tech',
+      },
+      {
+        path: 'labs',
+        loadComponent: () =>
+          import('./pages/labs-page/labs-page.component').then(
+            (m) => m.LabsPageComponent,
+          ),
+        title: 'Laboratorios · Impulso Tech',
+      },
+      {
+        path: 'labs/:id',
+        loadComponent: () =>
+          import('./pages/lab-detail-page/lab-detail-page.component').then(
+            (m) => m.LabDetailPageComponent,
+          ),
+        title: 'Detalle del laboratorio · Impulso Tech',
+      },
+      {
         path: 'resources',
         loadComponent: () =>
           import('./pages/resources-page/resources-page.component').then(

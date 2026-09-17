@@ -1,0 +1,114 @@
+<!-- Detalle de proyecto y envío de entrega -->
+<section class="project">
+  <a class="project__back" routerLink="/student/projects">← Volver a proyectos</a>
+
+  @if (loading()) {
+    <div class="project__placeholder">Cargando proyecto...</div>
+  } @else if (error() || !project()) {
+    <div class="project__alert" role="alert">{{ error() ?? 'No pudimos cargar el proyecto.' }}</div>
+  } @else {
+    @let p = project()!;
+
+    <header class="project__header">
+      <div class="project__meta">
+        <span class="project__difficulty" [attr.data-level]="p.difficulty">{{ p.difficulty }}</span>
+        <span class="project__xp">+{{ p.xpReward }} XP</span>
+        <span class="project__score">hasta {{ p.maxScore }} pts</span>
+        @if (p.deadlineAt) { <span class="project__deadline">vence {{ p.deadlineAt | date: 'medium' }}</span> }
+      </div>
+      <h1 class="project__title">{{ p.name }}</h1>
+      <div class="project__desc rich-html" [innerHTML]="p.description"></div>
+    </header>
+
+    @if (p.objective) {
+      <div class="section">
+        <h2 class="section__title">Objetivo</h2>
+        <div class="rich-html" [innerHTML]="p.objective"></div>
+      </div>
+    }
+
+    @if (p.instructions) {
+      <div class="section">
+        <h2 class="section__title">Instrucciones</h2>
+        <div class="rich-html" [innerHTML]="p.instructions"></div>
+      </div>
+    }
+
+    @if (p.requirements) {
+      <div class="section">
+        <h2 class="section__title">Requisitos</h2>
+        <div class="rich-html" [innerHTML]="p.requirements"></div>
+      </div>
+    }
+
+    @if (p.evaluationCriteria) {
+      <div class="section">
+        <h2 class="section__title">Criterios de evaluación</h2>
+        <div class="rich-html" [innerHTML]="p.evaluationCriteria"></div>
+      </div>
+    }
+
+    @if (p.resources) {
+      <div class="section">
+        <h2 class="section__title">Recursos</h2>
+        <div class="rich-html" [innerHTML]="p.resources"></div>
+      </div>
+    }
+
+    <form class="composer" (ngSubmit)="submit()">
+      <h2 class="composer__title">Enviar tu entrega</h2>
+      <label class="composer__field">
+        <span>URL de la entrega</span>
+        <input type="url" required maxlength="1000"
+          placeholder="https://github.com/tu-usuario/proyecto"
+          [ngModel]="submissionUrl()"
+          (ngModelChange)="submissionUrl.set($event)"
+          name="url" />
+      </label>
+      <label class="composer__field">
+        <span>Notas para el instructor (opcional)</span>
+        <textarea rows="4"
+          placeholder="Explica decisiones, dependencias, o dudas para la revisión."
+          [ngModel]="studentNotes()"
+          (ngModelChange)="studentNotes.set($event)"
+          name="notes"></textarea>
+      </label>
+      @if (submitError()) { <p class="composer__error" role="alert">{{ submitError() }}</p> }
+      @if (submitOk()) { <p class="composer__success" role="status">{{ submitOk() }}</p> }
+      <div class="composer__actions">
+        <button type="submit" class="composer__submit" [disabled]="!canSubmit() || submitting()">
+          @if (submitting()) { Enviando... } @else { Enviar entrega }
+        </button>
+      </div>
+    </form>
+
+    @if (sortedSubmissions().length > 0) {
+      <div class="section">
+        <h2 class="section__title">Mis entregas ({{ sortedSubmissions().length }})</h2>
+        <ul class="submissions">
+          @for (submission of sortedSubmissions(); track submission.id) {
+            <li class="submission" [attr.data-status]="submission.status">
+              <header class="submission__head">
+                <span class="submission__num">Entrega #{{ submission.submissionNumber }}</span>
+                <span class="submission__badge">{{ submission.status }}</span>
+                <time class="submission__date">{{ submission.submittedAt | date: 'medium' }}</time>
+              </header>
+              <a class="submission__url" [href]="submission.submissionUrl" target="_blank" rel="noopener noreferrer">
+                🔗 {{ submission.submissionUrl }}
+              </a>
+              @if (submission.grade != null) {
+                <p class="submission__grade">Calificación: <strong>{{ submission.grade }} / {{ p.maxScore }}</strong></p>
+              }
+              @if (submission.feedback) {
+                <div class="submission__feedback">
+                  <span class="submission__feedback-label">Retroalimentación:</span>
+                  <p>{{ submission.feedback }}</p>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  }
+</section>
