@@ -88,6 +88,14 @@ export const studentRoutes: Routes = [
         title: 'Detalle del proyecto · Impulso Tech',
       },
       {
+        path: 'evaluations/:id',
+        loadComponent: () =>
+          import('./pages/evaluation-page/evaluation-page.component').then(
+            (m) => m.EvaluationPageComponent,
+          ),
+        title: 'Evaluación · Impulso Tech',
+      },
+      {
         path: 'labs',
         loadComponent: () =>
           import('./pages/labs-page/labs-page.component').then(

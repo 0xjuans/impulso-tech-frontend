@@ -1,0 +1,155 @@
+<!-- Toma de evaluación por parte del estudiante -->
+<section class="eval">
+  <a class="eval__back" routerLink="/student/home">← Volver al panel</a>
+
+  @if (loading()) {
+    <div class="eval__placeholder">Cargando evaluación...</div>
+  } @else if (error() || !evaluation()) {
+    <div class="eval__alert" role="alert">{{ error() ?? 'No pudimos cargar la evaluación.' }}</div>
+  } @else {
+    @let e = evaluation()!;
+
+    <header class="eval__header">
+      <span class="eval__eyebrow">Evaluación</span>
+      <h1 class="eval__title">{{ e.name }}</h1>
+      <ul class="eval__meta">
+        <li>{{ e.passingPercentage }}% para aprobar</li>
+        <li>{{ e.maxAttempts }} intento{{ e.maxAttempts === 1 ? '' : 's' }}</li>
+        @if (e.timeLimitMinutes) { <li>{{ e.timeLimitMinutes }} min</li> }
+        <li>{{ orderedQuestions().length }} pregunta{{ orderedQuestions().length === 1 ? '' : 's' }}</li>
+      </ul>
+      @if (e.description) {
+        <div class="rich-html" [innerHTML]="e.description"></div>
+      }
+      @if (e.instructions) {
+        <div class="section">
+          <h2 class="section__title">Instrucciones</h2>
+          <div class="rich-html" [innerHTML]="e.instructions"></div>
+        </div>
+      }
+    </header>
+
+    @if (lastResult(); as r) {
+      <div class="result" [attr.data-passed]="r.passed.toString()">
+        <div class="result__badge">{{ r.passed ? '¡Aprobado!' : 'No aprobado' }}</div>
+        <div class="result__score">
+          <strong>{{ r.percentage }}%</strong>
+          <span>{{ r.totalScore }} / {{ r.maxPossibleScore }} puntos</span>
+        </div>
+        <p class="result__hint">
+          Necesitabas al menos {{ e.passingPercentage }}% para aprobar.
+        </p>
+      </div>
+    }
+
+    <!-- FASE 1: iniciar --------------------------------------------------- -->
+    @if (!hasAttemptInProgress()) {
+      <div class="start">
+        @if (canStart()) {
+          <button type="button" class="start__cta" [disabled]="starting()" (click)="startAttempt()">
+            @if (starting()) { Iniciando... } @else {
+              @if (attempts().length > 0) { Reintentar evaluación } @else { Iniciar intento }
+            }
+          </button>
+          <span class="start__hint">Al iniciar, comenzará a contar el tiempo del intento.</span>
+        } @else {
+          <p class="start__blocked">
+            Alcanzaste el máximo de intentos permitidos para esta evaluación.
+          </p>
+        }
+      </div>
+    }
+
+    <!-- FASE 2: responder ------------------------------------------------- -->
+    @if (hasAttemptInProgress()) {
+      <div class="attempt-info">
+        <span class="attempt-info__label">Tiempo transcurrido:</span>
+        <strong class="attempt-info__clock">{{ elapsedLabel() }}</strong>
+      </div>
+
+      <form class="quiz" (ngSubmit)="submit()">
+        @for (question of orderedQuestions(); track question.id; let i = $index) {
+          <fieldset class="question">
+            <legend class="question__legend">
+              <span class="question__num">Pregunta {{ i + 1 }}</span>
+              <span class="question__score">{{ question.score }} pt{{ question.score === 1 ? '' : 's' }}</span>
+            </legend>
+            <p class="question__text">{{ question.questionText }}</p>
+
+            @switch (question.type) {
+              @case ('SELECCION_MULTIPLE') {
+                <div class="options">
+                  @for (opt of optionsFor(question); track $index) {
+                    <label class="option" [class.option--selected]="answerOf(question) === $index">
+                      <input type="radio"
+                        [name]="'q_' + question.id"
+                        [checked]="answerOf(question) === $index"
+                        (change)="setAnswer(question, $index)" />
+                      <span>{{ opt }}</span>
+                    </label>
+                  }
+                </div>
+              }
+              @case ('VERDADERO_FALSO') {
+                <div class="options options--boolean">
+                  <label class="option" [class.option--selected]="answerOf(question) === true">
+                    <input type="radio"
+                      [name]="'q_' + question.id"
+                      [checked]="answerOf(question) === true"
+                      (change)="setAnswer(question, true)" />
+                    <span>Verdadero</span>
+                  </label>
+                  <label class="option" [class.option--selected]="answerOf(question) === false">
+                    <input type="radio"
+                      [name]="'q_' + question.id"
+                      [checked]="answerOf(question) === false"
+                      (change)="setAnswer(question, false)" />
+                    <span>Falso</span>
+                  </label>
+                </div>
+              }
+              @case ('RESPUESTA_CORTA') {
+                <input type="text" class="short-answer"
+                  placeholder="Escribe tu respuesta"
+                  [value]="(answerOf(question) ?? '')"
+                  (input)="setAnswer(question, ($any($event.target)).value)" />
+              }
+            }
+          </fieldset>
+        }
+
+        @if (submitError()) {
+          <p class="quiz__error" role="alert">{{ submitError() }}</p>
+        }
+
+        <div class="quiz__actions">
+          <button type="submit" class="quiz__submit" [disabled]="!canSubmit() || submitting()">
+            @if (submitting()) { Enviando... } @else { Enviar respuestas }
+          </button>
+        </div>
+      </form>
+    }
+
+    <!-- HISTORIAL -------------------------------------------------------- -->
+    @if (sortedAttempts().length > 0) {
+      <div class="section">
+        <h2 class="section__title">Mis intentos ({{ sortedAttempts().length }})</h2>
+        <ul class="attempts">
+          @for (a of sortedAttempts(); track a.id) {
+            <li class="attempt" [attr.data-passed]="a.passed.toString()">
+              <div class="attempt__meta">
+                <time>{{ a.startedAt | date: 'medium' }}</time>
+                @if (a.finishedAt) {
+                  <span class="attempt__result">{{ a.percentage }}% · {{ a.totalScore }}/{{ a.maxPossibleScore }}</span>
+                  <span class="attempt__badge">{{ a.passed ? 'Aprobado' : 'No aprobado' }}</span>
+                } @else {
+                  <span class="attempt__badge attempt__badge--open">En curso</span>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  }
+</section>
