@@ -2,23 +2,27 @@
   @if (label) {
     <span class="picker__group-label">{{ label }}</span>
   }
-  <div class="picker__grid" [class.picker__grid--three]="!showLesson">
-    <label class="picker__field">
-      <span class="picker__label">Ruta de aprendizaje</span>
-      <select
-        [ngModel]="routeId()"
-        (ngModelChange)="onRouteChange($event)"
-        [disabled]="loadingRoutes()">
-        <option [ngValue]="null">
-          @if (loadingRoutes()) { Cargando rutas... }
-          @else if (routes().length === 0) { Sin rutas disponibles }
-          @else { Sin asignar }
-        </option>
-        @for (route of routes(); track route.id) {
-          <option [ngValue]="route.id">{{ route.name }} · {{ route.status }}</option>
-        }
-      </select>
-    </label>
+  <div class="picker__grid"
+       [class.picker__grid--three]="!showLesson || !showRoute"
+       [class.picker__grid--two]="!showLesson && !showRoute">
+    @if (showRoute) {
+      <label class="picker__field">
+        <span class="picker__label">Ruta de aprendizaje</span>
+        <select
+          [ngModel]="routeId()"
+          (ngModelChange)="onRouteChange($event)"
+          [disabled]="loadingRoutes()">
+          <option [ngValue]="null">
+            @if (loadingRoutes()) { Cargando rutas... }
+            @else if (routes().length === 0) { Sin rutas disponibles }
+            @else { Sin asignar }
+          </option>
+          @for (route of routes(); track route.id) {
+            <option [ngValue]="route.id">{{ route.name }} · {{ route.status }}</option>
+          }
+        </select>
+      </label>
+    }
 
     <label class="picker__field">
       <span class="picker__label">Curso</span>

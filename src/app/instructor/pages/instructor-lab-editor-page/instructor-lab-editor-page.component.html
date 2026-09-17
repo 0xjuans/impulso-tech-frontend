@@ -1,0 +1,92 @@
+<!-- Editor de laboratorio -->
+<section class="editor">
+  <a class="editor__back" routerLink="/instructor/labs">← Volver a laboratorios</a>
+
+  <header class="editor__header">
+    <span class="editor__eyebrow">{{ isEditing() ? 'Editar laboratorio' : 'Nuevo laboratorio' }}</span>
+    <h1 class="editor__title">
+      @if (isEditing() && loaded()) { {{ loaded()!.title }} } @else { Crea un laboratorio }
+    </h1>
+    @if (isEditing() && loaded()) {
+      <p class="editor__meta">Lenguaje: <strong>{{ loaded()!.language }}</strong> · Estado: <strong>{{ loaded()!.status }}</strong></p>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="editor__placeholder">Cargando laboratorio...</div>
+  } @else if (error()) {
+    <div class="editor__alert" role="alert">{{ error() }}</div>
+  } @else {
+    <form class="editor__form" (ngSubmit)="submit()">
+      <div class="field">
+        <span class="field__label">Título *</span>
+        <input type="text" maxlength="180"
+          placeholder="Ej: Hola mundo con Python"
+          [ngModel]="title()" (ngModelChange)="title.set($event)" name="title" />
+      </div>
+
+      <div class="editor__row">
+        <label class="field">
+          <span>Lenguaje *</span>
+          <input type="text" maxlength="60"
+            placeholder="python, javascript, java..."
+            [ngModel]="language()" (ngModelChange)="language.set($event)" name="lang" />
+        </label>
+        <label class="field">
+          <span>Estado</span>
+          <select [ngModel]="status()" (ngModelChange)="status.set($event)" name="status">
+            @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+          </select>
+        </label>
+      </div>
+
+      <div class="field">
+        <span class="field__label">Descripción *</span>
+        <app-rich-text-editor
+          placeholder="¿Qué debe lograr el estudiante en este laboratorio?"
+          [minHeight]="120"
+          [ngModel]="description()" (ngModelChange)="description.set($event)" name="description" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Instrucciones *</span>
+        <app-rich-text-editor
+          placeholder="Explicación paso a paso del laboratorio."
+          [minHeight]="180"
+          [ngModel]="instructions()" (ngModelChange)="instructions.set($event)" name="instructions" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Código inicial (starter code)</span>
+        <textarea rows="6" class="editor__mono"
+          placeholder="Código que verá el estudiante al abrir el laboratorio."
+          [ngModel]="starterCode()" (ngModelChange)="starterCode.set($event)" name="starter"></textarea>
+      </div>
+
+      <div class="field">
+        <span class="field__label">Salida esperada (opcional)</span>
+        <textarea rows="4" class="editor__mono"
+          placeholder="Ej: Hola, mundo!"
+          [ngModel]="expectedOutput()" (ngModelChange)="expectedOutput.set($event)" name="expected"></textarea>
+      </div>
+
+      <app-content-context-picker
+        label="Contexto educativo (opcional)"
+        [showRoute]="false"
+        [showLesson]="true"
+        [value]="contextValue()"
+        (valueChange)="onContextChange($event)" />
+
+      @if (saveError()) {
+        <p class="editor__error" role="alert">{{ saveError() }}</p>
+      }
+
+      <div class="editor__actions">
+        <a class="editor__ghost" routerLink="/instructor/labs">Cancelar</a>
+        <button type="submit" class="editor__submit" [disabled]="!canSubmit() || saving()">
+          @if (saving()) { Guardando... } @else { {{ isEditing() ? 'Guardar cambios' : 'Crear laboratorio' }} }
+        </button>
+      </div>
+    </form>
+  }
+</section>

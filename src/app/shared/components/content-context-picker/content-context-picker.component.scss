@@ -27,6 +27,7 @@
 }
 
 .picker__grid--three { grid-template-columns: repeat(3, 1fr); }
+.picker__grid--two   { grid-template-columns: repeat(2, 1fr); }
 
 .picker__field {
   display: flex;

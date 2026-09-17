@@ -72,6 +72,13 @@ export class ContentContextPickerComponent implements OnInit, OnChanges {
   /** Oculta el selector de lección cuando el modelo no la contempla. */
   @Input() showLesson = true;
 
+  /**
+   * Oculta el selector de ruta de aprendizaje cuando el modelo no la
+   * necesita (por ejemplo laboratorios, que solo se relacionan con
+   * curso y lección).
+   */
+  @Input() showRoute = true;
+
   /** Etiqueta opcional que aparece antes del grupo de selectores. */
   @Input() label = '';
 
@@ -107,7 +114,8 @@ export class ContentContextPickerComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.applyExternalValue(this.value);
-    this.loadRoutes();
+    if (this.showRoute) this.loadRoutes();
+    else this.loadingRoutes.set(false);
     this.loadCourses();
     if (this.courseId() !== null) this.loadModulesFor(this.courseId()!);
     if (this.moduleId() !== null) this.loadLessonsFor(this.moduleId()!);

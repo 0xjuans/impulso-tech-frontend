@@ -116,6 +116,30 @@ export const instructorRoutes: Routes = [
         title: 'Entregas del proyecto · Impulso Tech',
       },
       {
+        path: 'labs',
+        loadComponent: () =>
+          import(
+            './pages/instructor-labs-page/instructor-labs-page.component'
+          ).then((m) => m.InstructorLabsPageComponent),
+        title: 'Laboratorios · Impulso Tech',
+      },
+      {
+        path: 'labs/new',
+        loadComponent: () =>
+          import(
+            './pages/instructor-lab-editor-page/instructor-lab-editor-page.component'
+          ).then((m) => m.InstructorLabEditorPageComponent),
+        title: 'Nuevo laboratorio · Impulso Tech',
+      },
+      {
+        path: 'labs/:id',
+        loadComponent: () =>
+          import(
+            './pages/instructor-lab-editor-page/instructor-lab-editor-page.component'
+          ).then((m) => m.InstructorLabEditorPageComponent),
+        title: 'Editar laboratorio · Impulso Tech',
+      },
+      {
         path: 'evaluations',
         loadComponent: () =>
           import(

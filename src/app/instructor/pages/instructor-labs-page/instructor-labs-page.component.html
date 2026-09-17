@@ -1,0 +1,81 @@
+<!-- Gestión de laboratorios del instructor -->
+<section class="labs">
+  <header class="labs__header">
+    <div>
+      <span class="labs__eyebrow">Gestión</span>
+      <h1 class="labs__title">Laboratorios</h1>
+      <p class="labs__lead">
+        Crea prácticas ejecutables donde el estudiante escribe código y lo prueba
+        contra una salida esperada.
+      </p>
+    </div>
+    <a class="labs__cta" routerLink="/instructor/labs/new">+ Nuevo laboratorio</a>
+  </header>
+
+  <div class="labs__stats">
+    <div class="stat"><span class="stat__num">{{ counts().total }}</span><span class="stat__label">Total</span></div>
+    <div class="stat stat--published"><span class="stat__num">{{ counts().published }}</span><span class="stat__label">Publicados</span></div>
+    <div class="stat stat--draft"><span class="stat__num">{{ counts().draft }}</span><span class="stat__label">Borradores</span></div>
+    <div class="stat stat--disabled"><span class="stat__num">{{ counts().disabled }}</span><span class="stat__label">Deshabilitados</span></div>
+  </div>
+
+  <div class="labs__filters">
+    <label class="filter filter--grow">
+      <span>Buscar</span>
+      <input type="search"
+        placeholder="Título, descripción o instrucciones..."
+        [ngModel]="q()"
+        (ngModelChange)="q.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <label class="filter">
+      <span>Lenguaje</span>
+      <input type="text"
+        placeholder="ej: python"
+        [ngModel]="language()"
+        (ngModelChange)="language.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="labs__placeholder">Cargando laboratorios...</div>
+  } @else if (error()) {
+    <div class="labs__alert" role="alert">{{ error() }}</div>
+  } @else if (labs().length === 0) {
+    <div class="labs__empty">
+      <h3>Aún no hay laboratorios</h3>
+      <p>Crea el primero para que tus estudiantes puedan practicar código.</p>
+      <a class="labs__cta" routerLink="/instructor/labs/new">+ Nuevo laboratorio</a>
+    </div>
+  } @else {
+    <ul class="lab-list">
+      @for (lab of labs(); track lab.id) {
+        <li class="lab" [attr.data-status]="lab.status">
+          <div class="lab__main">
+            <a class="lab__title-link" [routerLink]="['/instructor/labs', lab.id]">
+              <h2 class="lab__title">{{ lab.title }}</h2>
+            </a>
+            <p class="lab__desc">{{ lab.description | stripHtml }}</p>
+            <ul class="lab__meta">
+              <li class="lab__badge lab__badge--status">{{ lab.status }}</li>
+              <li class="lab__lang">{{ lab.language }}</li>
+              @if (lab.expectedOutput) { <li>con salida esperada</li> }
+              <li class="lab__date">actualizado {{ lab.updatedAt | date: 'shortDate' }}</li>
+            </ul>
+          </div>
+          <div class="lab__actions">
+            <a class="lab__edit" [routerLink]="['/instructor/labs', lab.id]">Editar</a>
+            <button type="button"
+              class="lab__action lab__action--danger"
+              [disabled]="pendingDeleteId() === lab.id"
+              (click)="deleteLab(lab)">
+              Eliminar
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>
