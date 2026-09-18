@@ -82,6 +82,7 @@ export class StudentShellComponent {
     { path: 'community', icon: 'users', label: 'Comunidad' },
     { path: 'messages', icon: 'chat', label: 'Mensajes' },
     { path: 'notifications', icon: 'bell', label: 'Notificaciones' },
+    { path: 'certificates', icon: 'certificate', label: 'Certificados' },
     { path: 'profile', icon: 'user', label: 'Mi perfil' },
   ];
 

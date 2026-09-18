@@ -1,0 +1,53 @@
+<!-- Listado de certificados del estudiante (RF-047) -->
+<section class="certs">
+  <header class="certs__header">
+    <div>
+      <span class="certs__eyebrow">Certificados</span>
+      <h1 class="certs__title">Mis certificados</h1>
+      <p class="certs__subtitle">Descarga y comparte los certificados de los cursos que completaste.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="certs__placeholder">Cargando certificados...</div>
+  } @else if (error()) {
+    <div class="certs__alert" role="alert">{{ error() }}</div>
+  } @else if (!hasCertificates()) {
+    <div class="certs__empty">
+      <p><strong>Aún no tienes certificados.</strong></p>
+      <p>Completa un curso que emita certificado y aparecerá aquí automáticamente.</p>
+      <a class="certs__cta" routerLink="/student/courses">Ver cursos disponibles</a>
+    </div>
+  } @else {
+    <ul class="certs__list">
+      @for (c of certificates(); track c.id) {
+        <li class="cert">
+          <div class="cert__body">
+            <span class="cert__eyebrow">Curso completado</span>
+            <h2 class="cert__course">{{ c.courseName }}</h2>
+            <p class="cert__meta">
+              Emitido el <time>{{ c.issuedAt | date: 'longDate' }}</time>
+              · a nombre de <strong>{{ c.recipientName }}</strong>
+            </p>
+            <p class="cert__code">
+              Código: <span>{{ c.verificationCode }}</span>
+            </p>
+          </div>
+          <div class="cert__actions">
+            <a class="cert__download"
+               [href]="downloadUrl(c.verificationCode)"
+               target="_blank" rel="noopener"
+               [download]="'certificado-' + c.verificationCode + '.pdf'">
+              Descargar PDF
+            </a>
+            <a class="cert__verify"
+               [routerLink]="verifyPath(c.verificationCode)"
+               target="_blank" rel="noopener">
+              Verificar
+            </a>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

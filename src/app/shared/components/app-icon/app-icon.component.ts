@@ -28,7 +28,8 @@ export type AppIconName =
   | 'beaker'
   | 'target'
   | 'sparkles'
-  | 'trophy';
+  | 'trophy'
+  | 'certificate';
 
 /**
  * Componente que renderiza un icono SVG monocromático usando el
@@ -73,6 +74,7 @@ export type AppIconName =
         @case ('target') { <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" /> }
         @case ('sparkles') { <path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.5 5.5l2 2m9 9 2 2m0-13-2 2m-9 9-2 2" /> }
         @case ('trophy') { <path d="M8 21h8M12 17v4M6 3h12v6a6 6 0 0 1-12 0V3zM6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3" /> }
+        @case ('certificate') { <path d="M4 4h16v11H4zM4 15l3 5 2-3 3 3 3-3 2 3 3-5M9 8h6M8 11h8" /> }
       }
     </svg>
   `,

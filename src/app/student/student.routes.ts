@@ -152,6 +152,14 @@ export const studentRoutes: Routes = [
         title: 'Mensajes · Impulso Tech',
       },
       {
+        path: 'certificates',
+        loadComponent: () =>
+          import('./pages/certificates-page/certificates-page.component').then(
+            (m) => m.CertificatesPageComponent,
+          ),
+        title: 'Mis certificados · Impulso Tech',
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./pages/profile-page/profile-page.component').then(
