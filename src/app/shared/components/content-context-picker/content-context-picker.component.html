@@ -1,0 +1,84 @@
+<div class="picker">
+  @if (label) {
+    <span class="picker__group-label">{{ label }}</span>
+  }
+  <div class="picker__grid"
+       [class.picker__grid--three]="!showLesson || !showRoute"
+       [class.picker__grid--two]="!showLesson && !showRoute">
+    @if (showRoute) {
+      <label class="picker__field">
+        <span class="picker__label">Ruta de aprendizaje</span>
+        <select
+          [ngModel]="routeId()"
+          (ngModelChange)="onRouteChange($event)"
+          [disabled]="loadingRoutes()">
+          <option [ngValue]="null">
+            @if (loadingRoutes()) { Cargando rutas... }
+            @else if (routes().length === 0) { Sin rutas disponibles }
+            @else { Sin asignar }
+          </option>
+          @for (route of routes(); track route.id) {
+            <option [ngValue]="route.id">{{ route.name }} · {{ route.status }}</option>
+          }
+        </select>
+      </label>
+    }
+
+    <label class="picker__field">
+      <span class="picker__label">Curso</span>
+      <select
+        [ngModel]="courseId()"
+        (ngModelChange)="onCourseChange($event)"
+        [disabled]="loadingCourses()">
+        <option [ngValue]="null">
+          @if (loadingCourses()) { Cargando cursos... }
+          @else if (filteredCourses().length === 0) {
+            @if (routeId()) { Esta ruta no tiene cursos } @else { Sin cursos disponibles }
+          }
+          @else { Sin asignar }
+        </option>
+        @for (course of filteredCourses(); track course.id) {
+          <option [ngValue]="course.id">{{ course.name }} · {{ course.status }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="picker__field">
+      <span class="picker__label">Módulo</span>
+      <select
+        [ngModel]="moduleId()"
+        (ngModelChange)="onModuleChange($event)"
+        [disabled]="!courseId() || loadingModules()">
+        <option [ngValue]="null">
+          @if (!courseId()) { Elige un curso primero }
+          @else if (loadingModules()) { Cargando módulos... }
+          @else if (modules().length === 0) { Este curso no tiene módulos }
+          @else { Sin asignar }
+        </option>
+        @for (m of modules(); track m.id) {
+          <option [ngValue]="m.id">#{{ m.orderIndex }} · {{ m.name }}</option>
+        }
+      </select>
+    </label>
+
+    @if (showLesson) {
+      <label class="picker__field">
+        <span class="picker__label">Lección</span>
+        <select
+          [ngModel]="lessonId()"
+          (ngModelChange)="onLessonChange($event)"
+          [disabled]="!moduleId() || loadingLessons()">
+          <option [ngValue]="null">
+            @if (!moduleId()) { Elige un módulo primero }
+            @else if (loadingLessons()) { Cargando lecciones... }
+            @else if (lessons().length === 0) { Este módulo no tiene lecciones }
+            @else { Sin asignar }
+          </option>
+          @for (l of lessons(); track l.id) {
+            <option [ngValue]="l.id">#{{ l.orderIndex }} · {{ l.title }}</option>
+          }
+        </select>
+      </label>
+    }
+  </div>
+</div>

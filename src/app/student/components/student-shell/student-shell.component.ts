@@ -75,9 +75,14 @@ export class StudentShellComponent {
     { path: 'home', icon: 'home', label: 'Inicio' },
     { path: 'routes', icon: 'route', label: 'Rutas' },
     { path: 'courses', icon: 'book', label: 'Cursos' },
+    { path: 'challenges', icon: 'target', label: 'Retos' },
+    { path: 'projects', icon: 'trophy', label: 'Proyectos' },
+    { path: 'labs', icon: 'sparkles', label: 'Laboratorios' },
     { path: 'resources', icon: 'beaker', label: 'Recursos' },
+    { path: 'community', icon: 'users', label: 'Comunidad' },
     { path: 'messages', icon: 'chat', label: 'Mensajes' },
     { path: 'notifications', icon: 'bell', label: 'Notificaciones' },
+    { path: 'certificates', icon: 'certificate', label: 'Certificados' },
     { path: 'profile', icon: 'user', label: 'Mi perfil' },
   ];
 

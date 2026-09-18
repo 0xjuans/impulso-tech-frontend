@@ -1,0 +1,56 @@
+<!-- Catálogo de laboratorios publicados para el estudiante -->
+<section class="labs">
+  <header class="labs__header">
+    <span class="labs__eyebrow">Práctica</span>
+    <h1 class="labs__title">Laboratorios</h1>
+    <p class="labs__lead">
+      Escribe código, ejecútalo en el sandbox y envía tu solución cuando funcione.
+    </p>
+  </header>
+
+  <div class="labs__filters">
+    <label class="filter filter--grow">
+      <span>Buscar</span>
+      <input type="search"
+        placeholder="Palabra clave..."
+        [ngModel]="q()"
+        (ngModelChange)="q.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <label class="filter">
+      <span>Lenguaje</span>
+      <input type="text"
+        placeholder="python, javascript, java..."
+        [ngModel]="language()"
+        (ngModelChange)="language.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="labs__placeholder">Cargando laboratorios...</div>
+  } @else if (error()) {
+    <div class="labs__alert" role="alert">{{ error() }}</div>
+  } @else if (labs().length === 0) {
+    <div class="labs__empty">
+      <h3>No hay laboratorios que coincidan</h3>
+      <p>Prueba con otros filtros o quítalos para ver todos los laboratorios publicados.</p>
+    </div>
+  } @else {
+    <ul class="lab-grid">
+      @for (lab of labs(); track lab.id) {
+        <li class="lab">
+          <a class="lab__link" [routerLink]="['/student/labs', lab.id]">
+            <span class="lab__lang">{{ lab.language }}</span>
+            <h2 class="lab__title">{{ lab.title }}</h2>
+            <p class="lab__desc">{{ lab.description | stripHtml }}</p>
+            @if (lab.expectedOutput) {
+              <span class="lab__has-output">✓ Con salida esperada</span>
+            }
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

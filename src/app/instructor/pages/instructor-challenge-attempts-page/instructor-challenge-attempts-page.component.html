@@ -1,0 +1,108 @@
+<!-- Revisión de intentos recibidos por un reto -->
+<section class="attempts">
+  <a class="attempts__back" [routerLink]="challengeId() ? ['/instructor/challenges', challengeId()] : ['/instructor/challenges']">
+    ← Volver al reto
+  </a>
+
+  <header class="attempts__header">
+    <span class="attempts__eyebrow">Revisión</span>
+    <h1 class="attempts__title">
+      Intentos {{ challenge() ? '· ' + challenge()!.name : '' }}
+    </h1>
+    <p class="attempts__lead">
+      Revisa los envíos recibidos y aplica el estado correspondiente. Aprobar un
+      intento otorga la XP asociada al reto al estudiante.
+    </p>
+  </header>
+
+  <div class="attempts__stats">
+    <div class="stat"><span class="stat__num">{{ counts().total }}</span><span class="stat__label">Total</span></div>
+    <div class="stat stat--pending"><span class="stat__num">{{ counts().pending }}</span><span class="stat__label">Pendientes</span></div>
+    <div class="stat stat--approved"><span class="stat__num">{{ counts().approved }}</span><span class="stat__label">Aprobados</span></div>
+    <div class="stat stat--rejected"><span class="stat__num">{{ counts().rejected }}</span><span class="stat__label">Rechazados</span></div>
+  </div>
+
+  <div class="attempts__filters">
+    <label class="filter">
+      <span>Estado</span>
+      <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (s of statuses; track s) {
+          <option [value]="s">{{ s }}</option>
+        }
+      </select>
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Recargar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="attempts__placeholder">Cargando intentos...</div>
+  } @else if (error()) {
+    <div class="attempts__alert" role="alert">{{ error() }}</div>
+  } @else if (attempts().length === 0) {
+    <div class="attempts__empty">
+      <h3>No hay intentos que mostrar</h3>
+      <p>Cuando los estudiantes envíen soluciones aparecerán aquí.</p>
+    </div>
+  } @else {
+    <ul class="attempt-list">
+      @for (attempt of attempts(); track attempt.id) {
+        <li class="attempt" [attr.data-status]="attempt.status">
+          <header class="attempt__head">
+            <div>
+              <h2 class="attempt__author">{{ attempt.userFullName }}</h2>
+              <p class="attempt__meta">
+                Intento #{{ attempt.attemptNumber }} · {{ attempt.language }}
+                · enviado {{ attempt.submittedAt | date: 'medium' }}
+              </p>
+            </div>
+            <span class="attempt__badge">{{ attempt.status }}</span>
+          </header>
+
+          <pre class="attempt__code"><code>{{ attempt.code }}</code></pre>
+
+          @if (attempt.feedback) {
+            <div class="attempt__feedback">
+              <span class="attempt__feedback-label">Retroalimentación previa:</span>
+              <p>{{ attempt.feedback }}</p>
+            </div>
+          }
+
+          @if (reviewingId() === attempt.id) {
+            <form class="review" (ngSubmit)="submitReview(attempt)">
+              <label class="review__field">
+                <span>Nuevo estado</span>
+                <select [ngModel]="reviewStatus()" (ngModelChange)="reviewStatus.set($event)" name="rst">
+                  <option value="APROBADO">APROBADO</option>
+                  <option value="RECHAZADO">RECHAZADO</option>
+                  <option value="PENDIENTE">Dejar pendiente</option>
+                </select>
+              </label>
+              <label class="review__field">
+                <span>Retroalimentación</span>
+                <textarea rows="3"
+                  placeholder="Explica qué está bien, qué falta o cómo mejorar la solución."
+                  [ngModel]="reviewFeedback()" (ngModelChange)="reviewFeedback.set($event)" name="rfb"></textarea>
+              </label>
+              @if (reviewError()) {
+                <p class="review__error" role="alert">{{ reviewError() }}</p>
+              }
+              <div class="review__actions">
+                <button type="button" class="review__ghost" (click)="cancelReview()" [disabled]="submittingReview()">Cancelar</button>
+                <button type="submit" class="review__submit" [disabled]="submittingReview()">
+                  {{ submittingReview() ? 'Guardando...' : 'Guardar revisión' }}
+                </button>
+              </div>
+            </form>
+          } @else {
+            <div class="attempt__actions">
+              <button type="button" class="attempt__review" (click)="startReview(attempt)">
+                {{ attempt.status === 'PENDIENTE' ? 'Revisar' : 'Editar revisión' }}
+              </button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>

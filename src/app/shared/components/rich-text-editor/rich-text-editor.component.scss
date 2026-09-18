@@ -1,0 +1,143 @@
+/* Editor de texto enriquecido -------------------------------------------- */
+
+:host { display: block; width: 100%; }
+
+.rte {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(32, 21, 21, 0.12);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+  overflow: hidden;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.rte:focus-within {
+  border-color: rgba(255, 79, 0, 0.55);
+  box-shadow: 0 0 0 3px rgba(255, 79, 0, 0.1);
+}
+
+.rte--disabled { opacity: 0.55; pointer-events: none; }
+
+/* Toolbar -------------------------------------------------------------- */
+
+.rte__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 6px 8px;
+  background: rgba(32, 21, 21, 0.03);
+  border-bottom: 1px solid rgba(32, 21, 21, 0.08);
+}
+
+.rte__btn {
+  min-width: 30px;
+  height: 28px;
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.rte__btn[data-cmd='b'] { font-weight: 800; }
+.rte__btn[data-cmd='i'] { font-style: italic; }
+.rte__btn[data-cmd='u'] { text-decoration: underline; }
+.rte__btn[data-cmd='s'] { text-decoration: line-through; }
+.rte__btn[data-cmd='code'] {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+}
+
+.rte__btn:hover:not(:disabled) {
+  background: rgba(255, 79, 0, 0.1);
+  color: var(--color-primary, #ff4f00);
+}
+
+.rte__btn:disabled { cursor: not-allowed; opacity: 0.5; }
+
+/* Editable ------------------------------------------------------------- */
+
+.rte__editable {
+  padding: 12px 14px;
+  color: var(--color-ink);
+  font-size: 14px;
+  line-height: 1.6;
+  outline: none;
+  overflow: auto;
+  max-height: 480px;
+}
+
+.rte__editable--empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-body);
+  opacity: 0.6;
+  pointer-events: none;
+  position: relative;
+  top: 0;
+}
+
+.rte__editable p { margin: 0 0 8px; }
+.rte__editable p:last-child { margin-bottom: 0; }
+
+.rte__editable h1,
+.rte__editable h2,
+.rte__editable h3 {
+  margin: 12px 0 8px;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+.rte__editable h3 { font-size: 16px; font-weight: 700; }
+
+.rte__editable ul,
+.rte__editable ol {
+  margin: 6px 0 10px;
+  padding-left: 22px;
+}
+
+.rte__editable li { margin: 2px 0; }
+
+.rte__editable a {
+  color: var(--color-primary, #ff4f00);
+  text-decoration: underline;
+}
+
+.rte__editable pre {
+  margin: 8px 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: #1e1414;
+  color: #f8f8f2;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.rte__editable blockquote {
+  margin: 8px 0;
+  padding: 8px 14px;
+  border-left: 3px solid var(--color-primary, #ff4f00);
+  background: rgba(255, 79, 0, 0.04);
+  color: var(--color-body);
+  font-style: italic;
+}
+
+.rte__editable strong { font-weight: 700; color: var(--color-ink); }
+.rte__editable em { font-style: italic; }
+.rte__editable code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(32, 21, 21, 0.06);
+}

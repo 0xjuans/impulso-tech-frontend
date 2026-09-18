@@ -13,6 +13,7 @@ import { finalize } from 'rxjs';
 import { ContentStatus } from '../../../core/api/learning-routes/learning-route.dto';
 import { Course, CreateCourseRequest } from '../../../core/api/courses/course.dto';
 import { CoursesService } from '../../../core/api/courses/courses.service';
+import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 
 /**
  * Página con los cursos gestionados por el instructor (RF-040).
@@ -24,7 +25,7 @@ import { CoursesService } from '../../../core/api/courses/courses.service';
 @Component({
   selector: 'app-instructor-courses-page',
   standalone: true,
-  imports: [DatePipe, FormsModule, RouterLink],
+  imports: [DatePipe, FormsModule, RouterLink, StripHtmlPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-courses-page.component.html',
   styleUrl: './instructor-courses-page.component.scss',

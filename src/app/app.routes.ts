@@ -35,6 +35,16 @@ export const routes: Routes = [
     loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),
   },
   {
+    // Página pública de verificación de certificados (RF-047). No requiere
+    // autenticación; el backend expone /api/certificates/{code} sin JWT.
+    path: 'verify/:code',
+    loadComponent: () =>
+      import('./verify/verify-certificate-page/verify-certificate-page.component').then(
+        (m) => m.VerifyCertificatePageComponent,
+      ),
+    title: 'Verificar certificado · Impulso Tech',
+  },
+  {
     path: '**',
     redirectTo: '',
   },

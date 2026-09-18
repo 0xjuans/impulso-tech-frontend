@@ -143,7 +143,7 @@
             <a class="course-row__name" [routerLink]="['/instructor/courses', course.id]">
               {{ course.name }}
             </a>
-            <p class="course-row__desc">{{ course.description }}</p>
+            <p class="course-row__desc">{{ course.description | stripHtml }}</p>
             <div class="course-row__meta">
               <span>{{ course.difficulty }}</span>
               @if (course.technology) {

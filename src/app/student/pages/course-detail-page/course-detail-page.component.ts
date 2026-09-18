@@ -17,6 +17,7 @@ import { EnrollmentsService } from '../../../core/api/enrollments/enrollments.se
 import { Lesson } from '../../../core/api/lessons/lesson.dto';
 import { LessonsService } from '../../../core/api/lessons/lessons.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
+import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 
 /**
  * Página de detalle de un curso (RF-040, RF-011).
@@ -29,7 +30,7 @@ import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.c
   selector: 'app-course-detail-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, AppIconComponent],
+  imports: [RouterLink, AppIconComponent, StripHtmlPipe],
   templateUrl: './course-detail-page.component.html',
   styleUrl: './course-detail-page.component.scss',
 })

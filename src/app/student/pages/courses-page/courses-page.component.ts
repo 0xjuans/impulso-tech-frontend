@@ -4,6 +4,7 @@ import { finalize } from 'rxjs';
 
 import { Course } from '../../../core/api/courses/course.dto';
 import { CoursesService } from '../../../core/api/courses/courses.service';
+import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 
 /**
  * Página que muestra el catálogo de cursos publicados (RF-040).
@@ -16,7 +17,7 @@ import { CoursesService } from '../../../core/api/courses/courses.service';
   selector: 'app-courses-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, StripHtmlPipe],
   templateUrl: './courses-page.component.html',
   styleUrl: './courses-page.component.scss',
 })

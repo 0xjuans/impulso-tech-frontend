@@ -83,8 +83,13 @@ export class GoogleSignInButtonComponent implements AfterViewInit {
   /** Se emite cuando el SDK reporta un error antes de emitir credential. */
   @Output() readonly errored = new EventEmitter<string>();
 
-  @ViewChild('container', { static: true })
-  private readonly container!: ElementRef<HTMLDivElement>;
+  // Nota: no se puede usar {static: true} porque el div #container vive
+  // dentro de un bloque @if. Con static:true, ViewChild se resuelve antes
+  // del primer change detection —cuando el @if aun no ha evaluado su
+  // condicion— y la referencia queda undefined. Sin static (default), se
+  // resuelve tras el primer CD, cuando el elemento ya existe en el DOM.
+  @ViewChild('container')
+  private readonly container?: ElementRef<HTMLDivElement>;
 
   private readonly zone = inject(NgZone);
   private readonly destroyRef = inject(DestroyRef);
@@ -125,6 +130,13 @@ export class GoogleSignInButtonComponent implements AfterViewInit {
       this.errored.emit('Google Sign-In no está disponible.');
       return;
     }
+    const host = this.container?.nativeElement;
+    if (!host) {
+      // Salvaguarda defensiva por si Angular aun no proyecto el div del
+      // @if cuando el script termino de cargar; evita fallar en silencio.
+      this.errored.emit('Contenedor de Google Sign-In no disponible.');
+      return;
+    }
     // Se ejecuta fuera de la zona de Angular para no gatillar detecciones
     // por cada micro-evento del iframe de Google; el emit posterior
     // vuelve a entrar en la zona para que la UI reactiva se actualice.
@@ -137,7 +149,7 @@ export class GoogleSignInButtonComponent implements AfterViewInit {
         ux_mode: 'popup',
         auto_select: false,
       });
-      gid.renderButton(this.container.nativeElement, {
+      gid.renderButton(host, {
         type: 'standard',
         theme: this.theme,
         size: 'large',

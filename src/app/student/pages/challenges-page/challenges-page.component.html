@@ -1,0 +1,69 @@
+<!-- Catálogo de retos publicados para el estudiante -->
+<section class="challenges">
+  <header class="challenges__header">
+    <span class="challenges__eyebrow">Práctica</span>
+    <h1 class="challenges__title">Retos de programación</h1>
+    <p class="challenges__lead">
+      Resuelve retos guiados en tu lenguaje favorito y gana XP al superarlos.
+    </p>
+  </header>
+
+  <div class="challenges__filters">
+    <label class="filter filter--grow">
+      <span>Buscar</span>
+      <input type="search"
+        placeholder="Palabra clave, tema..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <label class="filter">
+      <span>Dificultad</span>
+      <select [ngModel]="difficultyFilter()" (ngModelChange)="difficultyFilter.set($event); apply()">
+        <option value="">Todas</option>
+        @for (d of difficulties; track d) { <option [value]="d">{{ d }}</option> }
+      </select>
+    </label>
+    <label class="filter">
+      <span>Lenguaje</span>
+      <input type="text"
+        placeholder="python, javascript..."
+        [ngModel]="languageFilter()"
+        (ngModelChange)="languageFilter.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="challenges__placeholder">Cargando retos...</div>
+  } @else if (error()) {
+    <div class="challenges__alert" role="alert">{{ error() }}</div>
+  } @else if (challenges().length === 0) {
+    <div class="challenges__empty">
+      <h3>No hay retos que coincidan</h3>
+      <p>Prueba con otros filtros o quítalos para ver todos los retos publicados.</p>
+    </div>
+  } @else {
+    <ul class="challenge-grid">
+      @for (challenge of challenges(); track challenge.id) {
+        <li class="challenge" [attr.data-difficulty]="challenge.difficulty">
+          <a class="challenge__link" [routerLink]="['/student/challenges', challenge.id]">
+            <header class="challenge__head">
+              <span class="challenge__difficulty">{{ challenge.difficulty }}</span>
+              <span class="challenge__xp">+{{ challenge.xpReward }} XP</span>
+            </header>
+            <h2 class="challenge__title">{{ challenge.name }}</h2>
+            <p class="challenge__desc">{{ challenge.description | stripHtml }}</p>
+            <footer class="challenge__foot">
+              <span class="challenge__lang">{{ challenge.allowedLanguages }}</span>
+              @if (challenge.estimatedMinutes) {
+                <span class="challenge__time">{{ challenge.estimatedMinutes }} min</span>
+              }
+            </footer>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

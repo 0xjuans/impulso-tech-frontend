@@ -1,0 +1,80 @@
+/* Selector de contexto educativo reutilizable --------------------------- */
+
+:host { display: block; }
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(107, 138, 253, 0.04);
+  border: 1px solid rgba(107, 138, 253, 0.18);
+}
+
+.picker__group-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-body);
+  font-weight: 700;
+}
+
+.picker__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.picker__grid--three { grid-template-columns: repeat(3, 1fr); }
+.picker__grid--two   { grid-template-columns: repeat(2, 1fr); }
+
+.picker__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.picker__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-body);
+  font-weight: 600;
+}
+
+.picker__field select {
+  padding: 9px 11px;
+  border: 1px solid rgba(32, 21, 21, 0.12);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.picker__field select:focus {
+  outline: none;
+  border-color: rgba(107, 138, 253, 0.55);
+  box-shadow: 0 0 0 3px rgba(107, 138, 253, 0.14);
+}
+
+.picker__field select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: rgba(32, 21, 21, 0.03);
+}
+
+@media (max-width: 900px) {
+  .picker__grid,
+  .picker__grid--three { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 500px) {
+  .picker__grid,
+  .picker__grid--three { grid-template-columns: 1fr; }
+}

@@ -1,97 +1,166 @@
-<!-- Panel administrativo con métricas globales -->
+<!-- Panel del administrador -->
 <section class="dash">
-  <header class="dash__header">
-    <span class="dash__eyebrow">Panel del administrador</span>
-    <h1 class="dash__title">Estado general de la plataforma</h1>
-    <p class="dash__lead">Métricas globales de usuarios, contenidos y soporte.</p>
+  <header class="hero">
+    <div class="hero__content">
+      <span class="hero__eyebrow">
+        <span class="hero__prompt">&gt;</span>
+        <span class="hero__cmd">impulso admin --overview</span>
+      </span>
+      <h1 class="hero__title">
+        {{ greeting() }}@if (firstName()) {, <strong>{{ firstName() }}</strong>}.
+      </h1>
+      <p class="hero__lead">
+        Estado global de la plataforma: usuarios, contenidos y soporte en un solo vistazo.
+      </p>
+    </div>
+    <div class="hero__decor" aria-hidden="true">
+      <div class="hero__ring"></div>
+      <div class="hero__ring hero__ring--sm"></div>
+    </div>
   </header>
 
   @if (loading()) {
-    <div class="dash__placeholder">Cargando panel...</div>
+    <div class="dash__placeholder">
+      <span class="dash__spinner" aria-hidden="true"></span>
+      Cargando panel...
+    </div>
   } @else if (error()) {
     <div class="dash__alert" role="alert">{{ error() }}</div>
-  } @else {
-    @if (data(); as d) {
-      <div class="dash__section">
-        <h2>Usuarios por rol</h2>
-        <div class="dash__grid">
-          <article class="stat stat--cool">
-            <span class="stat__label">Estudiantes</span>
-            <strong class="stat__value">{{ d.students }}</strong>
-          </article>
-          <article class="stat stat--cool">
-            <span class="stat__label">Instructores</span>
-            <strong class="stat__value">{{ d.instructors }}</strong>
-          </article>
-          <article class="stat stat--cool">
-            <span class="stat__label">Administradores</span>
-            <strong class="stat__value">{{ d.administrators }}</strong>
-          </article>
+  } @else if (data()) {
+    @let d = data()!;
+    <nav class="quick" aria-label="Accesos rápidos">
+      <a class="quick__item quick__item--primary" routerLink="/admin/users">
+        <app-icon name="users" [sizePx]="20" />
+        <span>Gestionar usuarios</span>
+      </a>
+      <a class="quick__item" routerLink="/admin/support">
+        <app-icon name="life-ring" [sizePx]="20" />
+        <span>Soporte</span>
+      </a>
+      <a class="quick__item" routerLink="/admin/dashboard">
+        <app-icon name="dashboard" [sizePx]="20" />
+        <span>Actualizar métricas</span>
+      </a>
+    </nav>
+
+    <!-- BLOQUE: USUARIOS ------------------------------------------------ -->
+    <div class="dash__section">
+      <div class="dash__section-head">
+        <h2><app-icon name="users" [sizePx]="18" /> Base de usuarios</h2>
+        <span class="dash__section-hint">Total: <strong>{{ totalUsers() }}</strong> personas registradas</span>
+      </div>
+      <div class="kpis">
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--brand"><app-icon name="user" [sizePx]="22" /></div>
+          <div class="kpi__body">
+            <span class="kpi__label">Estudiantes</span>
+            <strong class="kpi__value">{{ d.students }}</strong>
+            <span class="kpi__hint">Comunidad de aprendizaje</span>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--indigo"><app-icon name="user" [sizePx]="22" /></div>
+          <div class="kpi__body">
+            <span class="kpi__label">Instructores</span>
+            <strong class="kpi__value">{{ d.instructors }}</strong>
+            <span class="kpi__hint">Autores de contenido</span>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--teal"><app-icon name="user" [sizePx]="22" /></div>
+          <div class="kpi__body">
+            <span class="kpi__label">Administradores</span>
+            <strong class="kpi__value">{{ d.administrators }}</strong>
+            <span class="kpi__hint">Cuentas con máximos permisos</span>
+          </div>
         </div>
       </div>
 
-      <div class="dash__section">
-        <h2>Estado de las cuentas</h2>
-        <div class="dash__grid">
-          <article class="stat">
-            <span class="stat__label">Activas</span>
-            <strong class="stat__value">{{ d.activeUsers }}</strong>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Pendientes de verificación</span>
-            <strong class="stat__value">{{ d.pendingUsers }}</strong>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Desactivadas</span>
-            <strong class="stat__value">{{ d.disabledUsers }}</strong>
-          </article>
+      <div class="status-grid">
+        <div class="status status--ok">
+          <span class="status__label">Cuentas activas</span>
+          <strong class="status__value">{{ d.activeUsers }}</strong>
+          <div class="status__bar"><span class="status__bar-fill status__bar-fill--ok" [style.width.%]="activePct()"></span></div>
+          <span class="status__hint">{{ activePct() }}% del total</span>
+        </div>
+        <div class="status status--warn" [class.status--has]="d.pendingUsers > 0">
+          <span class="status__label">Pendientes de verificación</span>
+          <strong class="status__value">{{ d.pendingUsers }}</strong>
+          <span class="status__hint">Esperando confirmación por correo</span>
+        </div>
+        <div class="status status--danger" [class.status--has]="d.disabledUsers > 0">
+          <span class="status__label">Cuentas deshabilitadas</span>
+          <strong class="status__value">{{ d.disabledUsers }}</strong>
+          <span class="status__hint">Suspendidas o dadas de baja</span>
         </div>
       </div>
+    </div>
 
-      <div class="dash__section">
-        <h2>Contenidos</h2>
-        <div class="dash__grid">
-          <article class="stat">
-            <span class="stat__label">Rutas</span>
-            <strong class="stat__value">{{ d.routesTotal }}</strong>
-            <span class="stat__hint">{{ d.routesPublished }} publicadas</span>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Cursos</span>
-            <strong class="stat__value">{{ d.coursesTotal }}</strong>
-            <span class="stat__hint">
-              {{ d.coursesPublished }} publicados · {{ d.coursesDraft }} borrador · {{ d.coursesDisabled }} deshabilitados
+    <!-- BLOQUE: CONTENIDO --------------------------------------------- -->
+    <div class="dash__section">
+      <div class="dash__section-head">
+        <h2><app-icon name="book" [sizePx]="18" /> Catálogo de contenidos</h2>
+        <span class="dash__section-hint">Salud del contenido publicado en la plataforma</span>
+      </div>
+      <div class="kpis">
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--brand"><app-icon name="route" [sizePx]="22" /></div>
+          <div class="kpi__body">
+            <span class="kpi__label">Rutas totales</span>
+            <strong class="kpi__value">{{ d.routesTotal }}</strong>
+            <div class="kpi__bar" role="progressbar" [attr.aria-valuenow]="routesPublishedPct()">
+              <span class="kpi__bar-fill kpi__bar-fill--brand" [style.width.%]="routesPublishedPct()"></span>
+            </div>
+            <span class="kpi__hint">{{ d.routesPublished }} publicadas ({{ routesPublishedPct() }}%)</span>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--indigo"><app-icon name="book" [sizePx]="22" /></div>
+          <div class="kpi__body">
+            <span class="kpi__label">Cursos totales</span>
+            <strong class="kpi__value">{{ d.coursesTotal }}</strong>
+            <div class="kpi__bar" role="progressbar" [attr.aria-valuenow]="coursesPublishedPct()">
+              <span class="kpi__bar-fill kpi__bar-fill--indigo" [style.width.%]="coursesPublishedPct()"></span>
+            </div>
+            <span class="kpi__hint">
+              {{ d.coursesPublished }} publicados · {{ d.coursesDraft }} borrador · {{ d.coursesDisabled }} deshab.
             </span>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Lecciones publicadas</span>
-            <strong class="stat__value">{{ d.publishedLessons }}</strong>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Inscripciones</span>
-            <strong class="stat__value">{{ d.totalEnrollments }}</strong>
-          </article>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__icon kpi__icon--teal"><app-icon name="sparkles" [sizePx]="22" /></div>
+          <div class="kpi__body">
+            <span class="kpi__label">Lecciones publicadas</span>
+            <strong class="kpi__value">{{ d.publishedLessons }}</strong>
+            <span class="kpi__hint">Total: {{ d.totalEnrollments }} inscripciones</span>
+          </div>
         </div>
       </div>
+    </div>
 
-      <div class="dash__section">
-        <h2>Tickets de soporte</h2>
-        <div class="dash__grid">
-          <article class="stat stat--warm" [class.stat--has]="d.openTickets > 0">
-            <span class="stat__label">Abiertos</span>
-            <strong class="stat__value">{{ d.openTickets }}</strong>
-            <span class="stat__hint">pendientes, en revisión o en proceso</span>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Resueltos</span>
-            <strong class="stat__value">{{ d.resolvedTickets }}</strong>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Cerrados</span>
-            <strong class="stat__value">{{ d.closedTickets }}</strong>
-          </article>
+    <!-- BLOQUE: SOPORTE ------------------------------------------------ -->
+    <div class="dash__section">
+      <div class="dash__section-head">
+        <h2><app-icon name="life-ring" [sizePx]="18" /> Tickets de soporte</h2>
+        <span class="dash__section-hint">Total histórico: <strong>{{ totalTickets() }}</strong></span>
+      </div>
+      <div class="tickets">
+        <a class="ticket" routerLink="/admin/support" [class.ticket--has]="d.openTickets > 0">
+          <span class="ticket__label">Abiertos</span>
+          <strong class="ticket__value">{{ d.openTickets }}</strong>
+          <span class="ticket__hint">Esperando respuesta</span>
+        </a>
+        <div class="ticket ticket--ok">
+          <span class="ticket__label">Resueltos</span>
+          <strong class="ticket__value">{{ d.resolvedTickets }}</strong>
+          <span class="ticket__hint">Atención completada</span>
+        </div>
+        <div class="ticket ticket--closed">
+          <span class="ticket__label">Cerrados</span>
+          <strong class="ticket__value">{{ d.closedTickets }}</strong>
+          <span class="ticket__hint">Archivados</span>
         </div>
       </div>
-    }
+    </div>
   }
 </section>

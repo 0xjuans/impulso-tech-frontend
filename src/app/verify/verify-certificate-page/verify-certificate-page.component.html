@@ -1,0 +1,51 @@
+<!-- Verificación pública de certificado (RF-047) -->
+<section class="verify">
+  <header class="verify__brand">
+    <a routerLink="/" class="verify__logo">Impulso Tech</a>
+    <p class="verify__tagline">Verificación de certificados</p>
+  </header>
+
+  @if (loading()) {
+    <div class="verify__card verify__card--placeholder">
+      Verificando certificado...
+    </div>
+  } @else if (error() || !certificate()) {
+    <div class="verify__card verify__card--invalid" role="alert">
+      <span class="verify__badge verify__badge--invalid">No válido</span>
+      <h1 class="verify__title">Certificado no encontrado</h1>
+      <p class="verify__body">{{ error() ?? 'El código indicado no corresponde a un certificado válido de Impulso Tech.' }}</p>
+      <p class="verify__code">Código verificado: <span>{{ code() }}</span></p>
+    </div>
+  } @else {
+    @let c = certificate()!;
+    <div class="verify__card verify__card--valid">
+      <span class="verify__badge verify__badge--valid">Certificado válido</span>
+      <h1 class="verify__title">{{ c.courseName }}</h1>
+      <p class="verify__body">
+        Impulso Tech certifica que <strong>{{ c.recipientName }}</strong> completó
+        satisfactoriamente el curso <em>"{{ c.courseName }}"</em>.
+      </p>
+      <dl class="verify__meta">
+        <div>
+          <dt>Emitido el</dt>
+          <dd>{{ c.issuedAt | date: 'longDate' }}</dd>
+        </div>
+        <div>
+          <dt>Código de verificación</dt>
+          <dd class="verify__uuid">{{ c.verificationCode }}</dd>
+        </div>
+      </dl>
+      <div class="verify__actions">
+        <a class="verify__download"
+           [href]="downloadUrl(c.verificationCode)"
+           target="_blank" rel="noopener">
+          Descargar PDF
+        </a>
+      </div>
+    </div>
+  }
+
+  <p class="verify__footer">
+    Toda la información mostrada proviene directamente de los sistemas de Impulso Tech.
+  </p>
+</section>

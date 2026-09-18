@@ -1,0 +1,124 @@
+<!-- Editor de ruta de aprendizaje del instructor -->
+<section class="editor">
+  <a class="editor__back" routerLink="/instructor/routes">← Volver a rutas</a>
+
+  <header class="editor__header">
+    <span class="editor__eyebrow">
+      {{ isEditing() ? 'Editar ruta' : 'Nueva ruta' }}
+    </span>
+    <h1 class="editor__title">
+      @if (isEditing() && loaded()) {
+        {{ loaded()!.name }}
+      } @else {
+        Crea una ruta de aprendizaje
+      }
+    </h1>
+    @if (isEditing() && loaded()) {
+      <p class="editor__meta">
+        Estado actual: <strong>{{ loaded()!.status }}</strong>
+      </p>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="editor__placeholder">Cargando ruta...</div>
+  } @else if (error()) {
+    <div class="editor__alert" role="alert">{{ error() }}</div>
+  } @else {
+    <form class="editor__form" (ngSubmit)="submit()">
+      <label class="field">
+        <span>Nombre *</span>
+        <input
+          type="text"
+          maxlength="150"
+          placeholder="Ej: Fundamentos de desarrollo web"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+          name="name" />
+      </label>
+
+      <div class="field">
+        <span class="field__label">Descripción *</span>
+        <app-rich-text-editor
+          placeholder="¿Qué aprenderá el estudiante al completar esta ruta?"
+          [minHeight]="140"
+          [ngModel]="description()"
+          (ngModelChange)="description.set($event)"
+          name="description" />
+      </div>
+
+      <div class="field">
+        <span class="field__label">Objetivo (opcional)</span>
+        <app-rich-text-editor
+          placeholder="Objetivo de aprendizaje detallado."
+          [minHeight]="100"
+          [ngModel]="objective()"
+          (ngModelChange)="objective.set($event)"
+          name="objective" />
+      </div>
+
+      <div class="editor__row">
+        <label class="field">
+          <span>Dificultad</span>
+          <select [ngModel]="difficulty()" (ngModelChange)="difficulty.set($event)" name="difficulty">
+            <option value="">Sin definir</option>
+            @for (d of difficulties; track d) {
+              <option [value]="d">{{ d }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Duración estimada (horas)</span>
+          <input
+            type="number"
+            min="1"
+            placeholder="20"
+            [ngModel]="estimatedDurationHours()"
+            (ngModelChange)="estimatedDurationHours.set($event)"
+            name="hours" />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Tecnologías (opcional, separadas por coma)</span>
+        <input
+          type="text"
+          maxlength="300"
+          placeholder="Angular, TypeScript, HTML"
+          [ngModel]="technologies()"
+          (ngModelChange)="technologies.set($event)"
+          name="tech" />
+      </label>
+
+      <label class="field">
+        <span>URL de imagen de portada (opcional)</span>
+        <input
+          type="url"
+          maxlength="500"
+          placeholder="https://..."
+          [ngModel]="coverImageUrl()"
+          (ngModelChange)="coverImageUrl.set($event)"
+          name="cover" />
+      </label>
+
+      @if (saveError()) {
+        <p class="editor__error" role="alert">{{ saveError() }}</p>
+      }
+
+      <div class="editor__actions">
+        <a class="editor__ghost" routerLink="/instructor/routes">Cancelar</a>
+        <button
+          type="submit"
+          class="editor__submit"
+          [disabled]="!canSubmit() || saving()">
+          @if (saving()) {
+            Guardando...
+          } @else {
+            {{ isEditing() ? 'Guardar cambios' : 'Crear ruta' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</section>

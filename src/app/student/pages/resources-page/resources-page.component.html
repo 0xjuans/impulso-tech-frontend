@@ -80,7 +80,7 @@
 
           <h2 class="resource__name">{{ resource.name }}</h2>
           @if (resource.description) {
-            <p class="resource__desc">{{ resource.description }}</p>
+            <p class="resource__desc">{{ resource.description | stripHtml }}</p>
           }
 
           <ul class="resource__tags">

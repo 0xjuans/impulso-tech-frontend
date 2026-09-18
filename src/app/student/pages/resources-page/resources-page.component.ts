@@ -16,6 +16,7 @@ import {
 } from '../../../core/api/resources/resource.dto';
 import { ResourcesService } from '../../../core/api/resources/resources.service';
 import { DifficultyLevel } from '../../../core/api/learning-routes/learning-route.dto';
+import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 
 /**
  * Biblioteca de recursos educativos publicados (RF-024) con soporte
@@ -28,7 +29,7 @@ import { DifficultyLevel } from '../../../core/api/learning-routes/learning-rout
 @Component({
   selector: 'app-resources-page',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, StripHtmlPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './resources-page.component.html',
   styleUrl: './resources-page.component.scss',

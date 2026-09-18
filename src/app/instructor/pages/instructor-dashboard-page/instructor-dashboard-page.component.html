@@ -1,80 +1,175 @@
-<!-- Panel de métricas del instructor -->
+<!-- Panel del instructor -->
 <section class="dash">
-  <header class="dash__header">
-    <span class="dash__eyebrow">Panel del instructor</span>
-    <h1 class="dash__title">Estado general de tus contenidos</h1>
-    <p class="dash__lead">
-      Resumen de rutas, cursos, lecciones e inscripciones bajo tu responsabilidad.
-    </p>
+  <!-- HERO ---------------------------------------------------------------- -->
+  <header class="hero">
+    <div class="hero__content">
+      <span class="hero__eyebrow">
+        <span class="hero__prompt">&gt;</span>
+        <span class="hero__cmd">impulso instructor --overview</span>
+      </span>
+      <h1 class="hero__title">
+        {{ greeting() }}@if (firstName()) {, <strong>{{ firstName() }}</strong>}.
+      </h1>
+      <p class="hero__lead">
+        Este es el estado de tu contenido, tu comunidad y tus tareas por atender hoy.
+      </p>
+    </div>
+    <div class="hero__decor" aria-hidden="true">
+      <div class="hero__ring"></div>
+      <div class="hero__ring hero__ring--sm"></div>
+    </div>
   </header>
 
   @if (loading()) {
-    <div class="dash__placeholder">Cargando panel...</div>
+    <div class="dash__placeholder">
+      <span class="dash__spinner" aria-hidden="true"></span>
+      Cargando panel...
+    </div>
   } @else if (error()) {
     <div class="dash__alert" role="alert">{{ error() }}</div>
-  } @else {
-    @if (data(); as d) {
-      <div class="dash__section">
-        <h2>Contenidos</h2>
-        <div class="dash__grid">
-          <article class="stat">
-            <span class="stat__label">Rutas gestionadas</span>
-            <strong class="stat__value">{{ d.routesTotal }}</strong>
-            <span class="stat__hint">
-              {{ d.routesPublished }} publicadas · {{ d.routesDraft }} en borrador
-            </span>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Cursos gestionados</span>
-            <strong class="stat__value">{{ d.coursesTotal }}</strong>
-            <span class="stat__hint">
-              {{ d.coursesPublished }} publicados · {{ d.coursesDraft }} borrador · {{ d.coursesDisabled }} deshabilitados
-            </span>
-          </article>
-          <article class="stat">
-            <span class="stat__label">Lecciones publicadas</span>
-            <strong class="stat__value">{{ d.publishedLessons }}</strong>
-            <span class="stat__hint">en tus cursos publicados</span>
-          </article>
+  } @else if (data()) {
+    @let d = data()!;
+    <!-- ACCIONES RÁPIDAS ------------------------------------------------- -->
+    <nav class="quick" aria-label="Accesos rápidos">
+      <a class="quick__item quick__item--primary" routerLink="/instructor/routes/new">
+        <app-icon name="route" [sizePx]="20" />
+        <span>Nueva ruta</span>
+      </a>
+      <a class="quick__item" routerLink="/instructor/courses">
+        <app-icon name="book" [sizePx]="20" />
+        <span>Nuevo curso</span>
+      </a>
+      <a class="quick__item" routerLink="/instructor/challenges/new">
+        <app-icon name="target" [sizePx]="20" />
+        <span>Nuevo reto</span>
+      </a>
+      <a class="quick__item" routerLink="/instructor/routes">
+        <app-icon name="dashboard" [sizePx]="20" />
+        <span>Gestionar contenido</span>
+      </a>
+    </nav>
+
+    <!-- BANDA DE PENDIENTES --------------------------------------------- -->
+    @if (totalPending() > 0) {
+      <div class="pending-banner">
+        <div class="pending-banner__icon"><app-icon name="bell" [sizePx]="24" /></div>
+        <div class="pending-banner__text">
+          <strong>Tienes {{ totalPending() }} tarea{{ totalPending() === 1 ? '' : 's' }} por revisar.</strong>
+          <span>Estudiantes esperan tu retroalimentación.</span>
         </div>
       </div>
-
-      <div class="dash__section">
-        <h2>Alcance con estudiantes</h2>
-        <div class="dash__grid">
-          <article class="stat stat--cool">
-            <span class="stat__label">Inscripciones</span>
-            <strong class="stat__value">{{ d.totalEnrollments }}</strong>
-            <span class="stat__hint">totales en tus cursos</span>
-          </article>
-          <article class="stat stat--cool">
-            <span class="stat__label">Estudiantes únicos</span>
-            <strong class="stat__value">{{ d.uniqueStudents }}</strong>
-            <span class="stat__hint">personas distintas alcanzadas</span>
-          </article>
-        </div>
-      </div>
-
-      <div class="dash__section">
-        <h2>Pendientes por revisar</h2>
-        <div class="dash__grid">
-          <article class="stat stat--warm" [class.stat--has]="d.pendingChallenges > 0">
-            <span class="stat__label">Retos pendientes</span>
-            <strong class="stat__value">{{ d.pendingChallenges }}</strong>
-            <span class="stat__hint">intentos por evaluar</span>
-          </article>
-          <article class="stat stat--warm" [class.stat--has]="d.pendingProjects > 0">
-            <span class="stat__label">Proyectos pendientes</span>
-            <strong class="stat__value">{{ d.pendingProjects }}</strong>
-            <span class="stat__hint">entregas por revisar</span>
-          </article>
-          <article class="stat stat--warm" [class.stat--has]="d.openAssignedTickets > 0">
-            <span class="stat__label">Tickets asignados</span>
-            <strong class="stat__value">{{ d.openAssignedTickets }}</strong>
-            <span class="stat__hint">abiertos y esperando respuesta</span>
-          </article>
+    } @else {
+      <div class="pending-banner pending-banner--ok">
+        <div class="pending-banner__icon"><app-icon name="check" [sizePx]="24" /></div>
+        <div class="pending-banner__text">
+          <strong>Bandeja al día.</strong>
+          <span>Nada pendiente por revisar en este momento.</span>
         </div>
       </div>
     }
+
+    <!-- KPI PRINCIPALES -------------------------------------------------- -->
+    <div class="kpis">
+      <a class="kpi" routerLink="/instructor/routes">
+        <div class="kpi__icon kpi__icon--brand"><app-icon name="route" [sizePx]="22" /></div>
+        <div class="kpi__body">
+          <span class="kpi__label">Rutas</span>
+          <strong class="kpi__value">{{ d.routesTotal }}</strong>
+          <div class="kpi__bar" [attr.aria-valuenow]="routesPublishedPct()" role="progressbar">
+            <span class="kpi__bar-fill kpi__bar-fill--brand" [style.width.%]="routesPublishedPct()"></span>
+          </div>
+          <span class="kpi__hint">
+            {{ d.routesPublished }} publicadas · {{ d.routesDraft }} borrador
+          </span>
+        </div>
+      </a>
+
+      <a class="kpi" routerLink="/instructor/courses">
+        <div class="kpi__icon kpi__icon--indigo"><app-icon name="book" [sizePx]="22" /></div>
+        <div class="kpi__body">
+          <span class="kpi__label">Cursos</span>
+          <strong class="kpi__value">{{ d.coursesTotal }}</strong>
+          <div class="kpi__bar" [attr.aria-valuenow]="coursesPublishedPct()" role="progressbar">
+            <span class="kpi__bar-fill kpi__bar-fill--indigo" [style.width.%]="coursesPublishedPct()"></span>
+          </div>
+          <span class="kpi__hint">
+            {{ d.coursesPublished }} publicados · {{ d.coursesDraft }} borrador · {{ d.coursesDisabled }} deshab.
+          </span>
+        </div>
+      </a>
+
+      <div class="kpi">
+        <div class="kpi__icon kpi__icon--teal"><app-icon name="sparkles" [sizePx]="22" /></div>
+        <div class="kpi__body">
+          <span class="kpi__label">Lecciones publicadas</span>
+          <strong class="kpi__value">{{ d.publishedLessons }}</strong>
+          <span class="kpi__hint">Distribuidas en tus cursos activos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALCANCE ---------------------------------------------------------- -->
+    <div class="dash__section">
+      <div class="dash__section-head">
+        <h2><app-icon name="users" [sizePx]="18" /> Alcance con estudiantes</h2>
+        <span class="dash__section-hint">Personas impactadas por tus contenidos</span>
+      </div>
+      <div class="reach">
+        <div class="reach__card">
+          <span class="reach__label">Inscripciones totales</span>
+          <strong class="reach__value">{{ d.totalEnrollments }}</strong>
+          <span class="reach__hint">en todos tus cursos</span>
+        </div>
+        <div class="reach__card">
+          <span class="reach__label">Estudiantes únicos</span>
+          <strong class="reach__value">{{ d.uniqueStudents }}</strong>
+          <span class="reach__hint">personas distintas alcanzadas</span>
+        </div>
+        <div class="reach__card reach__card--accent">
+          <span class="reach__label">Promedio de cursos por estudiante</span>
+          <strong class="reach__value">{{ avgEnrollments() }}</strong>
+          <span class="reach__hint">indicador de retención</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENDIENTES DETALLE ---------------------------------------------- -->
+    <div class="dash__section">
+      <div class="dash__section-head">
+        <h2><app-icon name="bell" [sizePx]="18" /> Pendientes por revisar</h2>
+        <span class="dash__section-hint">Ingresa a cada apartado para atender los pendientes</span>
+      </div>
+      <div class="pending-grid">
+        <a class="pending" routerLink="/instructor/challenges"
+           [class.pending--has]="d.pendingChallenges > 0">
+          <div class="pending__icon"><app-icon name="target" [sizePx]="20" /></div>
+          <div>
+            <strong>{{ d.pendingChallenges }}</strong>
+            <span>Intentos de retos por evaluar</span>
+          </div>
+          <span class="pending__cta">Revisar →</span>
+        </a>
+
+        <a class="pending" routerLink="/instructor/courses"
+           [class.pending--has]="d.pendingProjects > 0">
+          <div class="pending__icon"><app-icon name="trophy" [sizePx]="20" /></div>
+          <div>
+            <strong>{{ d.pendingProjects }}</strong>
+            <span>Entregas de proyectos</span>
+          </div>
+          <span class="pending__cta">Revisar →</span>
+        </a>
+
+        <a class="pending" routerLink="/instructor/dashboard"
+           [class.pending--has]="d.openAssignedTickets > 0">
+          <div class="pending__icon"><app-icon name="life-ring" [sizePx]="20" /></div>
+          <div>
+            <strong>{{ d.openAssignedTickets }}</strong>
+            <span>Tickets de soporte asignados</span>
+          </div>
+          <span class="pending__cta">Revisar →</span>
+        </a>
+      </div>
+    </div>
   }
 </section>

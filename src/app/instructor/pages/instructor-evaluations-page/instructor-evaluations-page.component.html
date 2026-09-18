@@ -1,0 +1,163 @@
+<!-- Gestión de evaluaciones del instructor -->
+<section class="evaluations">
+  <header class="evaluations__header">
+    <div>
+      <span class="evaluations__eyebrow">Gestión</span>
+      <h1 class="evaluations__title">Evaluaciones</h1>
+      <p class="evaluations__lead">
+        Elige la lección donde vive la evaluación. Puedes navegar por
+        <strong>curso → módulo → lección</strong> y publicar, editar o eliminar
+        cada evaluación desde aquí.
+      </p>
+    </div>
+    @if (lessonId()) {
+      <a class="evaluations__cta" [routerLink]="['/instructor/evaluations/lessons', lessonId(), 'new']">
+        + Nueva evaluación
+      </a>
+    }
+  </header>
+
+  <!-- SELECTOR EN CASCADA -------------------------------------------- -->
+  <div class="picker">
+    <label class="picker__field">
+      <span class="picker__label">Curso</span>
+      <select
+        [ngModel]="courseId()"
+        (ngModelChange)="onCourseChange($event)"
+        [disabled]="loadingCourses()">
+        <option [ngValue]="null">
+          {{ loadingCourses() ? 'Cargando cursos...' : 'Selecciona un curso' }}
+        </option>
+        @for (course of courses(); track course.id) {
+          <option [ngValue]="course.id">
+            {{ course.name }} · {{ course.status }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <label class="picker__field">
+      <span class="picker__label">Módulo</span>
+      <select
+        [ngModel]="moduleId()"
+        (ngModelChange)="onModuleChange($event)"
+        [disabled]="!courseId() || loadingModules()">
+        <option [ngValue]="null">
+          @if (!courseId()) { Elige un curso primero }
+          @else if (loadingModules()) { Cargando módulos... }
+          @else if (modules().length === 0) { Este curso no tiene módulos }
+          @else { Selecciona un módulo }
+        </option>
+        @for (module of modules(); track module.id) {
+          <option [ngValue]="module.id">
+            #{{ module.orderIndex }} · {{ module.name }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <label class="picker__field">
+      <span class="picker__label">Lección</span>
+      <select
+        [ngModel]="lessonId()"
+        (ngModelChange)="onLessonChange($event)"
+        [disabled]="!moduleId() || loadingLessons()">
+        <option [ngValue]="null">
+          @if (!moduleId()) { Elige un módulo primero }
+          @else if (loadingLessons()) { Cargando lecciones... }
+          @else if (lessons().length === 0) { Este módulo no tiene lecciones }
+          @else { Selecciona una lección }
+        </option>
+        @for (lesson of lessons(); track lesson.id) {
+          <option [ngValue]="lesson.id">
+            #{{ lesson.orderIndex }} · {{ lesson.title }}
+          </option>
+        }
+      </select>
+    </label>
+  </div>
+
+  @if (lessonId()) {
+    <div class="evaluations__context">
+      <span class="evaluations__context-label">Lección seleccionada:</span>
+      <strong>{{ selectedLessonTitle() }}</strong>
+    </div>
+
+    <div class="evaluations__stats">
+      <div class="stat"><span class="stat__num">{{ counts().total }}</span><span class="stat__label">Total</span></div>
+      <div class="stat stat--published"><span class="stat__num">{{ counts().published }}</span><span class="stat__label">Publicadas</span></div>
+      <div class="stat stat--draft"><span class="stat__num">{{ counts().draft }}</span><span class="stat__label">Borradores</span></div>
+      <div class="stat stat--disabled"><span class="stat__num">{{ counts().disabled }}</span><span class="stat__label">Deshabilitadas</span></div>
+    </div>
+
+    @if (loading()) {
+      <div class="evaluations__placeholder">Cargando evaluaciones...</div>
+    } @else if (error()) {
+      <div class="evaluations__alert" role="alert">{{ error() }}</div>
+    } @else if (evaluations().length === 0) {
+      <div class="evaluations__empty">
+        <h3>Esta lección aún no tiene evaluaciones</h3>
+        <p>Crea la primera para poner a prueba lo aprendido.</p>
+        <a class="evaluations__cta" [routerLink]="['/instructor/evaluations/lessons', lessonId(), 'new']">
+          + Nueva evaluación
+        </a>
+      </div>
+    } @else {
+      <ul class="evaluation-list">
+        @for (evaluation of evaluations(); track evaluation.id) {
+          <li class="evaluation" [attr.data-status]="evaluation.status">
+            <div class="evaluation__main">
+              <a class="evaluation__title-link" [routerLink]="['/instructor/evaluations', evaluation.id]">
+                <h2 class="evaluation__title">{{ evaluation.name }}</h2>
+              </a>
+              @if (evaluation.description) {
+                <p class="evaluation__desc">{{ evaluation.description | stripHtml }}</p>
+              }
+              <ul class="evaluation__meta">
+                <li class="evaluation__badge evaluation__badge--status">{{ evaluation.status }}</li>
+                <li>Orden #{{ evaluation.orderIndex }}</li>
+                <li>{{ evaluation.questions.length }} pregunta{{ evaluation.questions.length === 1 ? '' : 's' }}</li>
+                <li>{{ evaluation.passingPercentage }}% para aprobar</li>
+                <li>{{ evaluation.maxAttempts }} intento{{ evaluation.maxAttempts === 1 ? '' : 's' }}</li>
+                @if (evaluation.timeLimitMinutes) {
+                  <li>{{ evaluation.timeLimitMinutes }} min</li>
+                }
+                <li class="evaluation__date">actualizada {{ evaluation.updatedAt | date: 'shortDate' }}</li>
+              </ul>
+            </div>
+            <div class="evaluation__actions">
+              <a class="evaluation__edit" [routerLink]="['/instructor/evaluations', evaluation.id]">Editar</a>
+              @if (evaluation.status !== 'PUBLICADO') {
+                <button type="button"
+                  class="evaluation__action evaluation__action--publish"
+                  [disabled]="pendingActionId() === evaluation.id"
+                  (click)="changeStatus(evaluation, 'PUBLICADO')">
+                  Publicar
+                </button>
+              }
+              @if (evaluation.status !== 'BORRADOR') {
+                <button type="button"
+                  class="evaluation__action"
+                  [disabled]="pendingActionId() === evaluation.id"
+                  (click)="changeStatus(evaluation, 'BORRADOR')">
+                  A borrador
+                </button>
+              }
+              <button type="button"
+                class="evaluation__action evaluation__action--danger"
+                [disabled]="pendingActionId() === evaluation.id"
+                (click)="deleteEvaluation(evaluation)">
+                Eliminar
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  } @else {
+    <div class="evaluations__hint">
+      Elige un curso, luego un módulo y finalmente una lección para
+      administrar sus evaluaciones.
+    </div>
+  }
+</section>

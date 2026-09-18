@@ -1,0 +1,120 @@
+<!-- Gestión de rutas de aprendizaje del instructor -->
+<section class="routes">
+  <header class="routes__header">
+    <div>
+      <span class="routes__eyebrow">Gestión</span>
+      <h1 class="routes__title">Rutas de aprendizaje</h1>
+      <p class="routes__lead">
+        Crea, edita, publica o retira rutas. Los estudiantes solo verán las que estén
+        en estado <strong>PUBLICADO</strong>.
+      </p>
+    </div>
+    <a class="routes__cta" routerLink="/instructor/routes/new">+ Nueva ruta</a>
+  </header>
+
+  <div class="routes__stats">
+    <div class="stat"><span class="stat__num">{{ counts().total }}</span><span class="stat__label">Total</span></div>
+    <div class="stat stat--published"><span class="stat__num">{{ counts().published }}</span><span class="stat__label">Publicadas</span></div>
+    <div class="stat stat--draft"><span class="stat__num">{{ counts().draft }}</span><span class="stat__label">Borradores</span></div>
+    <div class="stat stat--disabled"><span class="stat__num">{{ counts().disabled }}</span><span class="stat__label">Deshabilitadas</span></div>
+  </div>
+
+  <div class="routes__filters">
+    <label class="filter filter--grow">
+      <span>Buscar</span>
+      <input
+        type="search"
+        placeholder="Nombre, descripción o tecnología..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="apply()" />
+    </label>
+    <label class="filter">
+      <span>Dificultad</span>
+      <select [ngModel]="difficultyFilter()" (ngModelChange)="difficultyFilter.set($event); apply()">
+        <option value="">Todas</option>
+        @for (d of difficulties; track d) {
+          <option [value]="d">{{ d }}</option>
+        }
+      </select>
+    </label>
+    <label class="filter">
+      <span>Estado</span>
+      <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (s of statuses; track s) {
+          <option [value]="s">{{ s }}</option>
+        }
+      </select>
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Aplicar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="routes__placeholder">Cargando rutas...</div>
+  } @else if (error()) {
+    <div class="routes__alert" role="alert">{{ error() }}</div>
+  } @else if (routes().length === 0) {
+    <div class="routes__empty">
+      <h3>Aún no hay rutas</h3>
+      <p>Crea la primera ruta de aprendizaje para tus estudiantes.</p>
+      <a class="routes__cta" routerLink="/instructor/routes/new">+ Nueva ruta</a>
+    </div>
+  } @else {
+    <ul class="route-list">
+      @for (route of routes(); track route.id) {
+        <li class="route" [attr.data-status]="route.status">
+          <div class="route__main">
+            <a class="route__title-link" [routerLink]="['/instructor/routes', route.id]">
+              <h2 class="route__title">{{ route.name }}</h2>
+            </a>
+            <p class="route__desc">{{ route.description | stripHtml }}</p>
+            <ul class="route__meta">
+              <li class="route__badge route__badge--status">{{ route.status }}</li>
+              @if (route.difficulty) {
+                <li class="route__badge">{{ route.difficulty }}</li>
+              }
+              @if (route.estimatedDurationHours) {
+                <li>{{ route.estimatedDurationHours }} h</li>
+              }
+              @if (route.technologies) {
+                <li class="route__tech">{{ route.technologies }}</li>
+              }
+              <li class="route__date">actualizada {{ route.updatedAt | date: 'shortDate' }}</li>
+            </ul>
+          </div>
+          <div class="route__actions">
+            <a class="route__edit" [routerLink]="['/instructor/routes', route.id]">Editar</a>
+            @if (route.status !== 'PUBLICADO') {
+              <button
+                type="button"
+                class="route__action route__action--publish"
+                [disabled]="pendingStatusId() === route.id"
+                (click)="changeStatus(route, 'PUBLICADO')">
+                Publicar
+              </button>
+            }
+            @if (route.status !== 'BORRADOR') {
+              <button
+                type="button"
+                class="route__action"
+                [disabled]="pendingStatusId() === route.id"
+                (click)="changeStatus(route, 'BORRADOR')">
+                A borrador
+              </button>
+            }
+            @if (route.status !== 'DESHABILITADO') {
+              <button
+                type="button"
+                class="route__action route__action--danger"
+                [disabled]="pendingStatusId() === route.id"
+                (click)="changeStatus(route, 'DESHABILITADO')">
+                Deshabilitar
+              </button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

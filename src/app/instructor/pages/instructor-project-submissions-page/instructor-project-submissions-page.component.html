@@ -1,0 +1,132 @@
+<!-- Revisión de entregas de un proyecto -->
+<section class="submissions">
+  <a class="submissions__back"
+     [routerLink]="projectId() ? ['/instructor/projects', projectId()] : ['/instructor/projects']">
+    ← Volver al proyecto
+  </a>
+
+  <header class="submissions__header">
+    <span class="submissions__eyebrow">Revisión</span>
+    <h1 class="submissions__title">
+      Entregas {{ project() ? '· ' + project()!.name : '' }}
+    </h1>
+    <p class="submissions__lead">
+      Aprueba, solicita correcciones o rechaza cada entrega, y otorga una
+      calificación de 0 a {{ project()?.maxScore ?? 100 }} puntos.
+    </p>
+  </header>
+
+  <div class="submissions__stats">
+    <div class="stat"><span class="stat__num">{{ counts().total }}</span><span class="stat__label">Total</span></div>
+    <div class="stat stat--pending"><span class="stat__num">{{ counts().pending }}</span><span class="stat__label">Pendientes</span></div>
+    <div class="stat stat--approved"><span class="stat__num">{{ counts().approved }}</span><span class="stat__label">Aprobadas</span></div>
+    <div class="stat stat--correction"><span class="stat__num">{{ counts().correction }}</span><span class="stat__label">Con correcciones</span></div>
+    <div class="stat stat--rejected"><span class="stat__num">{{ counts().rejected }}</span><span class="stat__label">Rechazadas</span></div>
+  </div>
+
+  <div class="submissions__filters">
+    <label class="filter">
+      <span>Estado</span>
+      <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); apply()">
+        <option value="">Todos</option>
+        @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+      </select>
+    </label>
+    <button type="button" class="filter__apply" (click)="apply()">Recargar</button>
+  </div>
+
+  @if (loading()) {
+    <div class="submissions__placeholder">Cargando entregas...</div>
+  } @else if (error()) {
+    <div class="submissions__alert" role="alert">{{ error() }}</div>
+  } @else if (submissions().length === 0) {
+    <div class="submissions__empty">
+      <h3>No hay entregas que mostrar</h3>
+      <p>Cuando los estudiantes envíen entregas aparecerán aquí.</p>
+    </div>
+  } @else {
+    <ul class="submission-list">
+      @for (submission of submissions(); track submission.id) {
+        <li class="submission" [attr.data-status]="submission.status">
+          <header class="submission__head">
+            <div>
+              <h2 class="submission__author">{{ submission.userFullName }}</h2>
+              <p class="submission__meta">
+                Entrega #{{ submission.submissionNumber }}
+                · enviada {{ submission.submittedAt | date: 'medium' }}
+                @if (submission.grade !== null && submission.grade !== undefined) {
+                  · <strong>{{ submission.grade }} pts</strong>
+                }
+              </p>
+            </div>
+            <span class="submission__badge">{{ submission.status }}</span>
+          </header>
+
+          <a class="submission__url" [href]="submission.submissionUrl" target="_blank" rel="noopener noreferrer">
+            🔗 {{ submission.submissionUrl }}
+          </a>
+
+          @if (submission.studentNotes) {
+            <div class="submission__notes">
+              <span class="submission__notes-label">Notas del estudiante:</span>
+              <p>{{ submission.studentNotes }}</p>
+            </div>
+          }
+
+          @if (submission.feedback) {
+            <div class="submission__feedback">
+              <span class="submission__feedback-label">Retroalimentación previa:</span>
+              <p>{{ submission.feedback }}</p>
+            </div>
+          }
+
+          @if (reviewingId() === submission.id) {
+            <form class="review" (ngSubmit)="submitReview(submission)">
+              <div class="review__row">
+                <label class="review__field">
+                  <span>Nuevo estado</span>
+                  <select [ngModel]="reviewStatus()" (ngModelChange)="reviewStatus.set($event)" name="rst">
+                    <option value="APROBADA">APROBADA</option>
+                    <option value="CORRECCION_SOLICITADA">CORRECCION_SOLICITADA</option>
+                    <option value="RECHAZADA">RECHAZADA</option>
+                    <option value="EN_REVISION">EN_REVISION</option>
+                  </select>
+                </label>
+                <label class="review__field">
+                  <span>Calificación (0 - {{ project()?.maxScore ?? 100 }})</span>
+                  <input type="number" min="0" [max]="project()?.maxScore ?? 100"
+                    [ngModel]="reviewGrade()" (ngModelChange)="reviewGrade.set($event)" name="rgr" />
+                </label>
+              </div>
+              <label class="review__field">
+                <span>Retroalimentación</span>
+                <textarea rows="4"
+                  placeholder="Explica qué está bien, qué mejorar y por qué."
+                  [ngModel]="reviewFeedback()" (ngModelChange)="reviewFeedback.set($event)" name="rfb"></textarea>
+              </label>
+              @if (reviewError()) {
+                <p class="review__error" role="alert">{{ reviewError() }}</p>
+              }
+              <div class="review__actions">
+                <button type="button" class="review__ghost" (click)="cancelReview()" [disabled]="submittingReview()">Cancelar</button>
+                <button type="submit" class="review__submit" [disabled]="submittingReview()">
+                  {{ submittingReview() ? 'Guardando...' : 'Guardar revisión' }}
+                </button>
+              </div>
+            </form>
+          } @else {
+            <div class="submission__actions">
+              <button type="button" class="submission__review" (click)="startReview(submission)">
+                @if (submission.status === 'ENVIADA' || submission.status === 'EN_REVISION') {
+                  Revisar
+                } @else {
+                  Editar revisión
+                }
+              </button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>

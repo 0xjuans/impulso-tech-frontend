@@ -34,7 +34,7 @@
 
           <div class="course-card__body">
             <h2 class="course-card__name">{{ course.name }}</h2>
-            <p class="course-card__description">{{ course.description }}</p>
+            <p class="course-card__description">{{ course.description | stripHtml }}</p>
 
             @if (course.technology) {
               <ul class="course-card__tags" aria-label="Tecnologías">

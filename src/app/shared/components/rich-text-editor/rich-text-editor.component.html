@@ -1,0 +1,39 @@
+<div class="rte" [class.rte--disabled]="disabled()">
+  <div class="rte__toolbar" role="toolbar" aria-label="Formato de texto">
+    @for (btn of toolbarCommands; track btn.id) {
+      <button
+        type="button"
+        class="rte__btn"
+        [attr.data-cmd]="btn.id"
+        [title]="btn.title"
+        [attr.aria-label]="btn.title"
+        (mousedown)="$event.preventDefault(); exec(btn.command, btn.value)"
+        [disabled]="disabled()">
+        {{ btn.label }}
+      </button>
+    }
+    <button
+      type="button"
+      class="rte__btn"
+      title="Insertar enlace"
+      aria-label="Insertar enlace"
+      (mousedown)="$event.preventDefault(); insertLink()"
+      [disabled]="disabled()">
+      🔗
+    </button>
+  </div>
+
+  <div
+    #editable
+    class="rte__editable"
+    contenteditable="true"
+    role="textbox"
+    aria-multiline="true"
+    [attr.aria-disabled]="disabled()"
+    [attr.data-placeholder]="placeholder"
+    [class.rte__editable--empty]="empty()"
+    [style.min-height.px]="minHeight"
+    (input)="onInput()"
+    (blur)="onBlur()"
+    (paste)="onPaste($event)"></div>
+</div>
