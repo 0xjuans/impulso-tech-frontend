@@ -45,7 +45,7 @@
                   class="mascot__msg"
                   [class.mascot__msg--mine]="msg.role === 'USER'">
                   <div class="mascot__bubble">
-                    <p>{{ msg.content }}</p>
+                    <div class="mascot__content" [innerHTML]="msg.content | markdown"></div>
                     <span class="mascot__time">{{ msg.createdAt | date: 'shortTime' }}</span>
                   </div>
                 </li>

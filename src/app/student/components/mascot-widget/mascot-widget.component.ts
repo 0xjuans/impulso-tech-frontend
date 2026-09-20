@@ -20,6 +20,7 @@ import {
 } from '../../../core/api/mascot/mascot.dto';
 import { MascotService } from '../../../core/api/mascot/mascot.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
+import { MarkdownPipe } from '../../../shared/pipes/markdown.pipe';
 import {
   MascotAvatarComponent,
   MascotState,
@@ -37,7 +38,7 @@ import {
 @Component({
   selector: 'app-mascot-widget',
   standalone: true,
-  imports: [DatePipe, FormsModule, AppIconComponent, MascotAvatarComponent],
+  imports: [DatePipe, FormsModule, AppIconComponent, MascotAvatarComponent, MarkdownPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './mascot-widget.component.html',
   styleUrl: './mascot-widget.component.scss',
