@@ -1,7 +1,14 @@
 <!-- Widget flotante de la mascota IA -->
 <div class="mascot" [class.mascot--open]="open()">
   @if (open()) {
-    <section class="mascot__panel" role="dialog" aria-label="Chat con la mascota">
+    <section class="mascot__panel" role="dialog" aria-label="Chat con la mascota" #panel>
+      <span
+        class="mascot__resize"
+        role="separator"
+        aria-label="Arrastra para redimensionar"
+        title="Arrastra para redimensionar"
+        (mousedown)="startResize($event)">
+      </span>
       <header class="mascot__header">
         <div class="mascot__brand">
           <span class="mascot__avatar" aria-hidden="true">

@@ -61,6 +61,7 @@ export class MascotWidgetComponent implements AfterViewChecked {
   });
 
   @ViewChild('thread') private threadRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('panel') private panelRef?: ElementRef<HTMLElement>;
 
   protected readonly open = signal(false);
   protected readonly initializing = signal(false);
@@ -186,6 +187,47 @@ export class MascotWidgetComponent implements AfterViewChecked {
     this.draft.set(prompt);
   }
 
+  /**
+   * Inicia el redimensionado del panel al arrastrar la esquina superior
+   * izquierda. Como el panel está anclado a {@code bottom + right}, se
+   * calcula el ancho/alto desde el delta invertido del cursor para que
+   * al arrastrar hacia afuera el panel crezca hacia esa dirección.
+   *
+   * <p>Se aplican mínimos razonables (360×420 px) y máximos limitados
+   * por el viewport (90 vw × 90 vh) para que el panel siga siendo
+   * visible en pantallas pequeñas.</p>
+   */
+  protected startResize(event: MouseEvent): void {
+    const panel = this.panelRef?.nativeElement;
+    if (!panel) return;
+    event.preventDefault();
+
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const startWidth = panel.offsetWidth;
+    const startHeight = panel.offsetHeight;
+    const minWidth = 320;
+    const minHeight = 420;
+    const maxWidth = Math.floor(window.innerWidth * 0.9);
+    const maxHeight = Math.floor(window.innerHeight * 0.9);
+    const previousUserSelect = document.body.style.userSelect;
+    document.body.style.userSelect = 'none';
+
+    const onMove = (e: MouseEvent) => {
+      const width = clamp(startWidth + (startX - e.clientX), minWidth, maxWidth);
+      const height = clamp(startHeight + (startY - e.clientY), minHeight, maxHeight);
+      panel.style.width = `${width}px`;
+      panel.style.height = `${height}px`;
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.body.style.userSelect = previousUserSelect;
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }
+
   ngAfterViewChecked(): void {
     if (this.shouldScroll && this.threadRef) {
       this.shouldScroll = false;
@@ -250,4 +292,9 @@ export class MascotWidgetComponent implements AfterViewChecked {
       },
     });
   }
+}
+
+/** Recorta un valor al rango {@code [min, max]}. */
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
 }
