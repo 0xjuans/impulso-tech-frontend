@@ -12,10 +12,14 @@
       <header class="mascot__header">
         <div class="mascot__brand">
           <span class="mascot__avatar" aria-hidden="true">
-            <app-mascot-avatar [state]="mascotState()" [sizePx]="40" />
+            <img
+              class="mascot__avatar-img"
+              src="mascot/avatar.webp"
+              alt=""
+              draggable="false" />
           </span>
           <div>
-            <strong>Nano</strong>
+            <strong>Luki</strong>
             <small>Asistente IA · Impulso Tech</small>
           </div>
         </div>
@@ -51,6 +55,14 @@
                 <li
                   class="mascot__msg"
                   [class.mascot__msg--mine]="msg.role === 'USER'">
+                  @if (msg.role !== 'USER') {
+                    <img
+                      class="mascot__msg-avatar"
+                      src="mascot/avatar.webp"
+                      alt=""
+                      aria-hidden="true"
+                      draggable="false" />
+                  }
                   <div class="mascot__bubble">
                     <div class="mascot__content" [innerHTML]="msg.content | markdown"></div>
                     <span class="mascot__time">{{ msg.createdAt | date: 'shortTime' }}</span>
@@ -59,6 +71,12 @@
               }
               @if (sending()) {
                 <li class="mascot__msg">
+                  <img
+                    class="mascot__msg-avatar"
+                    src="mascot/avatar.webp"
+                    alt=""
+                    aria-hidden="true"
+                    draggable="false" />
                   <div class="mascot__bubble mascot__bubble--typing" aria-live="polite">
                     <span></span><span></span><span></span>
                   </div>
@@ -92,7 +110,7 @@
   }
 
   @if (!open() && greetingOpen()) {
-    <div class="mascot-greeting" role="dialog" aria-label="Saludo de la mascota Nano">
+    <div class="mascot-greeting" role="dialog" aria-label="Saludo de Luki">
       <button
         type="button"
         class="mascot-greeting__close"
@@ -126,7 +144,7 @@
     @if (open()) {
       <app-icon name="close" [sizePx]="22" />
     } @else {
-      <app-mascot-avatar [state]="mascotState()" [sizePx]="56" />
+      <app-mascot-avatar [state]="mascotState()" [sizePx]="104" />
     }
     @if (!open() && greetingOpen()) {
       <span class="mascot__trigger-ping" aria-hidden="true"></span>

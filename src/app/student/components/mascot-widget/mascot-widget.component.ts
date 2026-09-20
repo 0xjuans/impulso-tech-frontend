@@ -2,16 +2,20 @@ import {
   AfterViewChecked,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   HostListener,
   ViewChild,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, finalize } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import {
@@ -46,6 +50,21 @@ import {
 export class MascotWidgetComponent implements AfterViewChecked {
   private readonly service = inject(MascotService);
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /**
+   * Duración en milisegundos que la mascota se mantiene "despierta"
+   * (idle) tras cerrar el panel antes de pasar a la pose {@code inactivo}.
+   */
+  private static readonly SLEEP_DELAY_MS = 10_000;
+
+  /**
+   * Duración en milisegundos que la mascota mantiene una reacción
+   * disparada por navegación (por ejemplo, un saludo al cambiar de
+   * pestaña) antes de volver al estado calculado por actividad.
+   */
+  private static readonly ROUTE_REACTION_MS = 2_500;
 
   /** Nombre corto del usuario autenticado, usado en el saludo. */
   protected readonly userFirstName = computed(
@@ -82,14 +101,44 @@ export class MascotWidgetComponent implements AfterViewChecked {
     'Motívame a seguir aprendiendo.',
   ];
 
-  /** Estado semántico de la mascota que la animación consume. */
+  /**
+   * Bandera que se activa cuando el panel lleva
+   * {@link MascotWidgetComponent#SLEEP_DELAY_MS} milisegundos cerrado
+   * sin actividad. Al activarse, la mascota pasa a la pose
+   * {@code inactivo} (durmiendo); mientras está inactiva pero no
+   * dormida, se muestra en {@code idle} para que la transición sea
+   * gradual y natural.
+   */
+  private readonly dormant = signal(false);
+
+  /**
+   * Override manual del estado activado por eventos externos como los
+   * cambios de ruta. Se resetea después de un tiempo corto para que la
+   * mascota vuelva al estado calculado por la actividad del chat.
+   */
+  private readonly override = signal<MascotState | null>(null);
+
+  /**
+   * Estado semántico de la mascota que la animación consume.
+   *
+   * <p>Cascada de precedencia: (1) override por navegación, (2) estado
+   * derivado de la actividad del chat cuando el panel está abierto,
+   * (3) idle durante los primeros segundos tras cerrar el panel,
+   * (4) {@code inactivo} cuando se cumple el timeout de dormancia.</p>
+   */
   protected readonly mascotState = computed<MascotState>(() => {
-    if (this.sending()) return 'thinking';
-    const last = this.messages()[this.messages().length - 1];
-    if (last && last.role === 'ASSISTANT' && !this.sending()) {
-      return 'talking';
+    const override = this.override();
+    if (override) return override;
+
+    if (this.open()) {
+      if (this.sending()) return 'thinking';
+      const last = this.messages()[this.messages().length - 1];
+      if (last && last.role === 'ASSISTANT' && !this.sending()) {
+        return 'talking';
+      }
+      return 'idle';
     }
-    return 'idle';
+    return this.dormant() ? 'inactivo' : 'idle';
   });
 
   /** Deshabilita el botón cuando no hay contenido o el envío está en curso. */
@@ -101,6 +150,96 @@ export class MascotWidgetComponent implements AfterViewChecked {
   );
 
   private shouldScroll = false;
+  private dormantTimer: ReturnType<typeof setTimeout> | null = null;
+  private overrideTimer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    // Efecto: cuando cambia el estado abierto/cerrado del panel se
+    // reinicia el temporizador de dormancia. Estar abierto siempre
+    // implica estar despierto; al cerrar, la mascota se queda idle
+    // durante unos segundos antes de dormirse.
+    effect(
+      () => {
+        const isOpen = this.open();
+        this.clearDormantTimer();
+        this.dormant.set(false);
+        if (!isOpen) {
+          this.dormantTimer = setTimeout(
+            () => this.dormant.set(true),
+            MascotWidgetComponent.SLEEP_DELAY_MS,
+          );
+        }
+      },
+      { allowSignalWrites: true },
+    );
+
+    // Reacción a cambios de ruta: la mascota nota que el estudiante se
+    // movió y le "saluda" o adopta un ánimo contextual acorde al tipo
+    // de sección visitada. También reinicia el temporizador de
+    // dormancia porque navegar cuenta como actividad.
+    this.router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((e) => this.reactToRoute(e.urlAfterRedirects));
+  }
+
+  /**
+   * Reinicia el temporizador de dormancia y aplica un override breve
+   * con la pose sugerida por la ruta actual.
+   */
+  private reactToRoute(url: string): void {
+    this.clearDormantTimer();
+    this.dormant.set(false);
+    if (!this.open()) {
+      this.dormantTimer = setTimeout(
+        () => this.dormant.set(true),
+        MascotWidgetComponent.SLEEP_DELAY_MS,
+      );
+    }
+    this.setOverride(MascotWidgetComponent.pickMoodByRoute(url));
+  }
+
+  /**
+   * Fija un override temporal del estado semántico y programa su reset.
+   */
+  private setOverride(state: MascotState): void {
+    if (this.overrideTimer !== null) {
+      clearTimeout(this.overrideTimer);
+    }
+    this.override.set(state);
+    this.overrideTimer = setTimeout(
+      () => this.override.set(null),
+      MascotWidgetComponent.ROUTE_REACTION_MS,
+    );
+  }
+
+  private clearDormantTimer(): void {
+    if (this.dormantTimer !== null) {
+      clearTimeout(this.dormantTimer);
+      this.dormantTimer = null;
+    }
+  }
+
+  /**
+   * Mapea una URL de la aplicación a la pose más apropiada. La
+   * intención es que la mascota reaccione de forma coherente con el
+   * tipo de contenido que el estudiante acaba de abrir.
+   */
+  private static pickMoodByRoute(url: string): MascotState {
+    if (url.includes('/challenges')) return 'pensando';
+    if (url.includes('/labs')) return 'celebrando';
+    if (url.includes('/evaluations')) return 'pensando';
+    if (url.includes('/certificates')) return 'felicitando';
+    if (url.includes('/community')) return 'hablando';
+    if (url.includes('/messages')) return 'hablando';
+    if (url.includes('/notifications')) return 'confundido';
+    if (url.includes('/projects')) return 'celebrando';
+    if (url.includes('/routes')) return 'saludo';
+    if (url.includes('/courses')) return 'saludo';
+    return 'saludo';
+  }
 
   /** Alterna el estado abierto/cerrado del widget. */
   protected toggle(): void {
