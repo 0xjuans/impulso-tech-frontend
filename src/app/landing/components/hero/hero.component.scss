@@ -13,6 +13,7 @@
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   padding-top: calc(var(--nav-height) + var(--spacing-4xl));
   padding-bottom: 140px;
   overflow: hidden;

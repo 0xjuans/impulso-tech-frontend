@@ -296,18 +296,49 @@
   .meet-luki__title { font-size: clamp(32px, 8vw, 44px); }
   .meet-luki__lead { text-align: center; }
   .meet-luki__cta { align-self: center; }
-  .meet-luki__stage { max-width: 340px; }
-  .meet-luki__ability { font-size: 11px; padding: 6px 10px 6px 6px; }
-  .meet-luki__ability-icon { width: 22px; height: 22px; font-size: 12px; }
-  .meet-luki__speech { right: 4%; max-width: 200px; padding: 10px 14px; }
+  .meet-luki__stage { max-width: 320px; }
+  .meet-luki__ability { font-size: 12px; padding: 6px 12px 6px 6px; }
+  .meet-luki__ability-icon { width: 24px; height: 24px; font-size: 12px; }
+  .meet-luki__speech { right: 0; top: -12px; max-width: 220px; padding: 10px 14px; }
   .meet-luki__speech-head { font-size: 16px; }
   .meet-luki__speech-body { font-size: 12px; }
 }
 
-@media (max-width: 520px) {
-  .meet-luki__ability { display: none; }
-  .meet-luki__ability:nth-child(1),
-  .meet-luki__ability:nth-child(3) { display: inline-flex; }
+/* En móvil convertimos los chips orbitantes en una lista horizontal que
+   fluye debajo del mascot, evitando cortes y superposiciones. -------- */
+@media (max-width: 720px) {
+  .meet-luki__stage {
+    aspect-ratio: auto;
+    max-width: 100%;
+    padding: 0 4px;
+  }
+  .meet-luki__hero-img {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+  }
+  .meet-luki__glow { inset: 0; }
+  .meet-luki__speech {
+    position: static;
+    margin: 28px auto 0;
+    max-width: 260px;
+    text-align: left;
+  }
+  .meet-luki__speech::before { display: none; }
+  .meet-luki__orbits {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 22px;
+  }
+  .meet-luki__ability {
+    position: static !important;
+    transform: none !important;
+    animation: none !important;
+    inset: auto !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

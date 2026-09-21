@@ -89,6 +89,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  /* text-size-adjust: 100% impide que iOS agrande el texto al girar la
+     pantalla, otra fuente común de "descuadre" percibido. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  /* Evita el "rebote" elástico en iOS que hace sentir que la interfaz se
+     desplaza con gestos bruscos, sin afectar el scroll normal del ratón. */
+  overscroll-behavior-y: none;
+}
+
 a {
   color: inherit;
   text-decoration: none;

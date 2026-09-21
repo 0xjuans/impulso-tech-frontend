@@ -171,6 +171,7 @@
   max-width: 92vw;
   height: 520px;
   max-height: 90vh;
+  max-height: 90dvh;
   background: var(--color-canvas);
   border-radius: var(--radius-md);
   border: 1px solid rgba(32, 21, 21, 0.08);
@@ -180,6 +181,19 @@
   overflow: hidden;
   animation: mascotFadeIn 180ms ease;
   position: relative;
+}
+
+/* En móvil el panel ocupa casi toda la pantalla, sin handle de resize.
+   Se usa 100dvh (dynamic viewport height) para que el alto no salte
+   cuando iOS oculta o muestra la barra de direcciones. */
+@media (max-width: 640px) {
+  .mascot__panel {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    height: calc(100dvh - 130px);
+    max-height: calc(100dvh - 130px);
+  }
+  .mascot__resize { display: none; }
 }
 
 /* Handle de redimensionado en la esquina superior izquierda ------------- */

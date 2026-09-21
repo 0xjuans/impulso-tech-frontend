@@ -8,6 +8,7 @@
 :host {
   display: block;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-canvas-soft);
 }
 
@@ -19,6 +20,7 @@
     'side top'
     'side main';
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* ----------------------------------------------------------------- Side */
