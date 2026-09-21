@@ -183,23 +183,43 @@
   position: relative;
 }
 
-/* En móvil el panel ocupa casi toda la pantalla, sin handle de resize.
-   Se usa 100svh (small viewport height) en lugar de 100dvh para que el
-   alto se mantenga fijo cuando el teclado aparece/desaparece: svh usa
-   siempre el tamaño más pequeño posible del viewport, así el panel no
-   colapsa ni salta al abrir un input. */
+/* En móvil el chat es un modal full-screen que sale del layout del
+   contenedor `.mascot`. Con `position: fixed; inset: 0` el panel se
+   ancla al viewport visual del navegador y no se ve afectado por el
+   scroll del body ni por los cambios del layout viewport al abrir el
+   teclado. Combinado con `body.mascot-panel-open { overflow: hidden }`
+   (aplicado desde el componente), esto elimina de raíz la sensación
+   de "descuadre" al enfocar/desenfocar inputs. */
 @media (max-width: 640px) {
   .mascot__panel {
-    width: calc(100vw - 24px);
-    max-width: calc(100vw - 24px);
-    height: calc(100svh - 130px);
-    max-height: calc(100svh - 130px);
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    z-index: 300;
+    animation: mascotPanelInMobile 200ms ease;
   }
   .mascot__resize { display: none; }
+  /* Con el panel a full-screen, el trigger flotante ya no es necesario
+     (el cierre lo maneja el header del panel). */
+  .mascot__trigger.is-open { display: none; }
   /* iOS Safari aumenta automáticamente el zoom cuando un input tiene
-     font-size < 16px al enfocarlo. Ese zoom es el que recoloca el
-     viewport y hace sentir que la UI se descuadra. Con 16px se evita. */
+     font-size < 16px al enfocarlo. Con 16px se evita el zoom que
+     recoloca el viewport. */
   .mascot__input { font-size: 16px; }
+  /* El thread absorbe el overscroll para que el rebote elástico no
+     se propague al body detrás del panel. */
+  .mascot__thread { overscroll-behavior: contain; }
+}
+
+@keyframes mascotPanelInMobile {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Handle de redimensionado en la esquina superior izquierda ------------- */

@@ -169,6 +169,11 @@ export class MascotWidgetComponent implements AfterViewChecked {
             MascotWidgetComponent.SLEEP_DELAY_MS,
           );
         }
+        // Bloqueo de scroll del body cuando el chat está abierto en móvil.
+        // El panel se convierte en un modal full-screen y el body queda
+        // congelado, así el teclado virtual no genera cambios de scroll
+        // que se perciban como "descuadre" al enfocar/desenfocar inputs.
+        this.togglePanelBodyLock(isOpen);
       },
       { allowSignalWrites: true },
     );
@@ -219,6 +224,36 @@ export class MascotWidgetComponent implements AfterViewChecked {
     if (this.dormantTimer !== null) {
       clearTimeout(this.dormantTimer);
       this.dormantTimer = null;
+    }
+  }
+
+  /**
+   * Congela el scroll del body mientras el panel del chat está abierto.
+   *
+   * <p>Se guarda la posición actual de scroll y se aplica al {@code body}
+   * la clase {@code mascot-panel-open} que define
+   * {@code position: fixed; top: -scrollY}. Al cerrar el panel se
+   * restaura la clase y se re-posiciona la ventana en el mismo lugar
+   * donde estaba el usuario. Es el patrón estándar de los modales
+   * móviles y evita que el teclado virtual o el ajuste automático del
+   * navegador provoquen el "descuadre" percibido en iOS.</p>
+   */
+  private togglePanelBodyLock(open: boolean): void {
+    if (typeof document === 'undefined') return;
+    const body = document.body;
+    if (open) {
+      if (!body.classList.contains('mascot-panel-open')) {
+        const scrollY = window.scrollY;
+        body.dataset['mascotLockScrollY'] = String(scrollY);
+        body.style.top = `-${scrollY}px`;
+        body.classList.add('mascot-panel-open');
+      }
+    } else if (body.classList.contains('mascot-panel-open')) {
+      const savedY = Number(body.dataset['mascotLockScrollY'] ?? 0);
+      body.classList.remove('mascot-panel-open');
+      body.style.top = '';
+      delete body.dataset['mascotLockScrollY'];
+      window.scrollTo(0, savedY);
     }
   }
 

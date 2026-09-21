@@ -102,6 +102,17 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* Bloqueo de scroll del body mientras el chat de Luki está abierto en
+   móvil. Se combina con `position: fixed` desde JS (que además ajusta
+   `top` a la posición previa) para que al cerrar el panel el usuario
+   regrese exactamente al mismo punto donde estaba. Este patrón elimina
+   el "descuadre" percibido cuando el teclado virtual abre/cierra. */
+body.mascot-panel-open {
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+
 /* En móvil, cualquier input o textarea con font-size < 16px provoca que
    Safari aplique un zoom automático al enfocarlo. Ese zoom es la causa
    principal de que la interfaz se sienta "descuadrada" al tocar campos.
