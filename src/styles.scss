@@ -102,6 +102,19 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* En móvil, cualquier input o textarea con font-size < 16px provoca que
+   Safari aplique un zoom automático al enfocarlo. Ese zoom es la causa
+   principal de que la interfaz se sienta "descuadrada" al tocar campos.
+   Forzando 16px como mínimo se elimina el problema sin cambiar el
+   diseño en desktop. */
+@media (max-width: 768px) {
+  input:not([type='checkbox']):not([type='radio']),
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
 a {
   color: inherit;
   text-decoration: none;

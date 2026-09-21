@@ -184,16 +184,22 @@
 }
 
 /* En móvil el panel ocupa casi toda la pantalla, sin handle de resize.
-   Se usa 100dvh (dynamic viewport height) para que el alto no salte
-   cuando iOS oculta o muestra la barra de direcciones. */
+   Se usa 100svh (small viewport height) en lugar de 100dvh para que el
+   alto se mantenga fijo cuando el teclado aparece/desaparece: svh usa
+   siempre el tamaño más pequeño posible del viewport, así el panel no
+   colapsa ni salta al abrir un input. */
 @media (max-width: 640px) {
   .mascot__panel {
     width: calc(100vw - 24px);
     max-width: calc(100vw - 24px);
-    height: calc(100dvh - 130px);
-    max-height: calc(100dvh - 130px);
+    height: calc(100svh - 130px);
+    max-height: calc(100svh - 130px);
   }
   .mascot__resize { display: none; }
+  /* iOS Safari aumenta automáticamente el zoom cuando un input tiene
+     font-size < 16px al enfocarlo. Ese zoom es el que recoloca el
+     viewport y hace sentir que la UI se descuadra. Con 16px se evita. */
+  .mascot__input { font-size: 16px; }
 }
 
 /* Handle de redimensionado en la esquina superior izquierda ------------- */
