@@ -29,7 +29,10 @@ export type AppIconName =
   | 'target'
   | 'sparkles'
   | 'trophy'
-  | 'certificate';
+  | 'certificate'
+  | 'flame'
+  | 'bolt'
+  | 'arrow-right';
 
 /**
  * Componente que renderiza un icono SVG monocromático usando el
@@ -53,28 +56,31 @@ export type AppIconName =
       [attr.aria-label]="ariaLabel"
       fill="none"
       stroke="currentColor"
-      stroke-width="1.75"
+      stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round">
       @switch (name) {
-        @case ('dashboard') { <path d="M3 12h6V3H3zm12 9h6V10h-6zm-12 0h6v-6H3zm12-12h6V3h-6z" /> }
-        @case ('route') { <path d="M6 3v10a4 4 0 0 0 4 4h5a3 3 0 0 1 3 3M6 3l-3 3M6 3l3 3M18 21l3-3-3-3" /> }
-        @case ('book') { <path d="M4 5a2 2 0 0 1 2-2h11v16H6a2 2 0 0 0-2 2zm0 0v14M9 7h5M9 11h5" /> }
-        @case ('chat') { <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-4 4V5z" /> }
-        @case ('bell') { <path d="M6 8a6 6 0 1 1 12 0c0 6 3 7 3 7H3s3-1 3-7M10 21a2 2 0 0 0 4 0" /> }
-        @case ('user') { <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-8 9a8 8 0 0 1 16 0" /> }
-        @case ('users') { <path d="M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0m1-8a4 4 0 0 0 0-8m4 15a5 5 0 0 0-3-4.6" /> }
-        @case ('life-ring') { <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm-6.4-.4 3.5 3.5m5.8 5.8 3.5 3.5m-12.8 0 3.5-3.5m5.8-5.8 3.5-3.5" /> }
-        @case ('logout') { <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l-5-5 5-5M5 12h12" /> }
+        @case ('dashboard') { <path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z" /> }
+        @case ('route') { <path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13 6-3m-6 3V7m6 10 5.553 2.724A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m-6 3 6-3" /> }
+        @case ('book') { <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" /> }
+        @case ('chat') { <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> }
+        @case ('bell') { <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0" /> }
+        @case ('user') { <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0" /> }
+        @case ('users') { <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /> }
+        @case ('life-ring') { <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M14.83 9.17l4.24-4.24M14.83 9.17l3.53-3.53M4.93 19.07l4.24-4.24" /> }
+        @case ('logout') { <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /> }
         @case ('menu') { <path d="M4 6h16M4 12h16M4 18h16" /> }
-        @case ('close') { <path d="M6 6l12 12M18 6 6 18" /> }
-        @case ('home') { <path d="M3 12l9-9 9 9M5 10v10h14V10" /> }
-        @case ('check') { <path d="M5 12l5 5L20 7" /> }
-        @case ('beaker') { <path d="M9 3h6M10 3v6l-5 10a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-10V3M7 15h10" /> }
-        @case ('target') { <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" /> }
-        @case ('sparkles') { <path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.5 5.5l2 2m9 9 2 2m0-13-2 2m-9 9-2 2" /> }
-        @case ('trophy') { <path d="M8 21h8M12 17v4M6 3h12v6a6 6 0 0 1-12 0V3zM6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3" /> }
-        @case ('certificate') { <path d="M4 4h16v11H4zM4 15l3 5 2-3 3 3 3-3 2 3 3-5M9 8h6M8 11h8" /> }
+        @case ('close') { <path d="M18 6 6 18M6 6l12 12" /> }
+        @case ('home') { <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10" /> }
+        @case ('check') { <path d="M20 6 9 17l-5-5" /> }
+        @case ('beaker') { <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12" /> }
+        @case ('target') { <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4" /> }
+        @case ('sparkles') { <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3zM5 3v4M19 17v4M3 5h4M17 19h4" /> }
+        @case ('trophy') { <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z" /> }
+        @case ('certificate') { <path d="M15 20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l4.414 4.414a1 1 0 0 1 .293.707zM9 13l2 2 4-4" /> }
+        @case ('flame') { <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /> }
+        @case ('bolt') { <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" /> }
+        @case ('arrow-right') { <path d="M5 12h14M13 5l7 7-7 7" /> }
       }
     </svg>
   `,

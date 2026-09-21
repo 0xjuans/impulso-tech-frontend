@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+
+import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
@@ -34,7 +36,7 @@ import { GamificationService } from '../../../core/api/gamification/gamification
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
@@ -111,5 +113,34 @@ export class HomePageComponent implements OnInit {
   /** Devuelve las tres insignias más recientes del estudiante. */
   protected recentBadges(): readonly UserBadge[] {
     return this.badges().slice(0, 3);
+  }
+
+  /**
+   * Etiqueta corta para acompañar el ícono de la insignia según su
+   * rareza. Se usa como aria-label del ícono decorativo.
+   */
+  protected rarityLabel(rarity: string): string {
+    switch (rarity) {
+      case 'LEGENDARIA': return 'Legendaria';
+      case 'EPICA':      return 'Épica';
+      case 'RARA':       return 'Rara';
+      case 'COMUN':      return 'Común';
+      default:           return 'Insignia';
+    }
+  }
+
+  /**
+   * Devuelve el enrollment más reciente para usarlo como CTA principal
+   * "Continuar donde dejaste".
+   */
+  protected mostRecent(): Enrollment | null {
+    const list = [...this.enrollments()];
+    if (list.length === 0) return null;
+    list.sort((a, b) => {
+      const ta = a.lastAccessedAt ? new Date(a.lastAccessedAt).getTime() : 0;
+      const tb = b.lastAccessedAt ? new Date(b.lastAccessedAt).getTime() : 0;
+      return tb - ta;
+    });
+    return list[0];
   }
 }
