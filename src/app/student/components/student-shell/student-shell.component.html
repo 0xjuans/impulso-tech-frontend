@@ -1,10 +1,21 @@
 <!-- Layout principal del área privada del estudiante -->
-<div class="shell" [ngClass]="{ 'shell--menu-open': menuOpen() }">
+<div
+  class="shell"
+  [ngClass]="{
+    'shell--menu-open': menuOpen(),
+    'shell--collapsed': sideCollapsed()
+  }">
   <!-- Barra lateral -->
   <aside class="shell__side" aria-label="Navegación principal">
-    <a class="shell__brand" routerLink="/student/home" (click)="closeMenu()">
+    <a
+      class="shell__brand"
+      routerLink="/student/home"
+      (click)="closeMenu()"
+      [attr.title]="sideCollapsed() ? 'Impulso Tech' : null">
       <span class="shell__brand-prompt" aria-hidden="true">&gt;</span>
-      <span>Impulso<span class="shell__brand-accent">.tech</span></span>
+      <span class="shell__brand-text">
+        Impulso<span class="shell__brand-accent">.tech</span>
+      </span>
       <span class="shell__brand-caret" aria-hidden="true"></span>
     </a>
 
@@ -14,18 +25,27 @@
           class="shell__link"
           [routerLink]="item.path"
           routerLinkActive="is-active"
-          (click)="closeMenu()">
+          (click)="closeMenu()"
+          [attr.title]="sideCollapsed() ? item.label : null">
           <span class="shell__link-icon">
             <app-icon [name]="item.icon" [sizePx]="18" />
           </span>
           <span class="shell__link-label">{{ item.label }}</span>
+          <span class="shell__tooltip" aria-hidden="true">{{ item.label }}</span>
         </a>
       }
     </nav>
 
-    <button type="button" class="shell__logout" (click)="logout()">
-      <app-icon name="logout" [sizePx]="16" />
-      Cerrar sesión
+    <button
+      type="button"
+      class="shell__logout"
+      (click)="logout()"
+      [attr.title]="sideCollapsed() ? 'Cerrar sesión' : null">
+      <span class="shell__link-icon">
+        <app-icon name="logout" [sizePx]="16" />
+      </span>
+      <span class="shell__link-label">Cerrar sesión</span>
+      <span class="shell__tooltip" aria-hidden="true">Cerrar sesión</span>
     </button>
   </aside>
 
@@ -61,6 +81,28 @@
       </div>
     </div>
   </header>
+
+  <!-- Botón para colapsar/expandir la barra sin ocultarla del todo.
+       Se ancla al borde exterior de la barra, mitad afuera / mitad
+       adentro, al estilo Notion / Linear / VS Code. Vive fuera del
+       aside para no romper el overflow del panel. -->
+  <button
+    type="button"
+    class="shell__side-toggle"
+    (click)="toggleSideCollapsed()"
+    [attr.aria-expanded]="!sideCollapsed()"
+    [attr.aria-label]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
+    [attr.title]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.4"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      @if (sideCollapsed()) {
+        <path d="m9 6 6 6-6 6" />
+      } @else {
+        <path d="m15 6-6 6 6 6" />
+      }
+    </svg>
+  </button>
 
   <!-- Contenido principal -->
   <main class="shell__main">

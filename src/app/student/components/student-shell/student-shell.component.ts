@@ -67,6 +67,39 @@ export class StudentShellComponent {
   protected readonly menuOpen = signal(false);
 
   /**
+   * Estado colapsado de la barra lateral en desktop. Cuando está en
+   * {@code true} sólo se muestran los iconos y la barra queda como una
+   * columna estrecha, sin desaparecer por completo, para que el usuario
+   * pueda ganar espacio horizontal sin perder la navegación.
+   *
+   * <p>El valor se persiste en {@code localStorage} para que la
+   * preferencia sobreviva entre sesiones y recargas.</p>
+   */
+  protected readonly sideCollapsed = signal(this.readCollapsedPreference());
+
+  private static readonly COLLAPSED_KEY = 'impulso.student.side-collapsed';
+
+  private readCollapsedPreference(): boolean {
+    try {
+      return localStorage.getItem(StudentShellComponent.COLLAPSED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  protected toggleSideCollapsed(): void {
+    this.sideCollapsed.update((collapsed) => {
+      const next = !collapsed;
+      try {
+        localStorage.setItem(StudentShellComponent.COLLAPSED_KEY, next ? '1' : '0');
+      } catch {
+        // localStorage no disponible (privado): la preferencia solo dura la sesión.
+      }
+      return next;
+    });
+  }
+
+  /**
    * Entradas del menú lateral. El listado se mantiene estático porque el
    * área del estudiante tiene un número acotado y estable de secciones
    * en esta fase del producto.
