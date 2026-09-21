@@ -171,5 +171,71 @@
         </a>
       </div>
     </div>
+
+    <!-- TOP CURSOS + FEED DE INSCRIPCIONES ------------------------------- -->
+    <div class="dash__row-two">
+      <section class="panel">
+        <header class="panel__head">
+          <h3>Tus cursos con más inscripciones</h3>
+          <span class="panel__hint">Top 5 por matrícula</span>
+        </header>
+        @if (topCourses().length === 0) {
+          <p class="panel__empty">Todavía no hay cursos con inscripciones registradas.</p>
+        } @else {
+          <ul class="top-list">
+            @for (row of topCourses(); track row.courseId; let i = $index) {
+              <li class="top-row">
+                <span class="top-row__rank">{{ i + 1 }}</span>
+                <div class="top-row__body">
+                  <strong class="top-row__name">{{ row.name }}</strong>
+                  <div class="top-row__meta">
+                    <span>{{ row.totalEnrollments }} inscripciones</span>
+                    <span class="top-row__completion">
+                      {{ completionRate(row) }}% finalizadas
+                    </span>
+                  </div>
+                  <div class="top-row__bar">
+                    <span [style.width.%]="completionRate(row)"></span>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="panel">
+        <header class="panel__head">
+          <h3>Últimas inscripciones</h3>
+          <span class="panel__hint">Actividad reciente</span>
+        </header>
+        @if (recentEnrollments().length === 0) {
+          <p class="panel__empty">Cuando alguien se inscriba en tus cursos aparecerá aquí.</p>
+        } @else {
+          <ul class="feed">
+            @for (row of recentEnrollments(); track row.enrollmentId) {
+              <li class="feed-row">
+                <div class="feed-row__avatar" aria-hidden="true">
+                  {{ row.studentName[0] }}
+                </div>
+                <div class="feed-row__body">
+                  <p class="feed-row__title">
+                    <strong>{{ row.studentName }}</strong> se inscribió en
+                    <em>{{ row.courseName }}</em>
+                  </p>
+                  <div class="feed-row__meta">
+                    <span class="feed-row__status"
+                          [attr.data-status]="row.status">
+                      {{ statusLabel(row.status) }}
+                    </span>
+                    <time>{{ row.startedAt | date: 'medium' }}</time>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
   }
 </section>
