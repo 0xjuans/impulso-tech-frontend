@@ -63,9 +63,10 @@
       </h1>
 
       <p class="hero__subtitle">
-        Rutas guiadas, laboratorios en la nube, retos gamificados y una
-        mascota con IA que te acompaña. Todo pensado para que aprendas
-        programación desde tu colegio, sin pagar nada y a tu ritmo.
+        Rutas guiadas, laboratorios en la nube, retos gamificados y
+        <strong>Luki</strong>, tu mascota con IA que te acompaña 24/7.
+        Todo pensado para que aprendas programación desde tu colegio, sin
+        pagar nada y a tu ritmo.
       </p>
 
       <div class="hero__actions">
@@ -82,6 +83,20 @@
             <span class="hero-cta__text">Ver cómo funciona</span>
           </span>
         </a>
+
+        <!-- Chip pequeño con Luki al lado del CTA. Comunica que el
+             asistente IA acompaña sin invadir el copy principal. -->
+        <div class="hero__luki-chip" aria-hidden="true">
+          <img
+            class="hero__luki-chip-img"
+            src="mascot/avatar.webp"
+            alt=""
+            draggable="false"
+            loading="lazy" />
+          <span class="hero__luki-chip-text">
+            <strong>Luki</strong> te acompaña
+          </span>
+        </div>
       </div>
 
       <ul class="hero__proof" aria-label="Prueba social">
@@ -95,7 +110,7 @@
         </li>
         <li>
           <strong>24/7</strong>
-          <span>mascota con IA disponible</span>
+          <span>Luki, tu mascota IA disponible</span>
         </li>
       </ul>
     </div>
@@ -144,19 +159,38 @@
         </div>
       </article>
 
-      <article class="floating-card floating-card--pet">
-        <div class="pet">
-          <div class="pet__eyes">
-            <span></span><span></span>
+      <!--
+        Card de Luki: preview miniatura de la ventana real del chat, con
+        header, avatar grande, mensaje del asistente y estado online.
+        Comunica de un vistazo qué es y cómo se ve la mascota IA sin
+        invadir el copy del hero.
+      -->
+      <article class="floating-card floating-card--pet" aria-hidden="true">
+        <header class="luki-preview__header">
+          <div class="luki-preview__id">
+            <div class="luki-preview__avatar">
+              <img src="mascot/avatar.webp" alt="" draggable="false" />
+              <span class="luki-preview__online"></span>
+            </div>
+            <div class="luki-preview__meta">
+              <strong>Luki</strong>
+              <small><span class="luki-preview__dot"></span> Mascota IA · en línea</small>
+            </div>
           </div>
-          <div class="pet__mouth"></div>
-        </div>
-        <div class="pet__content">
-          <strong class="pet__name">Nova · tu mascota IA</strong>
-          <p class="pet__bubble">
-            Detecté un bucle infinito en tu solución. ¿Revisamos juntos la
-            condición de salida?
-          </p>
+          <span class="luki-preview__badge">24/7</span>
+        </header>
+
+        <div class="luki-preview__thread">
+          <div class="luki-preview__msg">
+            Detecté un bucle infinito en tu solución.
+            <br />¿Revisamos juntos la condición de salida?
+          </div>
+          <div class="luki-preview__typing" aria-label="Luki está pensando">
+            <img src="mascot/avatar.webp" alt="" draggable="false" />
+            <span class="luki-preview__dots">
+              <span></span><span></span><span></span>
+            </span>
+          </div>
         </div>
       </article>
     </aside>

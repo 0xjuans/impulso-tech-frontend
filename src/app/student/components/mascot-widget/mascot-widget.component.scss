@@ -152,17 +152,17 @@
   transform: translateY(-1px);
 }
 
-/* Colita del globo apuntando al trigger */
+/* Colita del globo apuntando hacia abajo, al avatar de Luki -------------- */
 .mascot-greeting__tail {
   position: absolute;
-  right: -6px;
-  bottom: 22px;
+  right: 28px;
+  bottom: -7px;
   width: 14px;
   height: 14px;
   background: var(--color-canvas);
   border-right: 1px solid rgba(32, 21, 21, 0.08);
   border-bottom: 1px solid rgba(32, 21, 21, 0.08);
-  transform: rotate(-45deg);
+  transform: rotate(45deg);
   border-radius: 0 0 3px 0;
 }
 

@@ -227,6 +227,7 @@
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--spacing-md);
   margin-top: var(--spacing-sm);
 }
@@ -493,10 +494,7 @@
 .floating-card--pet {
   top: 405px;
   right: 20px;
-  width: 320px;
-  display: flex;
-  gap: var(--spacing-md);
-  align-items: flex-start;
+  width: 340px;
   animation-delay: 3.2s;
   transform: rotate(1deg);
 }
@@ -666,45 +664,182 @@
 .pill--cool { background: rgba(107, 138, 253, 0.18); color: #3b52c4; }
 .pill--time { background: rgba(32, 21, 21, 0.08); color: var(--color-ink); }
 
-/* Mascota IA --------------------------------------------------------- */
+/* Chip de Luki al lado del CTA ---------------------------------------- */
 
-.pet {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: radial-gradient(circle at 30% 30%, #ff8a3d, #ff4f00);
+.hero__luki-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  background: rgba(255, 254, 251, 0.08);
+  border: 1px solid rgba(255, 254, 251, 0.14);
+  backdrop-filter: blur(10px);
+  color: #fffefb;
+  font-size: 13px;
+  animation: lukiChipIn 500ms ease 400ms both;
+}
+.hero__luki-chip-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  user-select: none;
+}
+.hero__luki-chip-text { line-height: 1.2; opacity: 0.95; }
+.hero__luki-chip-text strong { color: #ff8a3d; font-weight: 700; }
+
+@keyframes lukiChipIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Preview del chat de Luki — mini ventana profesional ------------------ */
+
+.floating-card--pet {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.18);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #ffffff;
 }
 
-.pet__eyes {
+.luki-preview__header {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #ff4f00;
+  color: #fff;
 }
 
-.pet__eyes span {
+.luki-preview__id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.luki-preview__avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: visible;
+  flex-shrink: 0;
+}
+.luki-preview__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  user-select: none;
+}
+.luki-preview__online {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 2px #ff4f00;
+}
+
+.luki-preview__meta { display: flex; flex-direction: column; min-width: 0; }
+.luki-preview__meta strong {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.luki-preview__meta small {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  opacity: 0.92;
+  margin-top: 1px;
+}
+.luki-preview__dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #fffefb;
-  animation: blink 4s infinite;
+  background: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.35);
 }
 
-.pet__mouth {
-  width: 10px;
-  height: 4px;
-  border-radius: 0 0 8px 8px;
-  background: #fffefb;
+.luki-preview__badge {
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
-@keyframes blink {
-  0%, 92%, 100% { transform: scaleY(1); }
-  95% { transform: scaleY(0.1); }
+.luki-preview__thread {
+  padding: 14px;
+  background: #faf7f2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.luki-preview__msg {
+  align-self: flex-start;
+  max-width: 92%;
+  padding: 10px 12px;
+  border-radius: 4px 14px 14px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(32, 21, 21, 0.08);
+  color: var(--color-ink);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.luki-preview__typing {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.luki-preview__typing img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  user-select: none;
+}
+.luki-preview__dots {
+  display: inline-flex;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 4px 14px 14px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(32, 21, 21, 0.08);
+}
+.luki-preview__dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff4f00;
+  opacity: 0.5;
+  animation: lukiTypingDot 1.3s infinite ease-in-out;
+}
+.luki-preview__dots span:nth-child(2) { animation-delay: 0.18s; }
+.luki-preview__dots span:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes lukiTypingDot {
+  0%, 60%, 100% { transform: translateY(0);    opacity: 0.35; }
+  30%            { transform: translateY(-4px); opacity: 1; }
 }
 
 .pet__content {
@@ -874,18 +1009,19 @@
 
 @media (prefers-reduced-motion: reduce) {
   .floating-card,
-  .pet__eyes span,
   .hero__marquee-track,
   .hero__glow,
   .hero__orb,
   .hero__rotator-word,
   .progress__bar,
   .hero__eyebrow-dot,
-  .typing-caret {
-    animation: none;
-    transition: none;
+  .typing-caret,
+  .luki-preview__dots span {
+    animation: none !important;
+    transition: none !important;
   }
 
   .hero__rotator-word.is-active { opacity: 1; transform: none; }
   .progress__bar { width: 62%; }
 }
+
