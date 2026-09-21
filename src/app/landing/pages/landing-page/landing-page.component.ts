@@ -5,6 +5,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { HeroComponent } from '../../components/hero/hero.component';
 import { FeaturesGridComponent } from '../../components/features-grid/features-grid.component';
 import { LabsDemoComponent } from '../../components/labs-demo/labs-demo.component';
+import { MeetLukiComponent } from '../../components/meet-luki/meet-luki.component';
 import { CtaBandComponent } from '../../components/cta-band/cta-band.component';
 
 /**
@@ -24,6 +25,7 @@ import { CtaBandComponent } from '../../components/cta-band/cta-band.component';
     HeroComponent,
     FeaturesGridComponent,
     LabsDemoComponent,
+    MeetLukiComponent,
     CtaBandComponent,
     FooterComponent,
   ],

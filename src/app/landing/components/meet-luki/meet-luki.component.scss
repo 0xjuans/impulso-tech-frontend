@@ -1,0 +1,320 @@
+/* Sección "Conoce a Luki" - presentación de la mascota IA -------------- */
+
+.meet-luki {
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 140px;
+  background: #fffefb;
+  isolation: isolate;
+}
+
+/* Fondo con blobs sutiles y patrón de rejilla ------------------------- */
+.meet-luki__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.meet-luki__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+}
+.meet-luki__blob--a {
+  width: 480px;
+  height: 480px;
+  left: -160px;
+  top: -120px;
+  background: rgba(255, 138, 61, 0.35);
+}
+.meet-luki__blob--b {
+  width: 520px;
+  height: 520px;
+  right: -180px;
+  bottom: -180px;
+  background: rgba(255, 79, 0, 0.22);
+}
+.meet-luki__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(32, 21, 21, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 21, 21, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 75%);
+}
+
+.meet-luki__content {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+/* Columna de texto ----------------------------------------------------- */
+.meet-luki__text {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.meet-luki__eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.meet-luki__title {
+  margin: 0;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+  font-weight: 800;
+}
+.meet-luki__title-accent {
+  color: var(--color-primary);
+  position: relative;
+  display: inline-block;
+}
+.meet-luki__title-accent::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  height: 10px;
+  background: rgba(255, 79, 0, 0.18);
+  z-index: -1;
+  border-radius: 4px;
+}
+
+.meet-luki__lead {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--color-body);
+  max-width: 480px;
+}
+.meet-luki__lead strong { color: var(--color-ink); font-weight: 700; }
+
+.meet-luki__cta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  margin-top: 12px;
+  box-shadow: 0 8px 20px rgba(32, 21, 21, 0.20);
+}
+.meet-luki__cta:hover {
+  background: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(255, 79, 0, 0.32);
+}
+.meet-luki__cta svg { transition: transform 200ms ease; }
+.meet-luki__cta:hover svg { transform: translateX(4px); }
+
+/* Columna visual: ilustración con habilidades orbitantes -------------- */
+.meet-luki__stage {
+  position: relative;
+  aspect-ratio: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.meet-luki__glow {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 55%,
+    rgba(255, 138, 61, 0.35) 0%,
+    rgba(255, 79, 0, 0.15) 40%,
+    transparent 70%);
+  filter: blur(30px);
+  animation: lukiGlowPulse 5s ease-in-out infinite;
+}
+@keyframes lukiGlowPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.75; }
+  50%      { transform: scale(1.06); opacity: 1; }
+}
+
+.meet-luki__hero-img {
+  position: relative;
+  width: 88%;
+  height: 88%;
+  margin: 6% auto;
+  display: block;
+  object-fit: contain;
+  animation: lukiFloat 4s ease-in-out infinite;
+  filter: drop-shadow(0 30px 40px rgba(32, 21, 21, 0.25));
+}
+@keyframes lukiFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+/* Chips de habilidad posicionados en las esquinas del escenario,
+   siempre fuera de la silueta de Luki para no invadir la ilustración. */
+.meet-luki__orbits {
+  position: absolute;
+  inset: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.meet-luki__ability {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 8px 8px;
+  background: #ffffff;
+  border-radius: 999px;
+  border: 1px solid rgba(32, 21, 21, 0.08);
+  box-shadow: 0 10px 20px rgba(32, 21, 21, 0.12);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+  animation: abilityBob 5s ease-in-out infinite;
+  z-index: 2;
+}
+
+/* Posiciones manuales alrededor del lobito (cuadrante superior izquierdo,
+   superior derecho no — ese lo ocupa el bocadillo — inferior izquierdo,
+   inferior centro-derecho e izquierdo-medio). ------------------------- */
+.meet-luki__ability:nth-child(1) {
+  top: 8%;
+  left: -6%;
+  animation-delay: 0.0s;
+}
+.meet-luki__ability:nth-child(2) {
+  top: 46%;
+  left: -12%;
+  animation-delay: 0.4s;
+}
+.meet-luki__ability:nth-child(3) {
+  bottom: 20%;
+  left: -4%;
+  animation-delay: 0.8s;
+}
+.meet-luki__ability:nth-child(4) {
+  bottom: 6%;
+  right: 4%;
+  animation-delay: 1.2s;
+}
+.meet-luki__ability:nth-child(5) {
+  top: 52%;
+  right: -8%;
+  animation-delay: 1.6s;
+}
+
+.meet-luki__ability-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 79, 0, 0.10);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+@keyframes abilityBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* Bocadillo de saludo grande ------------------------------------------ */
+.meet-luki__speech {
+  position: absolute;
+  top: 6%;
+  right: -8%;
+  padding: 14px 20px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(32, 21, 21, 0.08);
+  box-shadow: 0 16px 32px rgba(32, 21, 21, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 240px;
+  z-index: 3;
+  animation: speechIn 500ms ease 300ms both;
+}
+.meet-luki__speech-head {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+}
+.meet-luki__speech-body {
+  font-size: 13.5px;
+  color: var(--color-ink);
+  line-height: 1.4;
+}
+.meet-luki__speech::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  bottom: 22px;
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border-left: 1px solid rgba(32, 21, 21, 0.08);
+  border-bottom: 1px solid rgba(32, 21, 21, 0.08);
+  transform: rotate(45deg);
+  border-radius: 0 0 0 3px;
+}
+@keyframes speechIn {
+  from { opacity: 0; transform: translateX(10px) scale(0.9); }
+  to   { opacity: 1; transform: translateX(0)   scale(1); }
+}
+
+/* Responsive ---------------------------------------------------------- */
+@media (max-width: 960px) {
+  .meet-luki { padding: 80px 0 90px; }
+  .meet-luki__content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+  .meet-luki__text { align-items: center; }
+  .meet-luki__title { font-size: clamp(32px, 8vw, 44px); }
+  .meet-luki__lead { text-align: center; }
+  .meet-luki__cta { align-self: center; }
+  .meet-luki__stage { max-width: 340px; }
+  .meet-luki__ability { font-size: 11px; padding: 6px 10px 6px 6px; }
+  .meet-luki__ability-icon { width: 22px; height: 22px; font-size: 12px; }
+  .meet-luki__speech { right: 4%; max-width: 200px; padding: 10px 14px; }
+  .meet-luki__speech-head { font-size: 16px; }
+  .meet-luki__speech-body { font-size: 12px; }
+}
+
+@media (max-width: 520px) {
+  .meet-luki__ability { display: none; }
+  .meet-luki__ability:nth-child(1),
+  .meet-luki__ability:nth-child(3) { display: inline-flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meet-luki__hero-img,
+  .meet-luki__glow,
+  .meet-luki__ability,
+  .meet-luki__speech {
+    animation: none !important;
+  }
+}

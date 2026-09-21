@@ -1,0 +1,64 @@
+<!--
+  Sección "Conoce a Luki": presentación de la mascota IA a cuerpo
+  completo con burbujas orbitantes de sus habilidades. Se ancla a un
+  fondo cálido para separarla visualmente del resto de la landing.
+-->
+<section class="meet-luki" aria-labelledby="meet-luki-title">
+  <div class="meet-luki__bg" aria-hidden="true">
+    <span class="meet-luki__blob meet-luki__blob--a"></span>
+    <span class="meet-luki__blob meet-luki__blob--b"></span>
+    <span class="meet-luki__grid"></span>
+  </div>
+
+  <div class="container meet-luki__content">
+    <div class="meet-luki__text">
+      <span class="meet-luki__eyebrow">Conoce a tu compañero de aprendizaje</span>
+      <h2 id="meet-luki-title" class="meet-luki__title">
+        Este es <span class="meet-luki__title-accent">Luki</span>,<br />
+        tu mascota con IA.
+      </h2>
+      <p class="meet-luki__lead">
+        Un lobezno curioso que vive dentro de Impulso Tech y te acompaña
+        en cada paso. Te da pistas cuando te atoras, celebra cuando
+        avanzas y adapta sus explicaciones a tu ritmo — porque el objetivo
+        es que <strong>tú</strong> aprendas.
+      </p>
+
+      <a class="meet-luki__cta" href="/auth/register">
+        <span>Habla con Luki gratis</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Ilustración con habilidades orbitantes ---------------------------- -->
+    <div class="meet-luki__stage" aria-hidden="true">
+      <div class="meet-luki__glow"></div>
+      <img
+        class="meet-luki__hero-img"
+        src="mascot/idle.webp"
+        alt=""
+        draggable="false"
+        loading="lazy" />
+
+      <ul class="meet-luki__orbits">
+        @for (a of abilities; track a.label) {
+          <li class="meet-luki__ability">
+            <span class="meet-luki__ability-icon">{{ a.icon }}</span>
+            <span class="meet-luki__ability-label">{{ a.label }}</span>
+          </li>
+        }
+      </ul>
+
+      <!-- Bocadillo de saludo grande, integrado con la composición ------- -->
+      <div class="meet-luki__speech">
+        <span class="meet-luki__speech-head">¡Hola!</span>
+        <span class="meet-luki__speech-body">
+          ¿En qué proyecto estás trabajando hoy?
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
