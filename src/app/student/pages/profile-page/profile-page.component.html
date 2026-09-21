@@ -1,184 +1,364 @@
-<!-- Página de gestión del perfil del usuario autenticado -->
+<!-- Página de perfil del estudiante ---------------------------------------->
 <section class="profile">
-  <header class="profile__header">
-    <span class="profile__eyebrow">Mi perfil</span>
-    <h1 class="profile__title">Cómo te ven los demás en Impulso Tech</h1>
-    <p class="profile__lead">
-      Actualiza tu información pública y mantén tu cuenta segura.
-    </p>
+  <!-- Hero: avatar + identidad + chips de resumen --------------------- -->
+  <header class="profile__hero">
+    <div class="profile__hero-bg" aria-hidden="true">
+      <span class="profile__blob"></span>
+    </div>
+
+    <div class="profile__identity">
+      <div class="profile__avatar" aria-hidden="true">
+        @if (user()?.profilePhotoUrl) {
+          <img [src]="user()?.profilePhotoUrl" [alt]="fullName()" />
+        } @else {
+          <span>{{ initials() }}</span>
+        }
+      </div>
+      <div class="profile__meta">
+        <span class="profile__eyebrow">{{ roleLabel(user()?.role) }}</span>
+        <h1 class="profile__name">{{ fullName() }}</h1>
+        <p class="profile__username">
+          &#64;{{ user()?.username }}
+          <span class="profile__dot" aria-hidden="true">·</span>
+          {{ user()?.email }}
+        </p>
+      </div>
+    </div>
+
+    <ul class="profile__stats" aria-label="Progreso general">
+      <li class="stat">
+        <span class="stat__icon" aria-hidden="true">
+          <app-icon name="bolt" [sizePx]="16" />
+        </span>
+        <div class="stat__body">
+          <strong class="stat__value">{{ xp()?.currentLevel ?? 1 }}</strong>
+          <span class="stat__label">Nivel</span>
+        </div>
+      </li>
+      <li class="stat">
+        <span class="stat__icon" aria-hidden="true">
+          <app-icon name="sparkles" [sizePx]="16" />
+        </span>
+        <div class="stat__body">
+          <strong class="stat__value">{{ xp()?.totalXp ?? 0 }}</strong>
+          <span class="stat__label">XP totales</span>
+        </div>
+      </li>
+      <li class="stat">
+        <span class="stat__icon" aria-hidden="true">
+          <app-icon name="flame" [sizePx]="16" />
+        </span>
+        <div class="stat__body">
+          <strong class="stat__value">{{ streak()?.currentStreak ?? 0 }}</strong>
+          <span class="stat__label">Días de racha</span>
+        </div>
+      </li>
+      <li class="stat">
+        <span class="stat__icon" aria-hidden="true">
+          <app-icon name="trophy" [sizePx]="16" />
+        </span>
+        <div class="stat__body">
+          <strong class="stat__value">{{ badges().length }}</strong>
+          <span class="stat__label">Insignias</span>
+        </div>
+      </li>
+      <li class="stat">
+        <span class="stat__icon" aria-hidden="true">
+          <app-icon name="certificate" [sizePx]="16" />
+        </span>
+        <div class="stat__body">
+          <strong class="stat__value">{{ certificates().length }}</strong>
+          <span class="stat__label">Certificados</span>
+        </div>
+      </li>
+      @if (rankPosition(); as me) {
+        <li class="stat">
+          <span class="stat__icon" aria-hidden="true">
+            <app-icon name="target" [sizePx]="16" />
+          </span>
+          <div class="stat__body">
+            <strong class="stat__value">#{{ me.position }}</strong>
+            <span class="stat__label">Ranking global</span>
+          </div>
+        </li>
+      }
+    </ul>
   </header>
 
-  <div class="profile__grid">
-    <!-- Bloque de información pública ------------------------------------ -->
-    <form
-      class="profile__card auth-form"
-      [formGroup]="profileForm"
-      (ngSubmit)="submitProfile()"
-      novalidate>
-      <header>
-        <h2 class="profile__section-title">Información pública</h2>
-        <p class="auth-form__lead">
-          Estos datos aparecen en tu perfil, en foros y en los rankings.
-        </p>
-      </header>
+  <!-- Pestañas ------------------------------------------------------- -->
+  <nav class="profile__tabs" aria-label="Secciones del perfil">
+    <button type="button"
+      class="profile__tab"
+      [class.is-active]="activeTab() === 'overview'"
+      (click)="setTab('overview')">Resumen</button>
+    <button type="button"
+      class="profile__tab"
+      [class.is-active]="activeTab() === 'badges'"
+      (click)="setTab('badges')">
+      Insignias
+      @if (badges().length > 0) { <span class="profile__tab-badge">{{ badges().length }}</span> }
+    </button>
+    <button type="button"
+      class="profile__tab"
+      [class.is-active]="activeTab() === 'certificates'"
+      (click)="setTab('certificates')">
+      Certificados
+      @if (certificates().length > 0) { <span class="profile__tab-badge">{{ certificates().length }}</span> }
+    </button>
+    <button type="button"
+      class="profile__tab"
+      [class.is-active]="activeTab() === 'edit'"
+      (click)="setTab('edit')">Editar perfil</button>
+    <button type="button"
+      class="profile__tab"
+      [class.is-active]="activeTab() === 'security'"
+      (click)="setTab('security')">Seguridad</button>
+  </nav>
 
-      @if (profileMessage()) {
-        <div class="auth-form__alert auth-form__alert--success">{{ profileMessage() }}</div>
+  <!-- Contenido de la pestaña activa --------------------------------- -->
+  @switch (activeTab()) {
+    @case ('overview') {
+      <div class="profile__grid">
+        <!-- Progreso al siguiente nivel -->
+        <article class="card">
+          <header class="card__head">
+            <h2>Progreso al siguiente nivel</h2>
+          </header>
+          @if (xp(); as x) {
+            <div class="level">
+              <div class="level__row">
+                <strong class="level__num">Nivel {{ x.currentLevel }}</strong>
+                <span class="level__meta">{{ x.totalXp }} XP totales</span>
+              </div>
+              <div class="level__bar" [attr.aria-valuenow]="levelProgress()">
+                <span [style.width.%]="levelProgress()"></span>
+              </div>
+              <p class="level__hint">
+                Te faltan <strong>{{ x.xpToNextLevel }} XP</strong> para el nivel
+                {{ x.currentLevel + 1 }}.
+              </p>
+            </div>
+          } @else {
+            <p class="card__empty">Sin datos de experiencia todavía.</p>
+          }
+        </article>
+
+        <!-- Racha -->
+        <article class="card">
+          <header class="card__head">
+            <h2>Racha de aprendizaje</h2>
+          </header>
+          @if (streak(); as s) {
+            <div class="streak">
+              <div class="streak__row">
+                <strong class="streak__value">{{ s.currentStreak }}</strong>
+                <span>días consecutivos</span>
+              </div>
+              <p class="streak__hint">
+                Récord personal: <strong>{{ s.longestStreak }}</strong> días.
+              </p>
+              @if (s.lastActivityDate) {
+                <p class="streak__meta">
+                  Última actividad: {{ s.lastActivityDate | date: 'mediumDate' }}
+                </p>
+              }
+            </div>
+          } @else {
+            <p class="card__empty">Empieza tu primera racha hoy completando una lección.</p>
+          }
+        </article>
+
+        <!-- Insignias recientes -->
+        <article class="card card--wide">
+          <header class="card__head">
+            <h2>Insignias recientes</h2>
+            @if (badges().length > 3) {
+              <button class="card__link" (click)="setTab('badges')">Ver todas</button>
+            }
+          </header>
+          @if (badges().length === 0) {
+            <div class="card__empty-block">
+              <app-icon name="trophy" [sizePx]="32" />
+              <p>Todavía no has ganado insignias. Completa lecciones y retos para desbloquear las primeras.</p>
+            </div>
+          } @else {
+            <ul class="badge-list">
+              @for (item of badges().slice(0, 6); track item.badge.id) {
+                <li class="badge">
+                  <div class="badge__icon">
+                    <app-icon name="trophy" [sizePx]="18" />
+                  </div>
+                  <div class="badge__body">
+                    <strong>{{ item.badge.name }}</strong>
+                    <span>{{ item.awardedAt | date: 'mediumDate' }}</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </article>
+
+        <!-- Certificados recientes -->
+        <article class="card card--wide">
+          <header class="card__head">
+            <h2>Certificados recientes</h2>
+            @if (certificates().length > 3) {
+              <button class="card__link" (click)="setTab('certificates')">Ver todos</button>
+            }
+          </header>
+          @if (certificates().length === 0) {
+            <div class="card__empty-block">
+              <app-icon name="certificate" [sizePx]="32" />
+              <p>Todavía no has obtenido certificados. Completa un curso que los emita para desbloquear el primero.</p>
+            </div>
+          } @else {
+            <ul class="cert-list">
+              @for (c of certificates().slice(0, 3); track c.id) {
+                <li class="cert">
+                  <div class="cert__body">
+                    <strong>{{ c.courseName }}</strong>
+                    <span>Emitido el {{ c.issuedAt | date: 'mediumDate' }}</span>
+                  </div>
+                  <a class="cert__download" [href]="downloadCertificateUrl(c.verificationCode)"
+                     target="_blank" rel="noopener">Descargar</a>
+                </li>
+              }
+            </ul>
+          }
+        </article>
+      </div>
+    }
+
+    @case ('badges') {
+      @if (badges().length === 0) {
+        <div class="tab-empty">
+          <app-icon name="trophy" [sizePx]="40" />
+          <h3>Sin insignias todavía</h3>
+          <p>Completa lecciones, retos y proyectos para desbloquear insignias que reconocen tu progreso.</p>
+          <a class="tab-empty__cta" routerLink="/student/challenges">Ver retos</a>
+        </div>
+      } @else {
+        <ul class="badge-grid">
+          @for (item of badges(); track item.badge.id) {
+            <li class="badge-tile" [attr.data-rarity]="item.badge.rarity">
+              <div class="badge-tile__icon">
+                <app-icon name="trophy" [sizePx]="24" />
+              </div>
+              <strong class="badge-tile__name">{{ item.badge.name }}</strong>
+              <span class="badge-tile__rarity">{{ item.badge.rarity }}</span>
+              <p class="badge-tile__desc">{{ item.badge.description }}</p>
+              <span class="badge-tile__meta">Otorgada el {{ item.awardedAt | date: 'mediumDate' }}</span>
+            </li>
+          }
+        </ul>
       }
-      @if (profileError()) {
-        <div class="auth-form__alert auth-form__alert--error" role="alert">
-          {{ profileError() }}
+    }
+
+    @case ('certificates') {
+      @if (certificates().length === 0) {
+        <div class="tab-empty">
+          <app-icon name="certificate" [sizePx]="40" />
+          <h3>Sin certificados todavía</h3>
+          <p>Completa un curso que emita certificado y aparecerá aquí para que puedas descargarlo o compartirlo.</p>
+          <a class="tab-empty__cta" routerLink="/student/courses">Ver cursos</a>
         </div>
+      } @else {
+        <ul class="cert-grid">
+          @for (c of certificates(); track c.id) {
+            <li class="cert-tile">
+              <div class="cert-tile__icon">
+                <app-icon name="certificate" [sizePx]="24" />
+              </div>
+              <strong class="cert-tile__title">{{ c.courseName }}</strong>
+              <span class="cert-tile__meta">Emitido el {{ c.issuedAt | date: 'longDate' }}</span>
+              <span class="cert-tile__code">Código: {{ c.verificationCode }}</span>
+              <div class="cert-tile__actions">
+                <a class="cert-tile__download"
+                   [href]="downloadCertificateUrl(c.verificationCode)"
+                   target="_blank" rel="noopener">Descargar PDF</a>
+                <a class="cert-tile__verify"
+                   [routerLink]="['/verify', c.verificationCode]"
+                   target="_blank" rel="noopener">Verificar</a>
+              </div>
+            </li>
+          }
+        </ul>
       }
+    }
 
-      <div class="auth-form__row">
-        <div class="auth-form__group">
-          <label class="auth-form__label" for="profile-first">Nombres</label>
-          <input
-            id="profile-first"
-            class="auth-form__input"
-            type="text"
-            autocomplete="given-name"
-            formControlName="firstName" />
-        </div>
-        <div class="auth-form__group">
-          <label class="auth-form__label" for="profile-last">Apellidos</label>
-          <input
-            id="profile-last"
-            class="auth-form__input"
-            type="text"
-            autocomplete="family-name"
-            formControlName="lastName" />
-        </div>
-      </div>
-
-      <div class="auth-form__group">
-        <label class="auth-form__label" for="profile-username">Nombre de usuario</label>
-        <input
-          id="profile-username"
-          class="auth-form__input"
-          type="text"
-          autocomplete="username"
-          formControlName="username" />
-        @if (profileForm.controls.username.touched && profileForm.controls.username.invalid) {
-          <span class="auth-form__error">
-            Usa entre 3 y 60 caracteres: letras, números, puntos, guiones y guiones bajos.
-          </span>
-        }
-      </div>
-
-      <div class="auth-form__group">
-        <label class="auth-form__label" for="profile-photo">URL de tu foto de perfil</label>
-        <input
-          id="profile-photo"
-          class="auth-form__input"
-          type="url"
-          placeholder="https://..."
-          formControlName="profilePhotoUrl" />
-        <span class="auth-form__hint">Opcional. Debe ser un enlace público a una imagen.</span>
-      </div>
-
-      <div class="auth-form__actions">
-        <button type="submit" class="auth-form__submit" [disabled]="profileSubmitting()">
-          @if (profileSubmitting()) { Guardando... } @else { Guardar cambios }
-        </button>
-      </div>
-    </form>
-
-    <!-- Bloque de cambio de contraseña ----------------------------------- -->
-    <form
-      class="profile__card auth-form"
-      [formGroup]="passwordForm"
-      (ngSubmit)="submitPassword()"
-      novalidate>
-      <header>
-        <h2 class="profile__section-title">Cambiar contraseña</h2>
-        <p class="auth-form__lead">
-          Confirma tu contraseña actual antes de definir una nueva.
-        </p>
-      </header>
-
-      @if (passwordMessage()) {
-        <div class="auth-form__alert auth-form__alert--success">{{ passwordMessage() }}</div>
-      }
-      @if (passwordError()) {
-        <div class="auth-form__alert auth-form__alert--error" role="alert">
-          {{ passwordError() }}
-        </div>
-      }
-
-      <div class="auth-form__group">
-        <label class="auth-form__label" for="profile-current">Contraseña actual</label>
-        <input
-          id="profile-current"
-          class="auth-form__input"
-          type="password"
-          autocomplete="current-password"
-          formControlName="currentPassword" />
-        @if (
-          passwordForm.controls.currentPassword.touched &&
-          passwordForm.controls.currentPassword.hasError('required')
-        ) {
-          <span class="auth-form__error">Ingresa tu contraseña actual.</span>
-        }
-      </div>
-
-      <div class="auth-form__group">
-        <label class="auth-form__label" for="profile-new">Nueva contraseña</label>
-        <input
-          id="profile-new"
-          class="auth-form__input"
-          type="password"
-          autocomplete="new-password"
-          formControlName="newPassword" />
-        @if (
-          passwordForm.controls.newPassword.touched &&
-          passwordForm.controls.newPassword.invalid
-        ) {
-          <span class="auth-form__error">
-            Mínimo 8 caracteres, con al menos una letra y un número.
-          </span>
-        } @else {
-          <span class="auth-form__hint">
-            Mínimo 8 caracteres, con al menos una letra y un número.
-          </span>
-        }
-      </div>
-
-      <div class="auth-form__actions">
-        <button type="submit" class="auth-form__submit" [disabled]="passwordSubmitting()">
-          @if (passwordSubmitting()) { Actualizando... } @else { Cambiar contraseña }
-        </button>
-      </div>
-    </form>
-
-    <!-- Bloque de resumen de cuenta ------------------------------------- -->
-    <aside class="profile__meta">
-      <h2 class="profile__section-title">Datos de tu cuenta</h2>
-      <dl class="profile__list">
-        <div>
-          <dt>Correo electrónico</dt>
-          <dd>{{ user()?.email }}</dd>
-        </div>
-        <div>
-          <dt>Rol</dt>
-          <dd>{{ user()?.role }}</dd>
-        </div>
-        <div>
-          <dt>Estado</dt>
-          <dd>{{ user()?.status }}</dd>
-        </div>
-        <div>
-          <dt>Miembro desde</dt>
-          <dd>{{ user()?.createdAt | date: 'longDate' }}</dd>
-        </div>
-        @if (user()?.emailVerifiedAt) {
-          <div>
-            <dt>Correo verificado</dt>
-            <dd>{{ user()?.emailVerifiedAt | date: 'longDate' }}</dd>
+    @case ('edit') {
+      <article class="card">
+        <header class="card__head">
+          <h2>Editar perfil</h2>
+        </header>
+        <form class="form" [formGroup]="profileForm" (ngSubmit)="submitProfile()">
+          <div class="form__row">
+            <label class="form__field">
+              <span>Nombre</span>
+              <input type="text" formControlName="firstName" autocomplete="given-name" />
+            </label>
+            <label class="form__field">
+              <span>Apellido</span>
+              <input type="text" formControlName="lastName" autocomplete="family-name" />
+            </label>
           </div>
-        }
-      </dl>
-    </aside>
-  </div>
+          <label class="form__field">
+            <span>Nombre de usuario</span>
+            <input type="text" formControlName="username" autocomplete="username" />
+          </label>
+          <label class="form__field">
+            <span>URL de foto de perfil (opcional)</span>
+            <input type="url" formControlName="profilePhotoUrl" placeholder="https://…" />
+          </label>
+
+          @if (profileError()) {
+            <p class="form__error" role="alert">{{ profileError() }}</p>
+          }
+          @if (profileMessage()) {
+            <p class="form__success">{{ profileMessage() }}</p>
+          }
+
+          <div class="form__actions">
+            <button type="submit" class="form__submit" [disabled]="profileSubmitting()">
+              {{ profileSubmitting() ? 'Guardando…' : 'Guardar cambios' }}
+            </button>
+          </div>
+        </form>
+      </article>
+    }
+
+    @case ('security') {
+      <article class="card">
+        <header class="card__head">
+          <h2>Cambiar contraseña</h2>
+        </header>
+        <form class="form" [formGroup]="passwordForm" (ngSubmit)="submitPassword()">
+          <label class="form__field">
+            <span>Contraseña actual</span>
+            <input type="password" formControlName="currentPassword" autocomplete="current-password" />
+          </label>
+          <label class="form__field">
+            <span>Nueva contraseña</span>
+            <input type="password" formControlName="newPassword" autocomplete="new-password" />
+            <small class="form__hint">
+              Mínimo 8 caracteres con al menos una letra y un número.
+            </small>
+          </label>
+
+          @if (passwordError()) {
+            <p class="form__error" role="alert">{{ passwordError() }}</p>
+          }
+          @if (passwordMessage()) {
+            <p class="form__success">{{ passwordMessage() }}</p>
+          }
+
+          <div class="form__actions">
+            <button type="submit" class="form__submit" [disabled]="passwordSubmitting()">
+              {{ passwordSubmitting() ? 'Guardando…' : 'Actualizar contraseña' }}
+            </button>
+          </div>
+        </form>
+      </article>
+    }
+  }
 </section>

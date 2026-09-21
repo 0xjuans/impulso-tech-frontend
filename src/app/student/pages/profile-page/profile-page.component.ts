@@ -1,30 +1,46 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { finalize } from 'rxjs';
+import { RouterLink } from '@angular/router';
+import { finalize, forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { UsersService } from '../../../core/api/users/users.service';
+import { GamificationService } from '../../../core/api/gamification/gamification.service';
+import {
+  RankingEntry,
+  UserBadge,
+  UserStreak,
+  UserXp,
+} from '../../../core/api/gamification/gamification.dto';
+import { CertificatesService } from '../../../core/api/certificates/certificates.service';
+import { CertificateResponse } from '../../../core/api/certificates/certificate.dto';
+import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
+
+type ProfileTab = 'overview' | 'badges' | 'certificates' | 'edit' | 'security';
 
 /**
- * Página de gestión del perfil del usuario autenticado (RF-005).
+ * Página de perfil del estudiante (RF-005 / RF-019 / RF-047).
  *
- * Ofrece dos flujos independientes:
- *
- * 1. Actualización de la información pública del perfil (nombre,
- *    apellido, nombre de usuario y foto).
- * 2. Cambio de contraseña, que requiere la contraseña actual como
- *    control de seguridad, tal como exige el backend.
- *
- * Los datos siempre provienen del backend a través de {@link UsersService},
- * y al guardar un cambio se sincroniza el usuario autenticado en
- * {@link AuthService} para que el resto de la aplicación refleje la
- * actualización de forma inmediata.
+ * <p>Presenta un panel completo con la información pública del usuario,
+ * su progreso gamificado (XP, nivel, racha, insignias, ranking) y sus
+ * certificados. Además permite editar los datos del perfil y cambiar la
+ * contraseña. La página se organiza en pestañas para que la carga
+ * inicial muestre un resumen y las acciones de edición queden un clic
+ * más profundo, sin invadir la vista principal.</p>
  */
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, RouterLink, AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
@@ -33,10 +49,24 @@ export class ProfilePageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly usersService = inject(UsersService);
+  private readonly gamification = inject(GamificationService);
+  private readonly certificatesService = inject(CertificatesService);
 
-  /** Usuario autenticado, expuesto de forma reactiva a la plantilla. */
+  /** Usuario autenticado. */
   protected readonly user = this.auth.currentUser;
 
+  // --------------------------- Datos de gamificación --------------
+  protected readonly xp = signal<UserXp | null>(null);
+  protected readonly streak = signal<UserStreak | null>(null);
+  protected readonly badges = signal<readonly UserBadge[]>([]);
+  protected readonly certificates = signal<readonly CertificateResponse[]>([]);
+  protected readonly rankPosition = signal<RankingEntry | null>(null);
+  protected readonly summaryLoading = signal(true);
+
+  // --------------------------- Estado de pestañas -----------------
+  protected readonly activeTab = signal<ProfileTab>('overview');
+
+  // --------------------------- Formularios ------------------------
   protected readonly profileSubmitting = signal(false);
   protected readonly profileMessage = signal<string | null>(null);
   protected readonly profileError = signal<string | null>(null);
@@ -45,7 +75,32 @@ export class ProfilePageComponent implements OnInit {
   protected readonly passwordMessage = signal<string | null>(null);
   protected readonly passwordError = signal<string | null>(null);
 
-  /** Formulario reactivo con la información editable del perfil. */
+  /** Iniciales que se usan si no hay foto de perfil. */
+  protected readonly initials = computed(() => {
+    const u = this.user();
+    if (!u) return '?';
+    const first = u.firstName?.[0] ?? '';
+    const last = u.lastName?.[0] ?? '';
+    return `${first}${last}`.toUpperCase() || u.username[0]?.toUpperCase() || '?';
+  });
+
+  /** Nombre completo para el hero. */
+  protected readonly fullName = computed(() => {
+    const u = this.user();
+    return u ? `${u.firstName} ${u.lastName}`.trim() : '';
+  });
+
+  /** Porcentaje de progreso hacia el siguiente nivel. */
+  protected readonly levelProgress = computed(() => {
+    const xp = this.xp();
+    if (!xp) return 0;
+    const span = xp.xpForNextLevel - xp.xpForCurrentLevel;
+    if (span <= 0) return 0;
+    const pct = Math.round((xp.xpIntoCurrentLevel / span) * 100);
+    return Math.max(0, Math.min(100, pct));
+  });
+
+  /** Formulario reactivo del perfil. */
   protected readonly profileForm = this.fb.nonNullable.group({
     firstName: ['', [Validators.required, Validators.maxLength(80)]],
     lastName: ['', [Validators.required, Validators.maxLength(80)]],
@@ -76,31 +131,75 @@ export class ProfilePageComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // Cargar el perfil fresco desde el backend para no depender solo del
-    // usuario cacheado en localStorage.
+    // Perfil fresco desde el backend.
     this.usersService.getProfile().subscribe({
       next: (user) => {
         this.auth.updateCurrentUser(user);
-        this.profileForm.reset({
-          firstName: user.firstName,
-          lastName: user.lastName,
-          username: user.username,
-          profilePhotoUrl: user.profilePhotoUrl ?? '',
-        });
+        this.hydrateForm(user);
       },
       error: () => {
-        // Se conserva el usuario cacheado; el formulario se rellenará con
-        // sus datos como fallback.
         const cached = this.user();
-        if (cached) {
-          this.profileForm.reset({
-            firstName: cached.firstName,
-            lastName: cached.lastName,
-            username: cached.username,
-            profilePhotoUrl: cached.profilePhotoUrl ?? '',
-          });
-        }
+        if (cached) this.hydrateForm(cached);
       },
+    });
+
+    // Carga en paralelo del resumen gamificado.
+    forkJoin({
+      xp: this.gamification.getMyXp().pipe(catchError(() => of(null as UserXp | null))),
+      streak: this.gamification.getMyStreak().pipe(catchError(() => of(null as UserStreak | null))),
+      badges: this.gamification.listMyBadges().pipe(catchError(() => of([] as readonly UserBadge[]))),
+      ranking: this.gamification
+        .getRanking('ALL_TIME', 20)
+        .pipe(
+          catchError(() =>
+            of(null as { entries: readonly RankingEntry[]; me: RankingEntry | null } | null),
+          ),
+        ),
+      certificates: this.certificatesService
+        .listMine()
+        .pipe(catchError(() => of([] as readonly CertificateResponse[]))),
+    })
+      .pipe(finalize(() => this.summaryLoading.set(false)))
+      .subscribe(({ xp, streak, badges, ranking, certificates }) => {
+        this.xp.set(xp);
+        this.streak.set(streak);
+        this.badges.set(badges);
+        this.certificates.set(certificates);
+        this.rankPosition.set(ranking?.me ?? null);
+      });
+  }
+
+  /** Cambia la pestaña activa desde la plantilla. */
+  protected setTab(tab: ProfileTab): void {
+    this.activeTab.set(tab);
+  }
+
+  /** Etiqueta legible del rol para mostrarlo en el hero. */
+  protected roleLabel(role: string | undefined): string {
+    switch (role) {
+      case 'ESTUDIANTE':     return 'Estudiante';
+      case 'INSTRUCTOR':     return 'Instructor';
+      case 'ADMINISTRADOR':  return 'Administrador';
+      default:               return role ?? '';
+    }
+  }
+
+  /** URL de descarga del PDF del certificado (público). */
+  protected downloadCertificateUrl(code: string): string {
+    return this.certificatesService.downloadUrl(code);
+  }
+
+  private hydrateForm(user: {
+    firstName: string;
+    lastName: string;
+    username: string;
+    profilePhotoUrl: string | null;
+  }): void {
+    this.profileForm.reset({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      profilePhotoUrl: user.profilePhotoUrl ?? '',
     });
   }
 
@@ -156,7 +255,7 @@ export class ProfilePageComponent implements OnInit {
       });
   }
 
-  /** Extrae un mensaje comprensible desde los errores tipados de la API. */
+  /** Extrae un mensaje legible desde los errores tipados de la API. */
   private extractMessage(err: unknown, fallback: string): string {
     if (err && typeof err === 'object' && 'message' in err) {
       return String((err as { message: string }).message) || fallback;
