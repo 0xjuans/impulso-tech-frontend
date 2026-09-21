@@ -1,0 +1,219 @@
+/* Sección "Cómo funciona" ------------------------------------------------- */
+
+.how {
+  padding: 120px 0 100px;
+  background: #fffefb;
+  scroll-margin-top: 40px;
+}
+
+.how__container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.how__header {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.how__eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+.how__title {
+  margin: 0;
+  font-size: clamp(32px, 4.5vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+  font-weight: 800;
+}
+.how__title-accent {
+  color: var(--color-primary);
+  position: relative;
+  display: inline-block;
+}
+.how__title-accent::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  height: 10px;
+  background: rgba(255, 79, 0, 0.16);
+  z-index: -1;
+  border-radius: 4px;
+}
+.how__lead {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--color-body);
+  max-width: 560px;
+}
+
+/* Timeline vertical con marcador numerado a la izquierda y tarjeta a
+   la derecha. Se conecta con una línea que atraviesa toda la lista. -- */
+.how__timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 22px;
+  align-items: flex-start;
+  animation: stepIn 500ms ease calc(var(--i) * 90ms) both;
+}
+@keyframes stepIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.step__marker {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+.step__num {
+  position: relative;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+  box-shadow: 0 6px 16px rgba(32, 21, 21, 0.20);
+  border: 4px solid #fffefb;
+}
+.step__line {
+  position: absolute;
+  top: 48px;
+  bottom: -34px;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 79, 0, 0.35) 0 6px,
+    transparent 6px 12px
+  );
+}
+.step:last-child .step__line { display: none; }
+
+.step__card {
+  padding: 20px 24px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(32, 21, 21, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 200ms ease, border-color 200ms ease,
+              box-shadow 200ms ease;
+}
+.step__card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 79, 0, 0.35);
+  box-shadow: 0 12px 28px rgba(255, 79, 0, 0.08);
+}
+
+.step__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 79, 0, 0.10);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.step__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+.step__copy {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--color-body);
+  max-width: 640px;
+}
+
+/* Footer CTA --------------------------------------------------------- */
+.how__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 24px 28px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 79, 0, 0.06), rgba(255, 138, 61, 0.03));
+  border: 1px solid rgba(255, 79, 0, 0.16);
+}
+.how__footer-copy {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.how__cta {
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 150ms ease, transform 150ms ease,
+              box-shadow 150ms ease;
+  box-shadow: 0 8px 20px rgba(32, 21, 21, 0.18);
+  white-space: nowrap;
+}
+.how__cta:hover {
+  background: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(255, 79, 0, 0.32);
+}
+
+/* Responsive --------------------------------------------------------- */
+@media (max-width: 720px) {
+  .how { padding: 80px 0 70px; }
+  .how__container { gap: 40px; }
+  .step { grid-template-columns: 48px 1fr; gap: 16px; }
+  .step__num { width: 40px; height: 40px; font-size: 12px; }
+  .step__line { top: 40px; bottom: -28px; }
+  .step__card { padding: 16px 18px; }
+  .step__title { font-size: 16px; }
+  .how__footer { flex-direction: column; text-align: center; padding: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step { animation: none; }
+}

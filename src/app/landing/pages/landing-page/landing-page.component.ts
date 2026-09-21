@@ -4,6 +4,7 @@ import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.comp
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { HeroComponent } from '../../components/hero/hero.component';
 import { FeaturesGridComponent } from '../../components/features-grid/features-grid.component';
+import { HowItWorksComponent } from '../../components/how-it-works/how-it-works.component';
 import { LabsDemoComponent } from '../../components/labs-demo/labs-demo.component';
 import { MeetLukiComponent } from '../../components/meet-luki/meet-luki.component';
 import { CtaBandComponent } from '../../components/cta-band/cta-band.component';
@@ -24,6 +25,7 @@ import { CtaBandComponent } from '../../components/cta-band/cta-band.component';
     NavBarComponent,
     HeroComponent,
     FeaturesGridComponent,
+    HowItWorksComponent,
     LabsDemoComponent,
     MeetLukiComponent,
     CtaBandComponent,
