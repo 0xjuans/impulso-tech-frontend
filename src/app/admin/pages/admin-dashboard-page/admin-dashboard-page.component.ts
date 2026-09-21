@@ -6,11 +6,18 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
-import { AdminDashboard } from '../../../core/api/dashboard/dashboard.dto';
+import {
+  AdminDashboard,
+  RecentEnrollmentRow,
+  RecentSignupRow,
+  TopCourseRow,
+} from '../../../core/api/dashboard/dashboard.dto';
 import { DashboardService } from '../../../core/api/dashboard/dashboard.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 
@@ -25,7 +32,7 @@ import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.c
 @Component({
   selector: 'app-admin-dashboard-page',
   standalone: true,
-  imports: [RouterLink, AppIconComponent],
+  imports: [RouterLink, AppIconComponent, DatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-dashboard-page.component.html',
   styleUrl: './admin-dashboard-page.component.scss',
@@ -37,6 +44,15 @@ export class AdminDashboardPageComponent implements OnInit {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly data = signal<AdminDashboard | null>(null);
+
+  /** Top cursos globales por número de inscripciones. */
+  protected readonly topCourses = signal<readonly TopCourseRow[]>([]);
+
+  /** Últimas inscripciones globales. */
+  protected readonly recentEnrollments = signal<readonly RecentEnrollmentRow[]>([]);
+
+  /** Últimos registros de usuarios en la plataforma. */
+  protected readonly recentSignups = signal<readonly RecentSignupRow[]>([]);
 
   protected readonly firstName = computed(() => this.auth.currentUser()?.firstName ?? '');
 
@@ -78,11 +94,26 @@ export class AdminDashboardPageComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.service
-      .getAdmin()
+    forkJoin({
+      dashboard: this.service.getAdmin(),
+      topCourses: this.service
+        .getAdminTopCourses(5)
+        .pipe(catchError(() => of([] as readonly TopCourseRow[]))),
+      recentEnrollments: this.service
+        .getAdminRecentEnrollments(8)
+        .pipe(catchError(() => of([] as readonly RecentEnrollmentRow[]))),
+      recentSignups: this.service
+        .getAdminRecentSignups(8)
+        .pipe(catchError(() => of([] as readonly RecentSignupRow[]))),
+    })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (d) => this.data.set(d),
+        next: ({ dashboard, topCourses, recentEnrollments, recentSignups }) => {
+          this.data.set(dashboard);
+          this.topCourses.set(topCourses);
+          this.recentEnrollments.set(recentEnrollments);
+          this.recentSignups.set(recentSignups);
+        },
         error: () =>
           this.error.set(
             'No pudimos cargar el panel administrativo en este momento. Inténtalo nuevamente.',
@@ -93,5 +124,35 @@ export class AdminDashboardPageComponent implements OnInit {
   private percentage(part?: number, total?: number): number {
     if (!part || !total) return 0;
     return Math.max(0, Math.min(100, Math.round((part / total) * 100)));
+  }
+
+  /** Etiqueta legible del estado de inscripción. */
+  protected statusLabel(status: string): string {
+    switch (status) {
+      case 'INSCRITO':    return 'Inscrito';
+      case 'EN_PROGRESO': return 'En progreso';
+      case 'COMPLETADO':  return 'Completado';
+      default:            return status;
+    }
+  }
+
+  /** Etiqueta legible del rol para el feed de registros. */
+  protected roleLabel(role: string): string {
+    switch (role) {
+      case 'ESTUDIANTE':    return 'Estudiante';
+      case 'INSTRUCTOR':    return 'Instructor';
+      case 'ADMINISTRADOR': return 'Administrador';
+      default:              return role;
+    }
+  }
+
+  /** Etiqueta legible del estado de la cuenta. */
+  protected accountStatusLabel(status: string): string {
+    switch (status) {
+      case 'ACTIVA':                 return 'Activa';
+      case 'PENDIENTE_VERIFICACION': return 'Pendiente';
+      case 'DESACTIVADA':            return 'Desactivada';
+      default:                       return status;
+    }
   }
 }
