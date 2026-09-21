@@ -117,13 +117,27 @@ body.mascot-panel-open {
    Safari aplique un zoom automático al enfocarlo. Ese zoom es la causa
    principal de que la interfaz se sienta "descuadrada" al tocar campos.
    Forzando 16px como mínimo se elimina el problema sin cambiar el
-   diseño en desktop. */
+   diseño en desktop.
+
+   Se usa !important porque los componentes tienen sus propios selectores
+   de clase que ganan por especificidad (por ejemplo `.sandbox__code`
+   con `font-size: 13px` en el laboratorio). Sin !important, la regla se
+   ignoraba y iOS seguía haciendo zoom. */
 @media (max-width: 768px) {
   input:not([type='checkbox']):not([type='radio']),
   textarea,
-  select {
-    font-size: 16px;
+  select,
+  [contenteditable='true'],
+  [contenteditable=''] {
+    font-size: 16px !important;
   }
+}
+
+/* touch-action: manipulation deshabilita el doble-tap-zoom en toda la
+   app, que es la otra fuente clásica de "salto" cuando el usuario
+   interactúa rápido con controles. No afecta el pinch-zoom. */
+button, a, input, textarea, select, [role='button'] {
+  touch-action: manipulation;
 }
 
 a {
