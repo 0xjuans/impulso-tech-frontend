@@ -1,0 +1,137 @@
+<section class="account">
+  @let u = currentUser();
+
+  <header class="account__hero">
+    <div class="account__identity">
+      <div class="account__avatar" aria-hidden="true">{{ initials() }}</div>
+      <div class="account__id">
+        <span class="account__eyebrow">
+          <span class="account__prompt" aria-hidden="true">&gt;</span>
+          <span>impulso profile --me</span>
+        </span>
+        <h1 class="account__title">
+          {{ u?.firstName }} <span>{{ u?.lastName }}</span>
+        </h1>
+        <div class="account__meta">
+          <span class="account__chip">{{ roleLabel() }}</span>
+          <span class="account__chip account__chip--muted">&#64;{{ u?.username }}</span>
+          @if (u?.createdAt) {
+            <span class="account__chip account__chip--muted">
+              Cuenta desde {{ u?.createdAt | date: 'longDate' }}
+            </span>
+          }
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="account__tabs" aria-label="Secciones del perfil">
+    <button
+      type="button"
+      class="account__tab"
+      [class.is-active]="tab() === 'perfil'"
+      (click)="setTab('perfil')">
+      <app-icon name="user" [sizePx]="16" /> Perfil
+    </button>
+    <button
+      type="button"
+      class="account__tab"
+      [class.is-active]="tab() === 'seguridad'"
+      (click)="setTab('seguridad')">
+      <app-icon name="shield" [sizePx]="16" /> Seguridad
+    </button>
+  </nav>
+
+  @if (tab() === 'perfil') {
+    <form class="account__card" [formGroup]="profileForm" (ngSubmit)="submitProfile()" novalidate>
+      <header class="account__card-head">
+        <h2>Datos personales</h2>
+        <p>Actualiza cómo se muestra tu identidad en Impulso Tech.</p>
+      </header>
+
+      <div class="account__grid">
+        <label class="account__field">
+          <span>Nombre</span>
+          <input type="text" formControlName="firstName" autocomplete="given-name" />
+          @if (profileForm.controls.firstName.touched && profileForm.controls.firstName.invalid) {
+            <small class="account__error">Ingresa un nombre válido.</small>
+          }
+        </label>
+        <label class="account__field">
+          <span>Apellido</span>
+          <input type="text" formControlName="lastName" autocomplete="family-name" />
+          @if (profileForm.controls.lastName.touched && profileForm.controls.lastName.invalid) {
+            <small class="account__error">Ingresa un apellido válido.</small>
+          }
+        </label>
+        <label class="account__field account__field--full">
+          <span>Nombre de usuario</span>
+          <input type="text" formControlName="username" autocomplete="username" />
+          @if (profileForm.controls.username.touched && profileForm.controls.username.invalid) {
+            <small class="account__error">Debe tener entre 3 y 30 caracteres.</small>
+          }
+        </label>
+        <div class="account__field account__field--full account__field--readonly">
+          <span>Correo electrónico</span>
+          <output>{{ u?.email }}</output>
+          <small>Para cambiar el correo contacta a soporte.</small>
+        </div>
+      </div>
+
+      @if (profileMessage(); as m) {
+        <div class="account__banner" [class.is-error]="m.tone === 'error'" role="status">
+          {{ m.text }}
+        </div>
+      }
+
+      <footer class="account__actions">
+        <button type="submit" class="account__submit" [disabled]="savingProfile()">
+          {{ savingProfile() ? 'Guardando…' : 'Guardar cambios' }}
+        </button>
+      </footer>
+    </form>
+  } @else {
+    <form class="account__card" [formGroup]="passwordForm" (ngSubmit)="submitPassword()" novalidate>
+      <header class="account__card-head">
+        <h2>Cambiar contraseña</h2>
+        <p>Usa una contraseña única de al menos 8 caracteres para proteger tu cuenta.</p>
+      </header>
+
+      <div class="account__grid">
+        <label class="account__field account__field--full">
+          <span>Contraseña actual</span>
+          <input type="password" formControlName="currentPassword" autocomplete="current-password" />
+          @if (passwordForm.controls.currentPassword.touched && passwordForm.controls.currentPassword.invalid) {
+            <small class="account__error">Ingresa tu contraseña actual.</small>
+          }
+        </label>
+        <label class="account__field">
+          <span>Nueva contraseña</span>
+          <input type="password" formControlName="newPassword" autocomplete="new-password" />
+          @if (passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.invalid) {
+            <small class="account__error">Mínimo 8 caracteres.</small>
+          }
+        </label>
+        <label class="account__field">
+          <span>Confirmar nueva contraseña</span>
+          <input type="password" formControlName="confirmPassword" autocomplete="new-password" />
+          @if (passwordForm.controls.confirmPassword.touched && passwordForm.controls.confirmPassword.invalid) {
+            <small class="account__error">Confirma la contraseña.</small>
+          }
+        </label>
+      </div>
+
+      @if (passwordMessage(); as m) {
+        <div class="account__banner" [class.is-error]="m.tone === 'error'" role="status">
+          {{ m.text }}
+        </div>
+      }
+
+      <footer class="account__actions">
+        <button type="submit" class="account__submit" [disabled]="savingPassword()">
+          {{ savingPassword() ? 'Actualizando…' : 'Actualizar contraseña' }}
+        </button>
+      </footer>
+    </form>
+  }
+</section>

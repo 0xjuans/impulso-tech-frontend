@@ -20,6 +20,14 @@ export const instructorRoutes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
+        path: 'profile',
+        loadComponent: () =>
+          import(
+            '../shared/pages/account-profile-page/account-profile-page.component'
+          ).then((m) => m.AccountProfilePageComponent),
+        title: 'Mi perfil · Impulso Tech',
+      },
+      {
         path: 'dashboard',
         loadComponent: () =>
           import(
