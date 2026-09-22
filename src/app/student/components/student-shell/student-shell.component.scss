@@ -49,24 +49,33 @@
   overflow-y: auto;
   overflow-x: hidden;
   transition: padding var(--side-transition);
+  /* Ocultar la scrollbar nativa de la barra lateral — el usuario ve el
+     panel oscuro sin la línea gris del sistema que rompía la limpieza
+     visual, especialmente al colapsarlo. El contenido sigue siendo
+     desplazable con la rueda y el teclado. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.shell__side::-webkit-scrollbar { display: none; }
 
-/* Botón de colapsar/expandir. Vive fuera del aside y se ancla al borde
-   externo de la barra: mitad afuera / mitad adentro. Es el patrón de
-   Notion, Linear y VS Code — visible pero discreto, siempre a la vista
-   del usuario. -------------------------------------------------------- */
+/* Botón de colapsar/expandir. Vive fuera del aside, se ancla al borde
+   entre barra y contenido, y usa `position: fixed` para acompañar al
+   usuario cuando hace scroll de la página. Diseño estilo "capsule"
+   con halo pulsante que se apaga al colapsar para que el estado sea
+   evidente. -------------------------------------------------------- */
 .shell__side-toggle {
-  position: absolute;
-  top: 32px;
-  left: var(--side-width);
-  transform: translateX(-50%);
-  width: 24px;
-  height: 24px;
+  position: fixed;
+  top: 96px;
+  left: calc(var(--side-width) - 22px);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--color-canvas);
   color: var(--color-ink);
-  border: 1px solid rgba(32, 21, 21, 0.14);
-  box-shadow: 0 4px 10px rgba(32, 21, 21, 0.16);
+  border: none;
+  box-shadow:
+    0 6px 18px rgba(32, 21, 21, 0.18),
+    0 0 0 4px rgba(255, 254, 251, 0.9);
   display: none;
   align-items: center;
   justify-content: center;
@@ -74,19 +83,60 @@
   z-index: 25;
   transition:
     left var(--side-transition),
-    background 150ms ease,
-    color 150ms ease,
-    transform 150ms ease;
+    background 200ms ease,
+    color 200ms ease,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: visible;
 }
+
+/* Halo animado — cuando la barra está abierta, un anillo naranja pulsa
+   suavemente para indicar interactividad. Al colapsar se detiene y el
+   botón queda naranja sólido para transmitir "acción disponible". --- */
+.shell__side-toggle::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  opacity: 0.35;
+  animation: sideTogglePulse 2.2s ease-out infinite;
+}
+@keyframes sideTogglePulse {
+  0%   { transform: scale(1);    opacity: 0.35; }
+  70%  { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
 .shell__side-toggle:hover {
+  color: #fff;
+  background: var(--color-primary);
+  transform: scale(1.08) rotate(-6deg);
+}
+
+.shell__side-toggle svg { transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+.shell__side-toggle:hover svg { transform: translateX(1px); }
+
+/* Estado colapsado: el botón se rellena de naranja y el halo se apaga
+   para dejar claro "aún estoy aquí, ábreme". */
+.shell--collapsed .shell__side-toggle {
   background: var(--color-primary);
   color: #fff;
-  border-color: var(--color-primary);
-  transform: translateX(-50%) scale(1.08);
+  box-shadow:
+    0 8px 20px rgba(255, 79, 0, 0.42),
+    0 0 0 4px rgba(255, 254, 251, 0.95);
 }
+.shell--collapsed .shell__side-toggle::after {
+  animation: none;
+  opacity: 0;
+}
+
 /* Solo en desktop; en mobile la barra usa el burger. */
 @media (min-width: 901px) {
   .shell__side-toggle { display: inline-flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell__side-toggle::after { animation: none; }
 }
 
 .shell__brand {

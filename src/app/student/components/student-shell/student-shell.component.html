@@ -82,10 +82,11 @@
     </div>
   </header>
 
-  <!-- Botón para colapsar/expandir la barra sin ocultarla del todo.
-       Se ancla al borde exterior de la barra, mitad afuera / mitad
-       adentro, al estilo Notion / Linear / VS Code. Vive fuera del
-       aside para no romper el overflow del panel. -->
+  <!-- Botón flotante para colapsar/expandir la barra sin ocultarla del
+       todo. Usa position: fixed para acompañar al scroll y muestra un
+       halo pulsante que invita a interactuar; al colapsar la barra el
+       botón se rellena de naranja para dejar claro que sigue disponible.
+       Vive fuera del aside para no depender del overflow del panel. -->
   <button
     type="button"
     class="shell__side-toggle"
@@ -93,13 +94,16 @@
     [attr.aria-expanded]="!sideCollapsed()"
     [attr.aria-label]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
     [attr.title]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2.4"
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.6"
          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       @if (sideCollapsed()) {
-        <path d="m9 6 6 6-6 6" />
+        <!-- Chevron doble apuntando hacia la derecha (más "expresivo") -->
+        <path d="M6 6l6 6-6 6" />
+        <path d="M13 6l6 6-6 6" opacity="0.55" />
       } @else {
-        <path d="m15 6-6 6 6 6" />
+        <path d="M18 6l-6 6 6 6" />
+        <path d="M11 6l-6 6 6 6" opacity="0.55" />
       }
     </svg>
   </button>
