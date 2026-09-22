@@ -11,6 +11,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { AppIconComponent, AppIconName } from '../../../shared/components/app-icon/app-icon.component';
+import { NotificationsBellComponent } from '../../../student/components/notifications-bell/notifications-bell.component';
 
 /** Entrada del menú lateral del área administrativa. */
 interface NavItem {
@@ -29,7 +30,14 @@ interface NavItem {
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
-  imports: [NgClass, RouterLink, RouterLinkActive, RouterOutlet, AppIconComponent],
+  imports: [
+    NgClass,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    AppIconComponent,
+    NotificationsBellComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-shell.component.html',
   styleUrl: './admin-shell.component.scss',
@@ -59,6 +67,7 @@ export class AdminShellComponent {
     { path: 'dashboard', icon: 'dashboard', label: 'Panel' },
     { path: 'users', icon: 'users', label: 'Usuarios' },
     { path: 'support', icon: 'life-ring', label: 'Soporte' },
+    { path: 'profile', icon: 'user', label: 'Mi perfil' },
   ];
 
   protected toggleMenu(): void {

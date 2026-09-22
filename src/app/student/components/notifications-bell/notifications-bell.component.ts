@@ -15,6 +15,7 @@ import { startWith } from 'rxjs/operators';
 
 import { Notification } from '../../../core/api/notifications/notification.dto';
 import { NotificationsService } from '../../../core/api/notifications/notifications.service';
+import { NotificationsStreamService } from '../../../core/api/notifications/notifications-stream.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 
 /**
@@ -34,10 +35,15 @@ import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.c
 })
 export class NotificationsBellComponent implements OnInit {
   private readonly service = inject(NotificationsService);
+  private readonly stream = inject(NotificationsStreamService);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** Intervalo de polling en milisegundos (60 segundos). */
-  private static readonly POLL_INTERVAL_MS = 60_000;
+  /**
+   * Intervalo de reconciliación por polling. El SSE entrega las
+   * notificaciones al instante, pero mantenemos un polling amplio como
+   * red de seguridad frente a pérdidas de conexión no detectadas.
+   */
+  private static readonly POLL_INTERVAL_MS = 5 * 60_000;
 
   /** Cantidad de notificaciones no leídas del usuario autenticado. */
   protected readonly unread = signal(0);
@@ -62,6 +68,27 @@ export class NotificationsBellComponent implements OnInit {
         next: (r) => this.unread.set(r.unread),
         error: () => this.unread.set(0),
       });
+
+    // Suscripción SSE: incrementa el contador y añade la notificación
+    // recibida al panel si está abierto.
+    this.stream.connect();
+    this.stream
+      .onNotification()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((incoming) => this.onIncoming(incoming));
+    this.destroyRef.onDestroy(() => this.stream.disconnect());
+  }
+
+  /**
+   * Aplica una notificación entregada por SSE al estado local: aumenta
+   * el conteo de no leídas y la inserta en la cabeza del listado del
+   * panel si el usuario ya lo tenía abierto.
+   */
+  private onIncoming(incoming: Notification): void {
+    this.unread.update((count) => count + 1);
+    if (this.open()) {
+      this.recent.update((items) => [incoming, ...items].slice(0, 8));
+    }
   }
 
   protected toggle(event?: Event): void {

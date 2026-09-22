@@ -11,6 +11,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { AppIconComponent, AppIconName } from '../../../shared/components/app-icon/app-icon.component';
+import { NotificationsBellComponent } from '../../../student/components/notifications-bell/notifications-bell.component';
 
 /** Entrada del menú lateral del área del instructor. */
 interface NavItem {
@@ -28,7 +29,14 @@ interface NavItem {
 @Component({
   selector: 'app-instructor-shell',
   standalone: true,
-  imports: [NgClass, RouterLink, RouterLinkActive, RouterOutlet, AppIconComponent],
+  imports: [
+    NgClass,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    AppIconComponent,
+    NotificationsBellComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-shell.component.html',
   styleUrl: './instructor-shell.component.scss',
@@ -62,6 +70,7 @@ export class InstructorShellComponent {
     { path: 'projects', icon: 'trophy', label: 'Proyectos' },
     { path: 'labs', icon: 'beaker', label: 'Laboratorios' },
     { path: 'evaluations', icon: 'check', label: 'Evaluaciones' },
+    { path: 'profile', icon: 'user', label: 'Mi perfil' },
   ];
 
   protected toggleMenu(): void {
