@@ -69,6 +69,33 @@
       <span></span><span></span><span></span>
     </button>
 
+    <!-- Toggle para colapsar/expandir el sidebar en desktop.
+         Vive dentro de la cabecera superior para integrarse con el resto
+         de acciones del header en lugar de flotar sobre el layout. -->
+    <button
+      type="button"
+      class="shell__side-toggle"
+      (click)="toggleSideCollapsed()"
+      [attr.aria-expanded]="!sideCollapsed()"
+      [attr.aria-label]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
+      [attr.title]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        @if (sideCollapsed()) {
+          <!-- arrow-right-from-line: expandir el panel -->
+          <path d="M3 5v14" />
+          <path d="M21 12H7" />
+          <path d="m15 6 6 6-6 6" />
+        } @else {
+          <!-- arrow-left-from-line: colapsar el panel -->
+          <path d="M21 5v14" />
+          <path d="M3 12h14" />
+          <path d="m9 6-6 6 6 6" />
+        }
+      </svg>
+    </button>
+
     <div class="shell__top-right">
       <app-notifications-bell />
 
@@ -81,32 +108,6 @@
       </div>
     </div>
   </header>
-
-  <!-- Botón flotante para colapsar/expandir la barra sin ocultarla del
-       todo. Usa position: fixed para acompañar al scroll y muestra un
-       halo pulsante que invita a interactuar; al colapsar la barra el
-       botón se rellena de naranja para dejar claro que sigue disponible.
-       Vive fuera del aside para no depender del overflow del panel. -->
-  <button
-    type="button"
-    class="shell__side-toggle"
-    (click)="toggleSideCollapsed()"
-    [attr.aria-expanded]="!sideCollapsed()"
-    [attr.aria-label]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
-    [attr.title]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2.6"
-         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      @if (sideCollapsed()) {
-        <!-- Chevron doble apuntando hacia la derecha (más "expresivo") -->
-        <path d="M6 6l6 6-6 6" />
-        <path d="M13 6l6 6-6 6" opacity="0.55" />
-      } @else {
-        <path d="M18 6l-6 6 6 6" />
-        <path d="M11 6l-6 6 6 6" opacity="0.55" />
-      }
-    </svg>
-  </button>
 
   <!-- Contenido principal -->
   <main class="shell__main">
