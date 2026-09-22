@@ -4,9 +4,11 @@ import {
   DestroyRef,
   HostListener,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
+import { AuthService } from '../../../core/auth/services/auth.service';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -36,7 +38,26 @@ import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.c
 export class NotificationsBellComponent implements OnInit {
   private readonly service = inject(NotificationsService);
   private readonly stream = inject(NotificationsStreamService);
+  private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+
+  /**
+   * URL destino del enlace "Ver todas". La página de listado completo de
+   * notificaciones vive dentro del área privada de cada rol para no
+   * atravesar guardias de acceso. Los tres roles (estudiante,
+   * instructor y administrador) comparten el mismo componente detrás
+   * de rutas distintas.
+   */
+  protected readonly notificationsUrl = computed<string>(() => {
+    switch (this.auth.currentUser()?.role) {
+      case 'ADMINISTRADOR':
+        return '/admin/notifications';
+      case 'INSTRUCTOR':
+        return '/instructor/notifications';
+      default:
+        return '/student/notifications';
+    }
+  });
 
   /**
    * Intervalo de reconciliación por polling. El SSE entrega las

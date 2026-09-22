@@ -47,7 +47,7 @@
       }
 
       <footer class="bell__panel-foot">
-        <a routerLink="/student/notifications" (click)="close()">Ver todas →</a>
+        <a [routerLink]="notificationsUrl()" (click)="close()">Ver todas →</a>
       </footer>
     </div>
   }

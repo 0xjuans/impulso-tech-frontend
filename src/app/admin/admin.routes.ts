@@ -20,6 +20,14 @@ export const adminRoutes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
+        path: 'notifications',
+        loadComponent: () =>
+          import(
+            '../student/pages/notifications-page/notifications-page.component'
+          ).then((m) => m.NotificationsPageComponent),
+        title: 'Notificaciones · Impulso Tech',
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import(
