@@ -40,6 +40,13 @@
       (click)="setTab('seguridad')">
       <app-icon name="shield" [sizePx]="16" /> Seguridad
     </button>
+    <button
+      type="button"
+      class="account__tab"
+      [class.is-active]="tab() === 'notificaciones'"
+      (click)="setTab('notificaciones')">
+      <app-icon name="bell" [sizePx]="16" /> Notificaciones
+    </button>
   </nav>
 
   @if (tab() === 'perfil') {
@@ -90,7 +97,7 @@
         </button>
       </footer>
     </form>
-  } @else {
+  } @else if (tab() === 'seguridad') {
     <form class="account__card" [formGroup]="passwordForm" (ngSubmit)="submitPassword()" novalidate>
       <header class="account__card-head">
         <h2>Cambiar contraseña</h2>
@@ -133,5 +140,107 @@
         </button>
       </footer>
     </form>
+  } @else {
+    <section class="account__card">
+      <header class="account__card-head">
+        <h2>Notificaciones</h2>
+        <p>Elige qué avisos quieres recibir. Los cambios se guardan automáticamente.</p>
+      </header>
+
+      @if (prefs(); as p) {
+        <ul class="prefs">
+          <li class="prefs__row">
+            <div>
+              <strong>Progreso y avances</strong>
+              <small>Recibe avisos cuando completes cursos o alcances hitos de racha.</small>
+            </div>
+            <button type="button" class="prefs__toggle"
+              [class.is-on]="p.notifyProgress"
+              [attr.aria-pressed]="p.notifyProgress"
+              [disabled]="savingPref() === 'notifyProgress'"
+              (click)="togglePreference('notifyProgress', !p.notifyProgress)">
+              <span class="prefs__toggle-thumb"></span>
+            </button>
+          </li>
+          <li class="prefs__row">
+            <div>
+              <strong>Evaluaciones</strong>
+              <small>Resultado de las evaluaciones que envíes.</small>
+            </div>
+            <button type="button" class="prefs__toggle"
+              [class.is-on]="p.notifyEvaluations"
+              [attr.aria-pressed]="p.notifyEvaluations"
+              [disabled]="savingPref() === 'notifyEvaluations'"
+              (click)="togglePreference('notifyEvaluations', !p.notifyEvaluations)">
+              <span class="prefs__toggle-thumb"></span>
+            </button>
+          </li>
+          <li class="prefs__row">
+            <div>
+              <strong>Logros e insignias</strong>
+              <small>Nuevas insignias y subidas de nivel.</small>
+            </div>
+            <button type="button" class="prefs__toggle"
+              [class.is-on]="p.notifyAchievements"
+              [attr.aria-pressed]="p.notifyAchievements"
+              [disabled]="savingPref() === 'notifyAchievements'"
+              (click)="togglePreference('notifyAchievements', !p.notifyAchievements)">
+              <span class="prefs__toggle-thumb"></span>
+            </button>
+          </li>
+          <li class="prefs__row">
+            <div>
+              <strong>Retos</strong>
+              <small>Actualizaciones de los retos en los que participas.</small>
+            </div>
+            <button type="button" class="prefs__toggle"
+              [class.is-on]="p.notifyChallenges"
+              [attr.aria-pressed]="p.notifyChallenges"
+              [disabled]="savingPref() === 'notifyChallenges'"
+              (click)="togglePreference('notifyChallenges', !p.notifyChallenges)">
+              <span class="prefs__toggle-thumb"></span>
+            </button>
+          </li>
+          <li class="prefs__row">
+            <div>
+              <strong>Recordatorios</strong>
+              <small>Sugerencias para no perder tu racha o retomar cursos.</small>
+            </div>
+            <button type="button" class="prefs__toggle"
+              [class.is-on]="p.notifyReminders"
+              [attr.aria-pressed]="p.notifyReminders"
+              [disabled]="savingPref() === 'notifyReminders'"
+              (click)="togglePreference('notifyReminders', !p.notifyReminders)">
+              <span class="prefs__toggle-thumb"></span>
+            </button>
+          </li>
+          <li class="prefs__row">
+            <div>
+              <strong>Correo electrónico</strong>
+              <small>Además del centro de notificaciones, recibe los avisos a tu correo.</small>
+            </div>
+            <button type="button" class="prefs__toggle"
+              [class.is-on]="p.notifyByEmail"
+              [attr.aria-pressed]="p.notifyByEmail"
+              [disabled]="savingPref() === 'notifyByEmail'"
+              (click)="togglePreference('notifyByEmail', !p.notifyByEmail)">
+              <span class="prefs__toggle-thumb"></span>
+            </button>
+          </li>
+        </ul>
+      } @else if (prefsMessage()) {
+        <div class="account__banner is-error" role="alert">{{ prefsMessage()!.text }}</div>
+      } @else {
+        <p class="prefs__loading">Cargando preferencias…</p>
+      }
+
+      @if (prefsMessage(); as m) {
+        @if (prefs()) {
+          <div class="account__banner" [class.is-error]="m.tone === 'error'" role="status">
+            {{ m.text }}
+          </div>
+        }
+      }
+    </section>
   }
 </section>

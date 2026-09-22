@@ -17,6 +17,11 @@ import {
   UpdateProfileRequest,
   UsersService,
 } from '../../../core/api/users/users.service';
+import {
+  PreferencesService,
+  UpdatePreferencesRequest,
+  UserPreferences,
+} from '../../../core/api/preferences/preferences.service';
 import { AppIconComponent } from '../../components/app-icon/app-icon.component';
 
 /**
@@ -41,10 +46,20 @@ import { AppIconComponent } from '../../components/app-icon/app-icon.component';
 export class AccountProfilePageComponent {
   private readonly auth = inject(AuthService);
   private readonly users = inject(UsersService);
+  private readonly preferences = inject(PreferencesService);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly tab = signal<'perfil' | 'seguridad'>('perfil');
+  protected readonly tab = signal<'perfil' | 'seguridad' | 'notificaciones'>('perfil');
+
+  /** Preferencias cargadas del backend. */
+  protected readonly prefs = signal<UserPreferences | null>(null);
+
+  /** Estado de guardado por categoría de notificación (para deshabilitar el toggle). */
+  protected readonly savingPref = signal<string | null>(null);
+
+  /** Mensaje contextual para la pestaña de notificaciones. */
+  protected readonly prefsMessage = signal<{ tone: 'ok' | 'error'; text: string } | null>(null);
 
   /** Estado de envío del formulario de perfil. */
   protected readonly savingProfile = signal(false);
@@ -95,10 +110,61 @@ export class AccountProfilePageComponent {
     }
   }
 
-  protected setTab(next: 'perfil' | 'seguridad'): void {
+  protected setTab(next: 'perfil' | 'seguridad' | 'notificaciones'): void {
     this.tab.set(next);
     this.profileMessage.set(null);
     this.passwordMessage.set(null);
+    if (next === 'notificaciones' && !this.prefs()) {
+      this.loadPreferences();
+    }
+  }
+
+  private loadPreferences(): void {
+    this.preferences
+      .getMine()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (p) => this.prefs.set(p),
+        error: () =>
+          this.prefsMessage.set({
+            tone: 'error',
+            text: 'No pudimos cargar tus preferencias. Inténtalo nuevamente.',
+          }),
+      });
+  }
+
+  /**
+   * Alterna una preferencia booleana y persiste el cambio. Se actualiza
+   * el estado local optimísticamente y se revierte si el backend
+   * responde con error.
+   */
+  protected togglePreference(key: keyof UpdatePreferencesRequest, value: boolean): void {
+    if (this.savingPref()) {
+      return;
+    }
+    const current = this.prefs();
+    if (!current) return;
+    this.savingPref.set(key);
+    this.prefsMessage.set(null);
+    // Actualización optimista para dar feedback inmediato.
+    this.prefs.set({ ...current, [key]: value } as UserPreferences);
+    this.preferences
+      .updateMine({ [key]: value } as UpdatePreferencesRequest)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated) => {
+          this.prefs.set(updated);
+          this.savingPref.set(null);
+        },
+        error: () => {
+          this.prefs.set(current);
+          this.savingPref.set(null);
+          this.prefsMessage.set({
+            tone: 'error',
+            text: 'No pudimos guardar el cambio. Revisa tu conexión y vuelve a intentarlo.',
+          });
+        },
+      });
   }
 
   protected submitProfile(): void {
