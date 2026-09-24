@@ -23,9 +23,14 @@ import {
 } from '../../../core/api/gamification/gamification.dto';
 import { CertificatesService } from '../../../core/api/certificates/certificates.service';
 import { CertificateResponse } from '../../../core/api/certificates/certificate.dto';
+import {
+  PreferencesService,
+  UpdatePreferencesRequest,
+  UserPreferences,
+} from '../../../core/api/preferences/preferences.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 
-type ProfileTab = 'overview' | 'badges' | 'certificates' | 'edit' | 'security';
+type ProfileTab = 'overview' | 'badges' | 'certificates' | 'edit' | 'security' | 'notifications';
 
 /**
  * Página de perfil del estudiante (RF-005 / RF-019 / RF-047).
@@ -51,6 +56,7 @@ export class ProfilePageComponent implements OnInit {
   private readonly usersService = inject(UsersService);
   private readonly gamification = inject(GamificationService);
   private readonly certificatesService = inject(CertificatesService);
+  private readonly preferencesService = inject(PreferencesService);
 
   /** Usuario autenticado. */
   protected readonly user = this.auth.currentUser;
@@ -74,6 +80,11 @@ export class ProfilePageComponent implements OnInit {
   protected readonly passwordSubmitting = signal(false);
   protected readonly passwordMessage = signal<string | null>(null);
   protected readonly passwordError = signal<string | null>(null);
+
+  // --------------------------- Preferencias de notificación -------
+  protected readonly prefs = signal<UserPreferences | null>(null);
+  protected readonly savingPref = signal<string | null>(null);
+  protected readonly prefsMessage = signal<{ tone: 'ok' | 'error'; text: string } | null>(null);
 
   /** Iniciales que se usan si no hay foto de perfil. */
   protected readonly initials = computed(() => {
@@ -172,6 +183,49 @@ export class ProfilePageComponent implements OnInit {
   /** Cambia la pestaña activa desde la plantilla. */
   protected setTab(tab: ProfileTab): void {
     this.activeTab.set(tab);
+    this.prefsMessage.set(null);
+    if (tab === 'notifications' && !this.prefs()) {
+      this.loadPreferences();
+    }
+  }
+
+  /** Carga las preferencias del usuario al abrir la pestaña. */
+  private loadPreferences(): void {
+    this.preferencesService.getMine().subscribe({
+      next: (p) => this.prefs.set(p),
+      error: () =>
+        this.prefsMessage.set({
+          tone: 'error',
+          text: 'No pudimos cargar tus preferencias. Inténtalo nuevamente.',
+        }),
+    });
+  }
+
+  /**
+   * Alterna una preferencia booleana con guardado optimista: se refleja
+   * de inmediato en la UI y se revierte si el backend rechaza el cambio.
+   */
+  protected togglePreference(key: keyof UpdatePreferencesRequest, value: boolean): void {
+    if (this.savingPref()) return;
+    const current = this.prefs();
+    if (!current) return;
+    this.savingPref.set(key);
+    this.prefsMessage.set(null);
+    this.prefs.set({ ...current, [key]: value } as UserPreferences);
+    this.preferencesService.updateMine({ [key]: value } as UpdatePreferencesRequest).subscribe({
+      next: (updated) => {
+        this.prefs.set(updated);
+        this.savingPref.set(null);
+      },
+      error: () => {
+        this.prefs.set(current);
+        this.savingPref.set(null);
+        this.prefsMessage.set({
+          tone: 'error',
+          text: 'No pudimos guardar el cambio. Revisa tu conexión e inténtalo de nuevo.',
+        });
+      },
+    });
   }
 
   /** Etiqueta legible del rol para mostrarlo en el hero. */
