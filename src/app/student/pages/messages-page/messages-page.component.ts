@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { Conversation, Message } from '../../../core/api/messaging/messaging.dto';
 import { MessagingService } from '../../../core/api/messaging/messaging.service';
+import { NotificationsStreamService } from '../../../core/api/notifications/notifications-stream.service';
 import {
   UserDirectoryResult,
   UserDirectoryService,
@@ -38,6 +39,7 @@ import {
 export class MessagesPageComponent implements OnInit {
   private readonly service = inject(MessagingService);
   private readonly directory = inject(UserDirectoryService);
+  private readonly stream = inject(NotificationsStreamService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -72,6 +74,16 @@ export class MessagesPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadConversations();
+
+    // Stream SSE: aplicamos cada mensaje entrante al estado local. Si
+    // pertenece a la conversación activa se anexa al hilo y se marca
+    // como leído; si no, sólo actualizamos el preview y el contador
+    // de no leídas del sidebar.
+    this.stream.connect();
+    this.stream
+      .onMessage()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((incoming) => this.onIncomingMessage(incoming));
 
     // Búsqueda con debounce para no saturar el rate limit del backend
     // y evitar carreras entre respuestas rápidas y lentas.
@@ -249,6 +261,61 @@ export class MessagesPageComponent implements OnInit {
     this.conversations.update((list) => {
       const updated = list.map((c) =>
         c.id === id ? { ...c, lastMessagePreview: preview, lastMessageAt: at } : c,
+      );
+      return [...updated].sort(
+        (a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime(),
+      );
+    });
+  }
+
+  /**
+   * Aplica un mensaje entrante recibido por SSE. Duplicados
+   * potenciales (por ejemplo, cuando el backend reenvía un mensaje que
+   * el propio usuario acaba de mandar) se descartan comparando el id.
+   */
+  private onIncomingMessage(incoming: Message): void {
+    // Nunca mostramos como entrante lo que el propio usuario acaba de
+    // enviar; ese caso ya se refleja en el hilo al confirmarse el POST.
+    if (incoming.senderId === this.myId()) {
+      return;
+    }
+    const activeId = this.activeId();
+    if (incoming.conversationId === activeId) {
+      const already = this.messages().some((m) => m.id === incoming.id);
+      if (!already) {
+        this.messages.update((list) => [...list, incoming]);
+      }
+      // El usuario está viendo la conversación: la marcamos leída para
+      // que el contador global de no leídas también se sincronice.
+      this.service.markAsRead(incoming.conversationId).subscribe({
+        error: () => {
+          // Silencioso: reintentar no aporta valor y el próximo
+          // markAsRead al abrir la conversación cerrará la brecha.
+        },
+      });
+      this.bumpConversationPreview(activeId, incoming.content, incoming.sentAt);
+      return;
+    }
+
+    // Mensaje entrante para otra conversación: subimos el contador de
+    // no leídas y refrescamos el preview en el sidebar.
+    this.conversations.update((list) => {
+      const found = list.find((c) => c.id === incoming.conversationId);
+      if (!found) {
+        // Conversación aún no listada; en ese caso preferimos recargar
+        // la lista para incorporarla con su metadata completa.
+        this.loadConversations();
+        return list;
+      }
+      const updated = list.map((c) =>
+        c.id === incoming.conversationId
+          ? {
+              ...c,
+              lastMessagePreview: incoming.content,
+              lastMessageAt: incoming.sentAt,
+              unreadCount: (c.unreadCount ?? 0) + 1,
+            }
+          : c,
       );
       return [...updated].sort(
         (a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime(),

@@ -3,6 +3,7 @@ import { Observable, Subject } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
+import { Message } from '../messaging/messaging.dto';
 import { Notification } from './notification.dto';
 
 /**
@@ -29,6 +30,7 @@ export class NotificationsStreamService {
   private retryTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly incoming$ = new Subject<Notification>();
+  private readonly incomingMessage$ = new Subject<Message>();
 
   /** Indica si actualmente hay una conexión SSE abierta y sana. */
   readonly connected = signal(false);
@@ -39,6 +41,15 @@ export class NotificationsStreamService {
    */
   onNotification(): Observable<Notification> {
     return this.incoming$.asObservable();
+  }
+
+  /**
+   * Devuelve el flujo de mensajes directos entrantes que llegan por
+   * SSE. Cada emisión representa un {@link Message} recién enviado por
+   * otro usuario al que está conectado el suscriptor actual.
+   */
+  onMessage(): Observable<Message> {
+    return this.incomingMessage$.asObservable();
   }
 
   /**
@@ -75,6 +86,15 @@ export class NotificationsStreamService {
       try {
         const data = JSON.parse((evt as MessageEvent).data) as Notification;
         this.incoming$.next(data);
+      } catch {
+        // Ignoramos payloads corruptos para no romper el flujo.
+      }
+    });
+
+    source.addEventListener('message', (evt) => {
+      try {
+        const data = JSON.parse((evt as MessageEvent).data) as Message;
+        this.incomingMessage$.next(data);
       } catch {
         // Ignoramos payloads corruptos para no romper el flujo.
       }
