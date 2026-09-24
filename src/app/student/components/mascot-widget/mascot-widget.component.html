@@ -92,10 +92,11 @@
           class="mascot__input"
           [ngModel]="draft()"
           (ngModelChange)="draft.set($event)"
+          (keydown.enter)="onComposerEnter($event)"
           name="draft"
           rows="2"
           maxlength="4000"
-          placeholder="Escribe a la mascota..."
+          placeholder="Pregúntale a Luki…"
           [disabled]="sending() || conversation() === null"></textarea>
         <div class="mascot__actions">
           @if (sendError(); as err) {

@@ -84,8 +84,27 @@ export class MascotWidgetComponent implements AfterViewChecked {
 
   protected readonly open = signal(false);
   protected readonly initializing = signal(false);
-  /** Controla la visibilidad de la burbuja de saludo flotante. */
-  protected readonly greetingOpen = signal(true);
+  /**
+   * Controla la visibilidad de la burbuja de saludo flotante.
+   *
+   * <p>Arranca cerrada y sólo se activa tras un pequeño delay para no
+   * interrumpir al usuario justo al entrar. Si el usuario la cierra
+   * manualmente o inicia el chat, la decisión se recuerda en
+   * {@code localStorage} para no reaparecer durante varios días.</p>
+   */
+  protected readonly greetingOpen = signal(false);
+
+  /** Clave para persistir el rechazo del saludo en el navegador. */
+  private static readonly GREETING_DISMISS_KEY = 'impulso.mascot.greeting-dismissed-at';
+  /** Cuánto tiempo se respeta el rechazo del saludo (7 días). */
+  private static readonly GREETING_SNOOZE_MS = 7 * 24 * 60 * 60 * 1000;
+  /** Tras cargar la página, cuánto esperar antes de mostrar el saludo. */
+  private static readonly GREETING_APPEAR_MS = 3_500;
+  /** Duración de la burbuja en pantalla antes del auto-cierre. */
+  private static readonly GREETING_AUTO_CLOSE_MS = 12_000;
+
+  private greetingShowTimer: ReturnType<typeof setTimeout> | null = null;
+  private greetingHideTimer: ReturnType<typeof setTimeout> | null = null;
   protected readonly initError = signal<string | null>(null);
   protected readonly sending = signal(false);
   protected readonly sendError = signal<string | null>(null);
@@ -154,6 +173,7 @@ export class MascotWidgetComponent implements AfterViewChecked {
   private overrideTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
+    this.scheduleGreetingAppearance();
     // Efecto: cuando cambia el estado abierto/cerrado del panel se
     // reinicia el temporizador de dormancia. Estar abierto siempre
     // implica estar despierto; al cerrar, la mascota se queda idle
@@ -296,15 +316,84 @@ export class MascotWidgetComponent implements AfterViewChecked {
   /** Cierra manualmente la burbuja de saludo flotante. */
   protected dismissGreeting(event: Event): void {
     event.stopPropagation();
-    this.greetingOpen.set(false);
+    this.hideGreeting({ persist: true });
   }
 
   /** Abre el chat directamente desde el CTA de la burbuja de saludo. */
   protected openFromGreeting(event: Event): void {
     event.stopPropagation();
-    this.greetingOpen.set(false);
+    this.hideGreeting({ persist: true });
     if (!this.open()) {
       this.toggle();
+    }
+  }
+
+  /**
+   * Programa la aparición del saludo tras un pequeño delay. No se
+   * muestra si:
+   *   - el ancho de la pantalla es de móvil (evita tapar el contenido),
+   *   - el usuario lo cerró manualmente hace menos de 7 días,
+   *   - la mascota ya está desplegada.
+   */
+  private scheduleGreetingAppearance(): void {
+    if (typeof window === 'undefined') return;
+    if (this.isMobileViewport()) return;
+    if (this.wasGreetingSnoozed()) return;
+    this.clearGreetingTimers();
+    this.greetingShowTimer = setTimeout(() => {
+      if (this.open()) return;
+      this.greetingOpen.set(true);
+      this.greetingHideTimer = setTimeout(
+        () => this.greetingOpen.set(false),
+        MascotWidgetComponent.GREETING_AUTO_CLOSE_MS,
+      );
+    }, MascotWidgetComponent.GREETING_APPEAR_MS);
+  }
+
+  private hideGreeting(options: { persist: boolean }): void {
+    this.clearGreetingTimers();
+    this.greetingOpen.set(false);
+    if (options.persist) {
+      try {
+        localStorage.setItem(
+          MascotWidgetComponent.GREETING_DISMISS_KEY,
+          String(Date.now()),
+        );
+      } catch {
+        // localStorage puede estar deshabilitado (modo privado); es
+        // aceptable perder la persistencia en ese caso.
+      }
+    }
+  }
+
+  private clearGreetingTimers(): void {
+    if (this.greetingShowTimer) {
+      clearTimeout(this.greetingShowTimer);
+      this.greetingShowTimer = null;
+    }
+    if (this.greetingHideTimer) {
+      clearTimeout(this.greetingHideTimer);
+      this.greetingHideTimer = null;
+    }
+  }
+
+  private wasGreetingSnoozed(): boolean {
+    try {
+      const raw = localStorage.getItem(MascotWidgetComponent.GREETING_DISMISS_KEY);
+      if (!raw) return false;
+      const at = Number(raw);
+      if (!Number.isFinite(at)) return false;
+      return Date.now() - at < MascotWidgetComponent.GREETING_SNOOZE_MS;
+    } catch {
+      return false;
+    }
+  }
+
+  private isMobileViewport(): boolean {
+    try {
+      return window.matchMedia('(max-width: 720px)').matches;
+    } catch {
+      return false;
     }
   }
 
@@ -314,6 +403,24 @@ export class MascotWidgetComponent implements AfterViewChecked {
     if (this.open()) {
       this.open.set(false);
     }
+  }
+
+  /**
+   * Manejador del textarea del chat: {@code Enter} envía, mientras que
+   * {@code Shift+Enter} inserta una nueva línea. Alinea el
+   * comportamiento con el resto de clientes de chat de la industria.
+   */
+  protected onComposerEnter(event: Event): void {
+    const ke = event as KeyboardEvent;
+    if (ke.shiftKey || ke.isComposing || ke.altKey || ke.ctrlKey || ke.metaKey) {
+      return;
+    }
+    if (!this.canSend()) {
+      ke.preventDefault();
+      return;
+    }
+    ke.preventDefault();
+    this.send();
   }
 
   /** Envía el mensaje redactado por el estudiante. */

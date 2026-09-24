@@ -105,10 +105,11 @@
             class="thread__input"
             [ngModel]="draft()"
             (ngModelChange)="draft.set($event)"
+            (keydown.enter)="onComposerEnter($event)"
             name="draft"
             rows="2"
             maxlength="4000"
-            placeholder="Escribe tu mensaje..."
+            placeholder="Escribe tu mensaje…"
             [disabled]="sending()"></textarea>
           <div class="thread__actions">
             @if (sendError(); as err) {

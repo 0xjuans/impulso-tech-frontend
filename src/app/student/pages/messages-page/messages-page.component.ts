@@ -169,6 +169,20 @@ export class MessagesPageComponent implements OnInit {
     this.loadMessages(conversation.id);
   }
 
+  /**
+   * Manejador del textarea del hilo: {@code Enter} envía el mensaje y
+   * {@code Shift+Enter} inserta una nueva línea. Refleja el patrón de
+   * clientes de chat estándar (WhatsApp, Slack, Discord).
+   */
+  protected onComposerEnter(event: Event): void {
+    const ke = event as KeyboardEvent;
+    if (ke.shiftKey || ke.isComposing || ke.altKey || ke.ctrlKey || ke.metaKey) {
+      return;
+    }
+    ke.preventDefault();
+    this.send();
+  }
+
   protected send(): void {
     const activeId = this.activeId();
     const content = this.draft().trim();
