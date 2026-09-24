@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { AppIconComponent, AppIconName } from '../../../shared/components/app-icon/app-icon.component';
+import { UserPillComponent } from '../../../shared/components/user-pill/user-pill.component';
 import { MascotWidgetComponent } from '../mascot-widget/mascot-widget.component';
 import { NotificationsBellComponent } from '../notifications-bell/notifications-bell.component';
 
@@ -34,6 +35,7 @@ interface NavItem {
     NotificationsBellComponent,
     MascotWidgetComponent,
     AppIconComponent,
+    UserPillComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './student-shell.component.html',

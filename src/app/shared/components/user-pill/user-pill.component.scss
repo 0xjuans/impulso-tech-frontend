@@ -1,0 +1,197 @@
+/* Píldora de usuario del shell privado -----------------------------------
+   Diseño sobrio, mismo lenguaje visual que el resto del navbar: bordes
+   suaves, hover con relleno translúcido y menú desplegable con sombra
+   discreta. */
+
+.pill {
+  position: relative;
+  display: inline-flex;
+}
+
+.pill__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.pill__btn:hover {
+  background: rgba(32, 21, 21, 0.05);
+  border-color: rgba(32, 21, 21, 0.08);
+}
+
+.pill__btn[aria-expanded='true'] {
+  background: rgba(32, 21, 21, 0.06);
+  border-color: rgba(32, 21, 21, 0.1);
+}
+
+.pill__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff8a3d, #ff4f00);
+  color: var(--color-on-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(255, 79, 0, 0.24);
+}
+
+.pill__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pill__avatar--lg {
+  width: 48px;
+  height: 48px;
+  font-size: 16px;
+}
+
+.pill__initials { line-height: 1; }
+
+.pill__meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  text-align: left;
+}
+
+.pill__meta strong {
+  font-size: 13px;
+  color: var(--color-ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pill__meta small {
+  font-size: 11px;
+  color: var(--color-body);
+  white-space: nowrap;
+}
+
+.pill__caret {
+  color: var(--color-body);
+  transition: transform 150ms ease;
+}
+
+.pill__caret.is-open { transform: rotate(-180deg); }
+
+/* Menú desplegable ------------------------------------------------------ */
+
+.pill__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 260px;
+  background: var(--color-canvas);
+  border: 1px solid rgba(32, 21, 21, 0.10);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(32, 21, 21, 0.14);
+  overflow: hidden;
+  z-index: 50;
+  padding: 6px;
+  animation: pill-open 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pill-open {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pill__menu-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(32, 21, 21, 0.06);
+  margin-bottom: 4px;
+}
+
+.pill__ident {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.pill__ident strong {
+  font-size: 14px;
+  color: var(--color-ink);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pill__ident small {
+  font-size: 12px;
+  color: var(--color-body);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pill__role {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 79, 0, 0.12);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  align-self: flex-start;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pill__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: left;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.pill__item:hover {
+  background: rgba(32, 21, 21, 0.05);
+}
+
+.pill__item--danger {
+  color: #b91c1c;
+}
+
+.pill__item--danger:hover {
+  background: rgba(185, 28, 28, 0.08);
+}
+
+/* En pantallas estrechas el nombre y el username sobran: solo se muestra
+   el avatar y el caret. */
+@media (max-width: 720px) {
+  .pill__meta { display: none; }
+  .pill__btn { padding: 3px; }
+}

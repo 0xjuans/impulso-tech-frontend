@@ -12,6 +12,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { AppIconComponent, AppIconName } from '../../../shared/components/app-icon/app-icon.component';
 import { NotificationsBellComponent } from '../../../student/components/notifications-bell/notifications-bell.component';
+import { UserPillComponent } from '../../../shared/components/user-pill/user-pill.component';
 
 /** Entrada del menú lateral del área administrativa. */
 interface NavItem {
@@ -37,6 +38,7 @@ interface NavItem {
     RouterOutlet,
     AppIconComponent,
     NotificationsBellComponent,
+    UserPillComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-shell.component.html',
@@ -67,6 +69,7 @@ export class AdminShellComponent {
     { path: 'dashboard', icon: 'dashboard', label: 'Panel' },
     { path: 'users', icon: 'users', label: 'Usuarios' },
     { path: 'support', icon: 'life-ring', label: 'Soporte' },
+    { path: 'messages', icon: 'chat', label: 'Mensajes' },
     { path: 'profile', icon: 'user', label: 'Mi perfil' },
   ];
 

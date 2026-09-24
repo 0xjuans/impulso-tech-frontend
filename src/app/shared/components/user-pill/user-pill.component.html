@@ -1,0 +1,67 @@
+<div class="pill" (click)="stop($event)">
+  <button
+    type="button"
+    class="pill__btn"
+    (click)="toggle($event)"
+    [attr.aria-expanded]="open()"
+    [attr.aria-haspopup]="true"
+    aria-label="Menú de usuario">
+    <span class="pill__avatar" aria-hidden="true">
+      @if (photoUrl(); as url) {
+        <img [src]="url" alt="" (error)="onPhotoError()" />
+      } @else {
+        <span class="pill__initials">{{ initials() }}</span>
+      }
+    </span>
+    <span class="pill__meta">
+      <strong>{{ displayName() }}</strong>
+      <small>&#64;{{ user()?.username }}</small>
+    </span>
+    <svg class="pill__caret"
+      [class.is-open]="open()"
+      width="14" height="14" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2.4"
+      stroke-linecap="round" stroke-linejoin="round"
+      aria-hidden="true">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  </button>
+
+  @if (open()) {
+    <div class="pill__menu" role="menu" (click)="stop($event)">
+      <header class="pill__menu-head">
+        <span class="pill__avatar pill__avatar--lg" aria-hidden="true">
+          @if (photoUrl(); as url) {
+            <img [src]="url" alt="" (error)="onPhotoError()" />
+          } @else {
+            <span class="pill__initials">{{ initials() }}</span>
+          }
+        </span>
+        <div class="pill__ident">
+          <strong>{{ displayName() }}</strong>
+          <small>{{ user()?.email }}</small>
+          @if (roleLabel(); as label) {
+            <span class="pill__role">{{ label }}</span>
+          }
+        </div>
+      </header>
+
+      <a class="pill__item"
+        role="menuitem"
+        [routerLink]="profileUrl()"
+        (click)="close()">
+        <app-icon name="user" [sizePx]="16" />
+        <span>Mi perfil</span>
+      </a>
+
+      <button
+        type="button"
+        class="pill__item pill__item--danger"
+        role="menuitem"
+        (click)="logout($event)">
+        <app-icon name="logout" [sizePx]="16" />
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  }
+</div>
