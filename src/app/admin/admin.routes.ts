@@ -28,6 +28,14 @@ export const adminRoutes: Routes = [
         title: 'Notificaciones · Impulso Tech',
       },
       {
+        path: 'messages',
+        loadComponent: () =>
+          import('../student/pages/messages-page/messages-page.component').then(
+            (m) => m.MessagesPageComponent,
+          ),
+        title: 'Mensajes · Impulso Tech',
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import(
