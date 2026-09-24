@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
@@ -8,11 +9,16 @@ import {
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { Conversation, Message } from '../../../core/api/messaging/messaging.dto';
 import { MessagingService } from '../../../core/api/messaging/messaging.service';
+import {
+  UserDirectoryResult,
+  UserDirectoryService,
+} from '../../../core/api/users/user-directory.service';
 
 /**
  * Página del inbox de mensajería directa (RF-061).
@@ -31,7 +37,9 @@ import { MessagingService } from '../../../core/api/messaging/messaging.service'
 })
 export class MessagesPageComponent implements OnInit {
   private readonly service = inject(MessagingService);
+  private readonly directory = inject(UserDirectoryService);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly loadingConversations = signal(true);
   protected readonly loadingMessages = signal(false);
@@ -52,8 +60,107 @@ export class MessagesPageComponent implements OnInit {
     this.conversations().find((c) => c.id === this.activeId()) ?? null,
   );
 
+  /** Estado del modal para iniciar una nueva conversación. */
+  protected readonly composerOpen = signal(false);
+  protected readonly directoryQuery = signal('');
+  protected readonly directoryLoading = signal(false);
+  protected readonly directoryResults = signal<readonly UserDirectoryResult[]>([]);
+  protected readonly directoryError = signal<string | null>(null);
+  protected readonly openingConversation = signal(false);
+
+  private readonly directoryQuery$ = new Subject<string>();
+
   ngOnInit(): void {
     this.loadConversations();
+
+    // Búsqueda con debounce para no saturar el rate limit del backend
+    // y evitar carreras entre respuestas rápidas y lentas.
+    this.directoryQuery$
+      .pipe(
+        debounceTime(280),
+        distinctUntilChanged(),
+        switchMap((q) => {
+          if (q.trim().length < 2) {
+            this.directoryLoading.set(false);
+            this.directoryResults.set([]);
+            return [];
+          }
+          this.directoryLoading.set(true);
+          this.directoryError.set(null);
+          return this.directory.search(q).pipe(
+            finalize(() => this.directoryLoading.set(false)),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (results) => this.directoryResults.set(results),
+        error: () => {
+          this.directoryError.set('No pudimos buscar en el directorio. Inténtalo nuevamente.');
+          this.directoryResults.set([]);
+        },
+      });
+  }
+
+  /** Abre el modal de nueva conversación. */
+  protected openComposer(): void {
+    this.composerOpen.set(true);
+    this.directoryQuery.set('');
+    this.directoryResults.set([]);
+    this.directoryError.set(null);
+  }
+
+  /** Cierra el modal descartando el estado local. */
+  protected closeComposer(): void {
+    this.composerOpen.set(false);
+  }
+
+  /** Notifica al pipeline de búsqueda que el término cambió. */
+  protected onDirectoryQueryChange(value: string): void {
+    this.directoryQuery.set(value);
+    this.directoryQuery$.next(value);
+  }
+
+  /**
+   * Abre (o recupera si ya existe) la conversación con el usuario
+   * seleccionado y la deja activa en el hilo principal.
+   */
+  protected pickRecipient(recipient: UserDirectoryResult): void {
+    if (this.openingConversation()) return;
+    this.openingConversation.set(true);
+    this.service
+      .open(recipient.id)
+      .pipe(
+        finalize(() => this.openingConversation.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (conversation) => {
+          // Inserta la conversación en la lista si aún no está.
+          this.conversations.update((list) => {
+            const exists = list.some((c) => c.id === conversation.id);
+            return exists ? list : [conversation, ...list];
+          });
+          this.activeId.set(conversation.id);
+          this.messages.set([]);
+          this.loadMessages(conversation.id);
+          this.closeComposer();
+        },
+        error: () =>
+          this.directoryError.set('No pudimos abrir la conversación. Inténtalo nuevamente.'),
+      });
+  }
+
+  /** Etiqueta legible del rol para el resultado del directorio. */
+  protected directoryRoleLabel(role: UserDirectoryResult['role']): string {
+    switch (role) {
+      case 'INSTRUCTOR':
+        return 'Instructor';
+      case 'ADMINISTRADOR':
+        return 'Administrador';
+      default:
+        return 'Estudiante';
+    }
   }
 
   protected selectConversation(conversation: Conversation): void {
