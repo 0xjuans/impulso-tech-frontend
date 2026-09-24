@@ -83,15 +83,13 @@
            stroke="currentColor" stroke-width="2.2"
            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         @if (sideCollapsed()) {
-          <!-- arrow-right-from-line: expandir el panel -->
-          <path d="M3 5v14" />
-          <path d="M21 12H7" />
-          <path d="m15 6 6 6-6 6" />
+          <!-- chevrons-right: doble chevron amable indicando expansión. -->
+          <path d="m6 17 5-5-5-5" />
+          <path d="m13 17 5-5-5-5" />
         } @else {
-          <!-- arrow-left-from-line: colapsar el panel -->
-          <path d="M21 5v14" />
-          <path d="M3 12h14" />
-          <path d="m9 6-6 6 6 6" />
+          <!-- chevrons-left: doble chevron amable indicando colapso. -->
+          <path d="m11 17-5-5 5-5" />
+          <path d="m18 17-5-5 5-5" />
         }
       </svg>
     </button>
