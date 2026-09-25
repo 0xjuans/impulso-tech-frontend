@@ -8,6 +8,41 @@
     </div>
   </header>
 
+  @if (hasPending()) {
+    <section class="pending" aria-label="Pendientes por reclamar">
+      <header class="pending__head">
+        <div>
+          <strong>Tienes cursos completados sin certificado emitido</strong>
+          <p>Reclámalo con un clic para que se genere y quede disponible.</p>
+        </div>
+      </header>
+      @if (claimMessage(); as m) {
+        <p class="pending__message" [class.is-error]="m.tone === 'error'" role="status">
+          {{ m.text }}
+        </p>
+      }
+      <ul class="pending__list">
+        @for (row of pending(); track row.courseId) {
+          <li class="pending__row">
+            <div class="pending__body">
+              <strong>{{ row.courseName }}</strong>
+              @if (row.completedAt) {
+                <small>Completado el {{ row.completedAt | date: 'longDate' }}</small>
+              }
+            </div>
+            <button
+              type="button"
+              class="pending__btn"
+              [disabled]="claimingId() === row.courseId"
+              (click)="claim(row)">
+              {{ claimingId() === row.courseId ? 'Emitiendo…' : 'Reclamar certificado' }}
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
   @if (loading()) {
     <div class="certs__placeholder">Cargando certificados...</div>
   } @else if (error()) {
