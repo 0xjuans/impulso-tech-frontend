@@ -48,7 +48,12 @@
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: var(--spacing-lg);
-  min-height: 520px;
+  /* Altura acotada al viewport para que el scroll suceda dentro del
+     panel del hilo y la página principal no se alargue con cada
+     mensaje. El descuento aproxima el espacio ocupado por el header
+     y los paddings del shell del estudiante. */
+  height: calc(100dvh - 240px);
+  min-height: 480px;
   align-items: stretch;
 }
 
@@ -68,6 +73,8 @@
   padding: 0;
   margin: 0;
   overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .conv {
@@ -149,6 +156,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Requerido para que el scroll interno del hilo funcione dentro de
+     un contenedor flex: sin este {@code min-height: 0} el hijo crece
+     con su contenido en vez de respetar el alto del padre. */
+  min-height: 0;
 }
 
 .thread__head {
@@ -294,8 +305,16 @@
 .thread__send[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 @media (max-width: 820px) {
-  .msgs__layout { grid-template-columns: 1fr; }
+  .msgs__layout {
+    grid-template-columns: 1fr;
+    /* En móvil la lista y el hilo se apilan; damos un alto útil al
+       panel para que el hilo pueda seguir usando scroll interno sin
+       que la página crezca sin fin. */
+    height: auto;
+    grid-auto-rows: minmax(0, auto);
+  }
   .msgs__sidebar { max-height: 300px; }
+  .msgs__thread { height: calc(100dvh - 320px); min-height: 380px; }
 }
 
 /* Nueva conversación (sidebar + modal) --------------------------------- */
