@@ -301,9 +301,10 @@ export class MascotWidgetComponent implements AfterViewChecked {
     const next = !this.open();
     this.open.set(next);
     if (next) {
-      // Al abrir el chat, ocultamos la burbuja flotante para no
-      // duplicar el saludo dentro del panel.
-      this.greetingOpen.set(false);
+      // Al abrir el chat, ocultamos la burbuja flotante y persistimos
+      // la decisión: si el usuario ya interactuó con la mascota, no
+      // tiene sentido volver a saludarlo la próxima visita.
+      this.hideGreeting({ persist: true });
     }
     if (next && this.conversation() === null && !this.initializing()) {
       this.initializeConversation();

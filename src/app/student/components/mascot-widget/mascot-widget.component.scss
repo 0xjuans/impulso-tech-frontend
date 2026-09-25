@@ -208,6 +208,10 @@
   /* Con el panel a full-screen, el trigger flotante ya no es necesario
      (el cierre lo maneja el header del panel). */
   .mascot__trigger.is-open { display: none; }
+  /* En móvil la burbuja de saludo tapa demasiado contenido y compite
+     con el propio botón flotante. Se oculta y se deja que el usuario
+     abra el chat manualmente cuando lo necesite. */
+  .mascot-greeting { display: none !important; }
   /* iOS Safari aumenta automáticamente el zoom cuando un input tiene
      font-size < 16px al enfocarlo. Con 16px se evita el zoom que
      recoloca el viewport. */
