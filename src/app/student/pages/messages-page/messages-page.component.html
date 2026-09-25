@@ -79,7 +79,7 @@
           </div>
         </header>
 
-        <div class="thread__body">
+        <div class="thread__body" #threadBody>
           @if (loadingMessages()) {
             <div class="msgs__placeholder">Cargando mensajes...</div>
           } @else if (messages().length === 0) {

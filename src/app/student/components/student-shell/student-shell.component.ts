@@ -3,10 +3,14 @@ import { NgClass } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { MessagingService } from '../../../core/api/messaging/messaging.service';
+import { NotificationsStreamService } from '../../../core/api/notifications/notifications-stream.service';
 import { AppIconComponent, AppIconName } from '../../../shared/components/app-icon/app-icon.component';
 import { UserPillComponent } from '../../../shared/components/user-pill/user-pill.component';
 import { MascotWidgetComponent } from '../mascot-widget/mascot-widget.component';
 import { NotificationsBellComponent } from '../notifications-bell/notifications-bell.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef, OnInit } from '@angular/core';
 
 /** Entrada del menú lateral del área del estudiante. */
 interface NavItem {
@@ -41,9 +45,15 @@ interface NavItem {
   templateUrl: './student-shell.component.html',
   styleUrl: './student-shell.component.scss',
 })
-export class StudentShellComponent {
+export class StudentShellComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly messaging = inject(MessagingService);
+  private readonly stream = inject(NotificationsStreamService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** Total de mensajes sin leer expuesto por el {@link MessagingService}. */
+  protected readonly messagesUnread = this.messaging.unread;
 
   /** Usuario autenticado, expuesto de forma reactiva a la plantilla. */
   protected readonly user = this.auth.currentUser;
@@ -120,6 +130,26 @@ export class StudentShellComponent {
     { path: 'certificates', icon: 'certificate', label: 'Certificados' },
     { path: 'profile', icon: 'user', label: 'Mi perfil' },
   ];
+
+  ngOnInit(): void {
+    // Hidrata el badge de mensajes sin leer al montar el shell y
+    // reacciona a cada mensaje entrante del stream SSE para mantenerlo
+    // actualizado sin necesidad de recargar la página.
+    this.messaging.unreadCount().subscribe({
+      error: () => this.messaging.setUnread(0),
+    });
+    this.stream.connect();
+    this.stream
+      .onMessage()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((msg) => {
+        // Sólo cuentan los mensajes cuyo emisor NO es el propio usuario:
+        // los mensajes que él acaba de enviar no son "sin leer".
+        if (msg.senderId !== this.auth.currentUser()?.id) {
+          this.messaging.bumpUnread(1);
+        }
+      });
+  }
 
   protected toggleMenu(): void {
     this.menuOpen.update((open) => !open);

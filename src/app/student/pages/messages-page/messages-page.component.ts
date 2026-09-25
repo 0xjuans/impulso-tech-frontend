@@ -2,8 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
+  Injector,
   OnInit,
+  ViewChild,
+  afterNextRender,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -42,6 +47,30 @@ export class MessagesPageComponent implements OnInit {
   private readonly stream = inject(NotificationsStreamService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+
+  /** Referencia al contenedor del hilo para hacer autoscroll al final. */
+  @ViewChild('threadBody') private threadBodyRef?: ElementRef<HTMLDivElement>;
+
+  constructor() {
+    // Cada vez que cambie la lista de mensajes, en la siguiente pasada
+    // de render bajamos el scroll al fondo para que el usuario vea el
+    // último mensaje sin esfuerzo. Comportamiento estándar de chat.
+    effect(() => {
+      // Sólo leemos el signal para engancharnos al ciclo reactivo.
+      this.messages();
+      afterNextRender(
+        () => {
+          const el = this.threadBodyRef?.nativeElement;
+          if (el) {
+            el.scrollTop = el.scrollHeight;
+          }
+        },
+        { injector: this.injector },
+      );
+    });
+  }
+
+  private readonly injector = inject(Injector);
 
   protected readonly loadingConversations = signal(true);
   protected readonly loadingMessages = signal(false);
@@ -250,9 +279,16 @@ export class MessagesPageComponent implements OnInit {
     });
     this.service.markAsRead(conversationId).subscribe({
       next: () => {
+        // Determinamos cuánto restar del contador global antes de
+        // pisar el {@code unreadCount} de la conversación local.
+        const conv = this.conversations().find((c) => c.id === conversationId);
+        const cleared = conv?.unreadCount ?? 0;
         this.conversations.update((list) =>
           list.map((c) => (c.id === conversationId ? { ...c, unreadCount: 0 } : c)),
         );
+        if (cleared > 0) {
+          this.service.bumpUnread(-cleared);
+        }
       },
     });
   }
@@ -288,6 +324,7 @@ export class MessagesPageComponent implements OnInit {
       // El usuario está viendo la conversación: la marcamos leída para
       // que el contador global de no leídas también se sincronice.
       this.service.markAsRead(incoming.conversationId).subscribe({
+        next: () => this.service.bumpUnread(-1),
         error: () => {
           // Silencioso: reintentar no aporta valor y el próximo
           // markAsRead al abrir la conversación cerrará la brecha.

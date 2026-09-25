@@ -163,6 +163,7 @@
 }
 
 .shell__link-icon {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -174,6 +175,42 @@
 
 .shell__link-label {
   transition: opacity var(--side-transition);
+  flex: 1;
+}
+
+/* Badge principal del sidebar expandido: pastilla con el número. */
+.shell__link-badge {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Punto que aparece sobre el icono cuando el sidebar está colapsado.
+   Sustituye visualmente al badge que ya no cabría. */
+.shell__link-dot {
+  position: absolute;
+  top: -1px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-ink);
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .shell--collapsed .shell__link-badge { display: none; }
+  .shell--collapsed .shell__link-dot { display: block; }
 }
 
 /* Tooltip que aparece a la derecha del icono cuando el sidebar está

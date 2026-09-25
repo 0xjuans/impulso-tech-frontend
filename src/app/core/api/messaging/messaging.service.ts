@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { PagedResponse } from '../learning-routes/learning-route.dto';
@@ -14,6 +14,36 @@ import { Conversation, Message } from './messaging.dto';
 export class MessagingService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiBaseUrl}/messages/conversations`;
+  private readonly rootUrl = `${environment.apiBaseUrl}/messages`;
+
+  /**
+   * Total de mensajes sin leer del usuario autenticado, expuesto de
+   * forma reactiva para que los shells muestren el badge del nav en
+   * cualquier página.
+   */
+  readonly unread = signal(0);
+
+  /** Devuelve el total de mensajes sin leer del usuario autenticado. */
+  unreadCount(): Observable<{ unread: number }> {
+    return this.http.get<{ unread: number }>(`${this.rootUrl}/unread-count`).pipe(
+      tap((res) => this.unread.set(res.unread)),
+    );
+  }
+
+  /**
+   * Ajusta el contador local en {@code delta}. Los shells lo llaman
+   * cuando el SSE entrega un mensaje entrante o cuando la propia UI
+   * marca una conversación como leída, para reflejar el cambio de
+   * inmediato sin esperar al siguiente sondeo del backend.
+   */
+  bumpUnread(delta: number): void {
+    this.unread.update((v) => Math.max(0, v + delta));
+  }
+
+  /** Fija el contador a un valor conocido. */
+  setUnread(value: number): void {
+    this.unread.set(Math.max(0, value));
+  }
 
   /** Lista mis conversaciones, más recientes primero. */
   listMine(page = 0, size = 20): Observable<PagedResponse<Conversation>> {
