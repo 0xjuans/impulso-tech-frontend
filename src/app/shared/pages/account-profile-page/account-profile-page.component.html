@@ -47,6 +47,15 @@
       (click)="setTab('notificaciones')">
       <app-icon name="bell" [sizePx]="16" /> Notificaciones
     </button>
+    @if (canManageSignature()) {
+      <button
+        type="button"
+        class="account__tab"
+        [class.is-active]="tab() === 'firma'"
+        (click)="setTab('firma')">
+        <app-icon name="certificate" [sizePx]="16" /> Firma
+      </button>
+    }
   </nav>
 
   @if (tab() === 'perfil') {
@@ -140,7 +149,7 @@
         </button>
       </footer>
     </form>
-  } @else {
+  } @else if (tab() === 'notificaciones') {
     <section class="account__card">
       <header class="account__card-head">
         <h2>Notificaciones</h2>
@@ -241,6 +250,59 @@
           </div>
         }
       }
+    </section>
+  } @else {
+    <section class="account__card">
+      <header class="account__card-head">
+        <h2>Firma para certificados</h2>
+        <p>Dibuja tu firma aquí y quedará grabada sobre la línea de firma de los
+          certificados que emitas a tus estudiantes.</p>
+      </header>
+
+      <div class="signature">
+        <canvas #signatureCanvas
+          class="signature__canvas"
+          (pointerdown)="onSignaturePointerDown($event)"
+          (pointermove)="onSignaturePointerMove($event)"
+          (pointerup)="onSignaturePointerUp($event)"
+          (pointercancel)="onSignaturePointerUp($event)"
+          (pointerleave)="onSignaturePointerUp($event)"
+          aria-label="Área para dibujar tu firma"></canvas>
+        <p class="signature__hint">Firma dentro del recuadro. Puedes borrar y volver a intentar cuantas veces necesites.</p>
+
+        @if (currentUser()?.signatureImageUrl; as existing) {
+          <div class="signature__current">
+            <span>Firma guardada actualmente</span>
+            <img [src]="existing" alt="Firma guardada" />
+          </div>
+        }
+
+        @if (signatureMessage(); as m) {
+          <div class="account__banner" [class.is-error]="m.tone === 'error'" role="status">
+            {{ m.text }}
+          </div>
+        }
+
+        <footer class="signature__actions">
+          <button type="button" class="signature__ghost"
+            [disabled]="signatureSaving()"
+            (click)="clearSignature()">
+            Limpiar
+          </button>
+          @if (currentUser()?.signatureImageUrl) {
+            <button type="button" class="signature__danger"
+              [disabled]="signatureSaving()"
+              (click)="removeSignature()">
+              Eliminar firma guardada
+            </button>
+          }
+          <button type="button" class="account__submit"
+            [disabled]="signatureSaving()"
+            (click)="saveSignature()">
+            {{ signatureSaving() ? 'Guardando…' : 'Guardar firma' }}
+          </button>
+        </footer>
+      </div>
     </section>
   }
 </section>

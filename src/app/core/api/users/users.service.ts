@@ -49,4 +49,17 @@ export class UsersService {
   changePassword(request: ChangePasswordRequest): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.baseUrl}/password`, request);
   }
+
+  /**
+   * Guarda la firma del instructor. Sólo aplica a usuarios con rol
+   * INSTRUCTOR o ADMINISTRADOR; el backend rechaza el resto.
+   */
+  updateSignature(signatureImage: string): Observable<User> {
+    return this.http.put<User>(`${this.baseUrl}/signature`, { signatureImage });
+  }
+
+  /** Elimina la firma cargada. */
+  deleteSignature(): Observable<User> {
+    return this.http.delete<User>(`${this.baseUrl}/signature`);
+  }
 }

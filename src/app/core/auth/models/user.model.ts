@@ -27,6 +27,7 @@ export interface User {
   readonly firstName: string;
   readonly lastName: string;
   readonly profilePhotoUrl: string | null;
+  readonly signatureImageUrl?: string | null;
   readonly role: Role;
   readonly status: UserStatus;
   readonly emailVerifiedAt: string | null;
