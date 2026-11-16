@@ -12,12 +12,13 @@ import { catchError, finalize, switchMap } from 'rxjs/operators';
 
 import { Course, CourseModule } from '../../../core/api/courses/course.dto';
 import { CoursesService } from '../../../core/api/courses/courses.service';
-import { CourseProgress } from '../../../core/api/enrollments/enrollment.dto';
+import { CourseProgress, EnrollmentStatus } from '../../../core/api/enrollments/enrollment.dto';
 import { EnrollmentsService } from '../../../core/api/enrollments/enrollments.service';
 import { Lesson } from '../../../core/api/lessons/lesson.dto';
 import { LessonsService } from '../../../core/api/lessons/lessons.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Página de detalle de un curso (RF-040, RF-011).
@@ -30,7 +31,7 @@ import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
   selector: 'app-course-detail-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, AppIconComponent, StripHtmlPipe],
+  imports: [RouterLink, AppIconComponent, StripHtmlPipe, EnumLabelPipe],
   templateUrl: './course-detail-page.component.html',
   styleUrl: './course-detail-page.component.scss',
 })
@@ -57,6 +58,16 @@ export class CourseDetailPageComponent implements OnInit {
 
   /** Indica si el estudiante ya está inscrito. */
   protected readonly enrolled = computed(() => this.progress() !== null);
+
+  private readonly statusLabels: Record<EnrollmentStatus, string> = {
+    INSCRITO: 'Inscrito',
+    EN_PROGRESO: 'En progreso',
+    COMPLETADO: 'Completado',
+  };
+
+  protected statusLabel(s: EnrollmentStatus): string {
+    return this.statusLabels[s] ?? s;
+  }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');

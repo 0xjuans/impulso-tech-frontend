@@ -36,7 +36,7 @@
           [class.notifs__item--unread]="!item.readAt"
           (click)="markAsRead(item)">
           <div class="notifs__item-body">
-            <span class="notifs__item-type" [attr.data-type]="item.type">{{ item.type }}</span>
+            <span class="notifs__item-type" [attr.data-type]="item.type">{{ item.type | enumLabel }}</span>
             <strong class="notifs__item-title">{{ item.title }}</strong>
             <p class="notifs__item-message">{{ item.message }}</p>
             <span class="notifs__item-time">{{ item.createdAt | date: 'medium' }}</span>

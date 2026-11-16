@@ -70,9 +70,9 @@
             </a>
             <p class="route__desc">{{ route.description | stripHtml }}</p>
             <ul class="route__meta">
-              <li class="route__badge route__badge--status">{{ route.status }}</li>
+              <li class="route__badge route__badge--status">{{ route.status | enumLabel }}</li>
               @if (route.difficulty) {
-                <li class="route__badge">{{ route.difficulty }}</li>
+                <li class="route__badge">{{ route.difficulty | enumLabel }}</li>
               }
               @if (route.estimatedDurationHours) {
                 <li>{{ route.estimatedDurationHours }} h</li>

@@ -11,7 +11,7 @@
 
     <header class="project__header">
       <div class="project__meta">
-        <span class="project__difficulty" [attr.data-level]="p.difficulty">{{ p.difficulty }}</span>
+        <span class="project__difficulty" [attr.data-level]="p.difficulty">{{ p.difficulty | enumLabel }}</span>
         <span class="project__xp">+{{ p.xpReward }} XP</span>
         <span class="project__score">hasta {{ p.maxScore }} pts</span>
         @if (p.deadlineAt) { <span class="project__deadline">vence {{ p.deadlineAt | date: 'medium' }}</span> }
@@ -90,7 +90,7 @@
             <li class="submission" [attr.data-status]="submission.status">
               <header class="submission__head">
                 <span class="submission__num">Entrega #{{ submission.submissionNumber }}</span>
-                <span class="submission__badge">{{ submission.status }}</span>
+                <span class="submission__badge">{{ submission.status | enumLabel }}</span>
                 <time class="submission__date">{{ submission.submittedAt | date: 'medium' }}</time>
               </header>
               <a class="submission__url" [href]="submission.submissionUrl" target="_blank" rel="noopener noreferrer">

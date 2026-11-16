@@ -14,8 +14,10 @@ import { catchError, finalize, of } from 'rxjs';
 import {
   Challenge,
   ChallengeAttempt,
+  ChallengeAttemptStatus,
 } from '../../../core/api/challenges/challenge.dto';
 import { ChallengesService } from '../../../core/api/challenges/challenges.service';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Detalle de un reto para el estudiante (RF-014).
@@ -29,7 +31,7 @@ import { ChallengesService } from '../../../core/api/challenges/challenges.servi
 @Component({
   selector: 'app-student-challenge-detail-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe],
+  imports: [FormsModule, RouterLink, DatePipe, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './challenge-detail-page.component.html',
   styleUrl: './challenge-detail-page.component.scss',
@@ -69,6 +71,16 @@ export class ChallengeDetailPageComponent implements OnInit {
       (a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime(),
     ),
   );
+
+  private readonly attemptStatusLabels: Record<ChallengeAttemptStatus, string> = {
+    PENDIENTE: 'Pendiente',
+    APROBADO: 'Aprobado',
+    RECHAZADO: 'Rechazado',
+  };
+
+  protected attemptStatusLabel(s: ChallengeAttemptStatus): string {
+    return this.attemptStatusLabels[s] ?? s;
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));

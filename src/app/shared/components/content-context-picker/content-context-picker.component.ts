@@ -20,6 +20,7 @@ import { LearningRoute } from '../../../core/api/learning-routes/learning-route.
 import { LearningRoutesService } from '../../../core/api/learning-routes/learning-routes.service';
 import { Lesson } from '../../../core/api/lessons/lesson.dto';
 import { LessonsService } from '../../../core/api/lessons/lessons.service';
+import { EnumLabelPipe } from './../../pipes/enum-label.pipe';
 
 /**
  * Contexto educativo al que se asocia un contenido (reto, proyecto,
@@ -51,7 +52,7 @@ export interface ContentContextValue {
 @Component({
   selector: 'app-content-context-picker',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './content-context-picker.component.html',
   styleUrl: './content-context-picker.component.scss',

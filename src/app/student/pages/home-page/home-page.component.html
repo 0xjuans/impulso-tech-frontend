@@ -136,7 +136,7 @@
                   <div class="course-card__meta-top">
                     <span class="course-card__status"
                           [attr.data-status]="enrollment.status">
-                      {{ enrollment.status }}
+                      {{ enrollment.status | enumLabel }}
                     </span>
                   </div>
                   <h3 class="course-card__title">{{ enrollment.courseName }}</h3>

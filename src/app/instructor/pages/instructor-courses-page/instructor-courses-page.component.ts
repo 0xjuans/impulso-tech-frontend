@@ -14,6 +14,7 @@ import { ContentStatus } from '../../../core/api/learning-routes/learning-route.
 import { Course, CreateCourseRequest } from '../../../core/api/courses/course.dto';
 import { CoursesService } from '../../../core/api/courses/courses.service';
 import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Página con los cursos gestionados por el instructor (RF-040).
@@ -25,7 +26,7 @@ import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 @Component({
   selector: 'app-instructor-courses-page',
   standalone: true,
-  imports: [DatePipe, FormsModule, RouterLink, StripHtmlPipe],
+  imports: [DatePipe, FormsModule, RouterLink, StripHtmlPipe, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-courses-page.component.html',
   styleUrl: './instructor-courses-page.component.scss',

@@ -59,7 +59,7 @@
                 }
               </p>
             </div>
-            <span class="submission__badge">{{ submission.status }}</span>
+            <span class="submission__badge">{{ submission.status | enumLabel }}</span>
           </header>
 
           <a class="submission__url" [href]="submission.submissionUrl" target="_blank" rel="noopener noreferrer">

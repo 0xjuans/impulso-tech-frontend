@@ -59,7 +59,7 @@
             </a>
             <p class="lab__desc">{{ lab.description | stripHtml }}</p>
             <ul class="lab__meta">
-              <li class="lab__badge lab__badge--status">{{ lab.status }}</li>
+              <li class="lab__badge lab__badge--status">{{ lab.status | enumLabel }}</li>
               <li class="lab__lang">{{ lab.language }}</li>
               @if (lab.expectedOutput) { <li>con salida esperada</li> }
               <li class="lab__date">actualizado {{ lab.updatedAt | date: 'shortDate' }}</li>

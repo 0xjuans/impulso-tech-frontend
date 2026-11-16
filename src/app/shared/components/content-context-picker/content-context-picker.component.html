@@ -18,7 +18,7 @@
             @else { Sin asignar }
           </option>
           @for (route of routes(); track route.id) {
-            <option [ngValue]="route.id">{{ route.name }} · {{ route.status }}</option>
+            <option [ngValue]="route.id">{{ route.name }} · {{ route.status | enumLabel }}</option>
           }
         </select>
       </label>
@@ -38,7 +38,7 @@
           @else { Sin asignar }
         </option>
         @for (course of filteredCourses(); track course.id) {
-          <option [ngValue]="course.id">{{ course.name }} · {{ course.status }}</option>
+          <option [ngValue]="course.id">{{ course.name }} · {{ course.status | enumLabel }}</option>
         }
       </select>
     </label>

@@ -23,7 +23,7 @@
       <select [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event); apply()">
         <option value="">Todos</option>
         @for (t of types; track t) {
-          <option [value]="t">{{ t }}</option>
+          <option [value]="t">{{ t | enumLabel }}</option>
         }
       </select>
     </label>
@@ -32,7 +32,7 @@
       <select [ngModel]="difficultyFilter()" (ngModelChange)="difficultyFilter.set($event); apply()">
         <option value="">Todas</option>
         @for (d of difficulties; track d) {
-          <option [value]="d">{{ d }}</option>
+          <option [value]="d">{{ d | enumLabel }}</option>
         }
       </select>
     </label>
@@ -60,7 +60,7 @@
       @for (resource of visibleResources(); track resource.id) {
         <li class="resource" [attr.data-type]="resource.type">
           <div class="resource__head">
-            <span class="resource__type">{{ resource.type }}</span>
+            <span class="resource__type">{{ resource.type | enumLabel }}</span>
             <button
               type="button"
               class="resource__fav"
@@ -84,7 +84,7 @@
           }
 
           <ul class="resource__tags">
-            @if (resource.difficulty) { <li>{{ resource.difficulty }}</li> }
+            @if (resource.difficulty) { <li>{{ resource.difficulty | enumLabel }}</li> }
             @if (resource.technology) { <li>{{ resource.technology }}</li> }
             @if (resource.topic) { <li>{{ resource.topic }}</li> }
           </ul>

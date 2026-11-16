@@ -18,6 +18,7 @@ import {
   DifficultyLevel,
 } from '../../../core/api/learning-routes/learning-route.dto';
 import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Panel de gestión de proyectos del instructor (RF-023).
@@ -30,7 +31,7 @@ import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 @Component({
   selector: 'app-instructor-projects-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe, StripHtmlPipe],
+  imports: [FormsModule, RouterLink, DatePipe, StripHtmlPipe, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-projects-page.component.html',
   styleUrl: './instructor-projects-page.component.scss',

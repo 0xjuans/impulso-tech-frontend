@@ -30,7 +30,7 @@
         </option>
         @for (course of courses(); track course.id) {
           <option [ngValue]="course.id">
-            {{ course.name }} · {{ course.status }}
+            {{ course.name }} · {{ course.status | enumLabel }}
           </option>
         }
       </select>
@@ -114,7 +114,7 @@
                 <p class="evaluation__desc">{{ evaluation.description | stripHtml }}</p>
               }
               <ul class="evaluation__meta">
-                <li class="evaluation__badge evaluation__badge--status">{{ evaluation.status }}</li>
+                <li class="evaluation__badge evaluation__badge--status">{{ evaluation.status | enumLabel }}</li>
                 <li>Orden #{{ evaluation.orderIndex }}</li>
                 <li>{{ evaluation.questions.length }} pregunta{{ evaluation.questions.length === 1 ? '' : 's' }}</li>
                 <li>{{ evaluation.passingPercentage }}% para aprobar</li>

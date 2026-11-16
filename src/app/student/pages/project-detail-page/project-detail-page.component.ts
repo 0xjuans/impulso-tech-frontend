@@ -14,8 +14,10 @@ import { catchError, finalize, of } from 'rxjs';
 import {
   Project,
   ProjectSubmission,
+  ProjectSubmissionStatus,
 } from '../../../core/api/projects/project.dto';
 import { ProjectsService } from '../../../core/api/projects/projects.service';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Detalle de proyecto para el estudiante (RF-023).
@@ -28,7 +30,7 @@ import { ProjectsService } from '../../../core/api/projects/projects.service';
 @Component({
   selector: 'app-student-project-detail-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe],
+  imports: [FormsModule, RouterLink, DatePipe, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './project-detail-page.component.html',
   styleUrl: './project-detail-page.component.scss',
@@ -55,6 +57,18 @@ export class ProjectDetailPageComponent implements OnInit {
       (a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime(),
     ),
   );
+
+  private readonly submissionStatusLabels: Record<ProjectSubmissionStatus, string> = {
+    ENVIADA: 'Enviada',
+    EN_REVISION: 'En revisión',
+    APROBADA: 'Aprobada',
+    CORRECCION_SOLICITADA: 'Corrección solicitada',
+    RECHAZADA: 'Rechazada',
+  };
+
+  protected submissionStatusLabel(s: ProjectSubmissionStatus): string {
+    return this.submissionStatusLabels[s] ?? s;
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));

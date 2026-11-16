@@ -8,9 +8,10 @@ import {
 import { DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
 
-import { Notification } from '../../../core/api/notifications/notification.dto';
+import { Notification, NotificationType } from '../../../core/api/notifications/notification.dto';
 import { NotificationsService } from '../../../core/api/notifications/notifications.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
+import { EnumLabelPipe } from '../../../shared/pipes/enum-label.pipe';
 
 /**
  * Página con el listado completo de notificaciones del estudiante
@@ -19,7 +20,7 @@ import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.c
 @Component({
   selector: 'app-notifications-page',
   standalone: true,
-  imports: [DatePipe, AppIconComponent],
+  imports: [DatePipe, AppIconComponent, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './notifications-page.component.html',
   styleUrl: './notifications-page.component.scss',
@@ -31,6 +32,20 @@ export class NotificationsPageComponent implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly items = signal<readonly Notification[]>([]);
   protected readonly onlyUnread = signal(false);
+
+  private readonly typeLabels: Record<NotificationType, string> = {
+    BADGE_AWARDED: 'Insignia obtenida',
+    LEVEL_UP: 'Subida de nivel',
+    COURSE_COMPLETED: 'Curso completado',
+    EVALUATION_PASSED: 'Evaluación aprobada',
+    EVALUATION_FAILED: 'Evaluación reprobada',
+    STREAK_MILESTONE: 'Racha alcanzada',
+    GENERIC: 'General',
+  };
+
+  protected typeLabel(t: NotificationType): string {
+    return this.typeLabels[t] ?? t;
+  }
 
   ngOnInit(): void {
     this.load();

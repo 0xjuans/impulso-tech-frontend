@@ -64,8 +64,8 @@
             </a>
             <p class="project__desc">{{ project.description | stripHtml }}</p>
             <ul class="project__meta">
-              <li class="project__badge project__badge--status">{{ project.status }}</li>
-              <li class="project__badge">{{ project.difficulty }}</li>
+              <li class="project__badge project__badge--status">{{ project.status | enumLabel }}</li>
+              <li class="project__badge">{{ project.difficulty | enumLabel }}</li>
               @if (project.technologies) { <li class="project__tech">{{ project.technologies }}</li> }
               <li>{{ project.xpReward }} XP</li>
               <li>hasta {{ project.maxScore }} pts</li>

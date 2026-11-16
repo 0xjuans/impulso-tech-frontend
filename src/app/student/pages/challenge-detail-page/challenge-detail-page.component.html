@@ -11,7 +11,7 @@
 
     <header class="challenge__header">
       <div class="challenge__meta">
-        <span class="challenge__difficulty" [attr.data-level]="c.difficulty">{{ c.difficulty }}</span>
+        <span class="challenge__difficulty" [attr.data-level]="c.difficulty">{{ c.difficulty | enumLabel }}</span>
         <span class="challenge__xp">+{{ c.xpReward }} XP</span>
         @if (c.estimatedMinutes) { <span class="challenge__time">{{ c.estimatedMinutes }} min</span> }
       </div>
@@ -95,7 +95,7 @@
             <li class="attempt" [attr.data-status]="attempt.status">
               <header class="attempt__head">
                 <span class="attempt__num">Intento #{{ attempt.attemptNumber }}</span>
-                <span class="attempt__badge">{{ attempt.status }}</span>
+                <span class="attempt__badge">{{ attempt.status | enumLabel }}</span>
                 <time class="attempt__date">{{ attempt.submittedAt | date: 'medium' }}</time>
               </header>
               <pre class="attempt__code"><code>{{ attempt.code }}</code></pre>

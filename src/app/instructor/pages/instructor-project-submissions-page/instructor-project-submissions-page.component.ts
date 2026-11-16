@@ -18,6 +18,7 @@ import {
   ReviewSubmissionRequest,
 } from '../../../core/api/projects/project.dto';
 import { ProjectsService } from '../../../core/api/projects/projects.service';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Panel de revisión de entregas de un proyecto (RF-045).
@@ -30,7 +31,7 @@ import { ProjectsService } from '../../../core/api/projects/projects.service';
 @Component({
   selector: 'app-instructor-project-submissions-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe],
+  imports: [FormsModule, RouterLink, DatePipe, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-project-submissions-page.component.html',
   styleUrl: './instructor-project-submissions-page.component.scss',

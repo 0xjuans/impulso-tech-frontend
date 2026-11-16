@@ -20,6 +20,7 @@ import {
 } from '../../../core/api/evaluations/evaluation.dto';
 import { EvaluationsService } from '../../../core/api/evaluations/evaluations.service';
 import { RichTextEditorComponent } from '../../../shared/components/rich-text-editor/rich-text-editor.component';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Editor de evaluación (RF-020).
@@ -34,7 +35,7 @@ import { RichTextEditorComponent } from '../../../shared/components/rich-text-ed
 @Component({
   selector: 'app-instructor-evaluation-editor-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, RichTextEditorComponent],
+  imports: [FormsModule, RouterLink, RichTextEditorComponent, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-evaluation-editor-page.component.html',
   styleUrl: './instructor-evaluation-editor-page.component.scss',

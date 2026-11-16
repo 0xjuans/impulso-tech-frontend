@@ -42,7 +42,7 @@
         <li class="project" [attr.data-difficulty]="project.difficulty">
           <a class="project__link" [routerLink]="['/student/projects', project.id]">
             <header class="project__head">
-              <span class="project__difficulty">{{ project.difficulty }}</span>
+              <span class="project__difficulty">{{ project.difficulty | enumLabel }}</span>
               <span class="project__xp">+{{ project.xpReward }} XP</span>
             </header>
             <h2 class="project__title">{{ project.name }}</h2>

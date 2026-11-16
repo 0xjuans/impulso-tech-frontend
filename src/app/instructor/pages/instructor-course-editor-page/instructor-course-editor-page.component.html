@@ -14,7 +14,7 @@
           <h1 class="editor__title">{{ c.name }}</h1>
         </div>
         <div class="editor__status">
-          <span class="editor__status-tag" [attr.data-status]="c.status">{{ c.status }}</span>
+          <span class="editor__status-tag" [attr.data-status]="c.status">{{ c.status | enumLabel }}</span>
           @if (c.status !== 'PUBLICADO') {
             <button
               type="button"
@@ -288,7 +288,7 @@
                                       <span
                                         class="module__pill module__pill--status"
                                         [attr.data-status]="lesson.status">
-                                        {{ lesson.status }}
+                                        {{ lesson.status | enumLabel }}
                                       </span>
                                       @if (lesson.optional) {
                                         <span class="module__pill">Opcional</span>

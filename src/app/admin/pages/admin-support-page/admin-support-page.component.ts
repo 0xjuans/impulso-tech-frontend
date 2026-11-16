@@ -16,6 +16,7 @@ import {
   SupportTicketType,
 } from '../../../core/api/support/support.dto';
 import { SupportService } from '../../../core/api/support/support.service';
+import { EnumLabelPipe } from '../../../shared/pipes/enum-label.pipe';
 
 /**
  * Página administrativa de tickets de soporte (RF-036).
@@ -27,7 +28,7 @@ import { SupportService } from '../../../core/api/support/support.service';
 @Component({
   selector: 'app-admin-support-page',
   standalone: true,
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, FormsModule, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-support-page.component.html',
   styleUrl: './admin-support-page.component.scss',

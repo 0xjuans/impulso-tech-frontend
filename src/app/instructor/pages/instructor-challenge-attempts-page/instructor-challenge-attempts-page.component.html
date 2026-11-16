@@ -56,7 +56,7 @@
                 · enviado {{ attempt.submittedAt | date: 'medium' }}
               </p>
             </div>
-            <span class="attempt__badge">{{ attempt.status }}</span>
+            <span class="attempt__badge">{{ attempt.status | enumLabel }}</span>
           </header>
 
           <pre class="attempt__code"><code>{{ attempt.code }}</code></pre>

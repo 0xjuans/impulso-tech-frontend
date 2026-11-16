@@ -50,7 +50,7 @@
         <li class="challenge" [attr.data-difficulty]="challenge.difficulty">
           <a class="challenge__link" [routerLink]="['/student/challenges', challenge.id]">
             <header class="challenge__head">
-              <span class="challenge__difficulty">{{ challenge.difficulty }}</span>
+              <span class="challenge__difficulty">{{ challenge.difficulty | enumLabel }}</span>
               <span class="challenge__xp">+{{ challenge.xpReward }} XP</span>
             </header>
             <h2 class="challenge__title">{{ challenge.name }}</h2>

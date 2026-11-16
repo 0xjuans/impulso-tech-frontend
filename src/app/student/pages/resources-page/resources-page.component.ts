@@ -16,6 +16,7 @@ import {
 } from '../../../core/api/resources/resource.dto';
 import { ResourcesService } from '../../../core/api/resources/resources.service';
 import { DifficultyLevel } from '../../../core/api/learning-routes/learning-route.dto';
+import { EnumLabelPipe } from '../../../shared/pipes/enum-label.pipe';
 import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 
 /**
@@ -29,7 +30,7 @@ import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 @Component({
   selector: 'app-resources-page',
   standalone: true,
-  imports: [FormsModule, StripHtmlPipe],
+  imports: [FormsModule, EnumLabelPipe, StripHtmlPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './resources-page.component.html',
   styleUrl: './resources-page.component.scss',
@@ -56,6 +57,24 @@ export class ResourcesPageComponent implements OnInit {
     'DOCUMENTO',
     'GUIA',
   ];
+
+  private readonly typeLabels: Record<ResourceType, string> = {
+    PDF: 'PDF',
+    VIDEO: 'Video',
+    IMAGEN: 'Imagen',
+    CODIGO: 'Código',
+    ENLACE_EXTERNO: 'Enlace externo',
+    DOCUMENTO: 'Documento',
+    GUIA: 'Guía',
+  };
+
+  protected typeLabel(type: ResourceType): string {
+    return this.typeLabels[type] ?? type;
+  }
+
+  protected difficultyLabel(d: DifficultyLevel): string {
+    return d.charAt(0) + d.slice(1).toLowerCase();
+  }
 
   protected readonly difficulties: readonly DifficultyLevel[] = [
     'PRINCIPIANTE',

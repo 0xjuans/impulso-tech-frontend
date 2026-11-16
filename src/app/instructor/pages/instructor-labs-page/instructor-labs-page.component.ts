@@ -14,6 +14,7 @@ import { catchError, finalize, of } from 'rxjs';
 import { Lab } from '../../../core/api/labs/lab.dto';
 import { LabsService } from '../../../core/api/labs/labs.service';
 import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Panel de gestión de laboratorios del instructor (RF-053).
@@ -25,7 +26,7 @@ import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 @Component({
   selector: 'app-instructor-labs-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe, StripHtmlPipe],
+  imports: [FormsModule, RouterLink, DatePipe, StripHtmlPipe, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-labs-page.component.html',
   styleUrl: './instructor-labs-page.component.scss',
