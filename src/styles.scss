@@ -514,3 +514,19 @@ button {
   border-radius: 4px;
   background: rgba(32, 21, 21, 0.06);
 }
+.rich-html table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 13.5px;
+}
+.rich-html th, .rich-html td {
+  padding: 8px 12px;
+  border: 1px solid rgba(32, 21, 21, 0.1);
+  text-align: left;
+}
+.rich-html th {
+  background: rgba(32, 21, 21, 0.04);
+  font-weight: 600;
+  color: var(--color-ink);
+}
