@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -28,6 +29,7 @@ import { LessonsService } from '../../../core/api/lessons/lessons.service';
   styleUrl: './lesson-page.component.scss',
 })
 export class LessonPageComponent implements OnInit {
+  private readonly location = inject(Location);
   private readonly route = inject(ActivatedRoute);
   private readonly lessonsService = inject(LessonsService);
   private readonly enrollmentsService = inject(EnrollmentsService);
@@ -77,6 +79,10 @@ export class LessonPageComponent implements OnInit {
             'No pudimos registrar el avance. Verifica que estés inscrito en el curso.',
           ),
       });
+  }
+
+  protected goBack(): void {
+    this.location.back();
   }
 
   /** Indica si la lección ya está marcada como completada por el estudiante. */

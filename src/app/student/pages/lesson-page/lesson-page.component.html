@@ -6,6 +6,10 @@
     <div class="lesson__alert" role="alert">{{ error() }}</div>
   } @else {
     @if (lesson(); as l) {
+    <nav class="lesson__nav">
+      <button type="button" class="lesson__back" (click)="goBack()">← Volver</button>
+    </nav>
+
     <header class="lesson__header">
       <span class="lesson__eyebrow">Lección</span>
       <h1 class="lesson__title">{{ l.title }}</h1>
@@ -27,7 +31,7 @@
 
     <article class="lesson__content">
       @if (l.content) {
-        <div class="lesson__body">{{ l.content }}</div>
+        <div class="lesson__body" [innerHTML]="l.content"></div>
       } @else {
         <p class="lesson__empty">Esta lección aún no tiene contenido publicado.</p>
       }
