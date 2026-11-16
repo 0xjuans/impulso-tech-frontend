@@ -7,7 +7,7 @@
 export const environment = {
   production: true,
   /** URL base de la API REST del backend de Impulso Tech. */
-  apiBaseUrl: 'https://impulso-tech-backend.fly.dev/api',
+  apiBaseUrl: 'https://162-35-185-87.sslip.io/api',
   /**
    * Identificador de cliente OAuth 2.0 de Google para producción.
    * Debe coincidir con el {@code GOOGLE_CLIENT_ID} configurado en
