@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { LearningRoute } from '../../../core/api/learning-routes/learning-route.dto';
@@ -17,7 +18,7 @@ import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 @Component({
   selector: 'app-routes-page',
   standalone: true,
-  imports: [StripHtmlPipe],
+  imports: [StripHtmlPipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './routes-page.component.html',
   styleUrl: './routes-page.component.scss',

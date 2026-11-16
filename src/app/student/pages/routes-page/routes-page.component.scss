@@ -187,12 +187,21 @@
 }
 
 .route-card__cta {
+  display: block;
   width: 100%;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: var(--color-canvas-soft);
-  color: var(--color-ink-soft);
+  background: var(--color-ink);
+  color: var(--color-canvas);
   font-weight: 600;
   font-size: 13px;
-  cursor: not-allowed;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: background 150ms ease;
+}
+
+.route-card__cta:hover {
+  background: var(--color-ink-soft);
 }
