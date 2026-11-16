@@ -14,7 +14,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
-import { Enrollment } from '../../../core/api/enrollments/enrollment.dto';
+import { Enrollment, EnrollmentStatus } from '../../../core/api/enrollments/enrollment.dto';
 import { EnrollmentsService } from '../../../core/api/enrollments/enrollments.service';
 import {
   RankingEntry,
@@ -23,6 +23,7 @@ import {
   UserXp,
 } from '../../../core/api/gamification/gamification.dto';
 import { GamificationService } from '../../../core/api/gamification/gamification.service';
+import { EnumLabelPipe } from '../../../shared/pipes/enum-label.pipe';
 
 /**
  * Página de inicio del estudiante.
@@ -36,7 +37,7 @@ import { GamificationService } from '../../../core/api/gamification/gamification
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [DatePipe, RouterLink, AppIconComponent],
+  imports: [DatePipe, RouterLink, AppIconComponent, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
@@ -66,6 +67,16 @@ export class HomePageComponent implements OnInit {
   protected readonly badges = signal<readonly UserBadge[]>([]);
   protected readonly rankingTop = signal<readonly RankingEntry[]>([]);
   protected readonly myRankingPosition = signal<RankingEntry | null>(null);
+
+  private readonly statusLabels: Record<EnrollmentStatus, string> = {
+    INSCRITO: 'Inscrito',
+    EN_PROGRESO: 'En progreso',
+    COMPLETADO: 'Completado',
+  };
+
+  protected statusLabel(s: EnrollmentStatus): string {
+    return this.statusLabels[s] ?? s;
+  }
 
   /** Porcentaje de progreso hacia el siguiente nivel, acotado a [0, 100]. */
   protected readonly levelProgress = computed(() => {

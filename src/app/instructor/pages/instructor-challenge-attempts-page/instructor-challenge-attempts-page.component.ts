@@ -18,6 +18,7 @@ import {
   ReviewChallengeAttemptRequest,
 } from '../../../core/api/challenges/challenge.dto';
 import { ChallengesService } from '../../../core/api/challenges/challenges.service';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Panel de revisión de intentos recibidos por un reto (RF-038).
@@ -30,7 +31,7 @@ import { ChallengesService } from '../../../core/api/challenges/challenges.servi
 @Component({
   selector: 'app-instructor-challenge-attempts-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, DatePipe],
+  imports: [FormsModule, RouterLink, DatePipe, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-challenge-attempts-page.component.html',
   styleUrl: './instructor-challenge-attempts-page.component.scss',

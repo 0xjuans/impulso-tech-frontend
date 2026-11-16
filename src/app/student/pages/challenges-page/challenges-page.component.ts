@@ -13,6 +13,7 @@ import { Challenge } from '../../../core/api/challenges/challenge.dto';
 import { ChallengesService } from '../../../core/api/challenges/challenges.service';
 import { DifficultyLevel } from '../../../core/api/learning-routes/learning-route.dto';
 import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Catálogo de retos publicados para el estudiante (RF-014).
@@ -25,7 +26,7 @@ import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 @Component({
   selector: 'app-student-challenges-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, StripHtmlPipe],
+  imports: [FormsModule, RouterLink, StripHtmlPipe, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './challenges-page.component.html',
   styleUrl: './challenges-page.component.scss',

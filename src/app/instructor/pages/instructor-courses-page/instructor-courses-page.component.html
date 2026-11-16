@@ -138,14 +138,14 @@
         <li class="course-row">
           <div class="course-row__main">
             <span class="course-row__status" [attr.data-status]="course.status">
-              {{ course.status }}
+              {{ course.status | enumLabel }}
             </span>
             <a class="course-row__name" [routerLink]="['/instructor/courses', course.id]">
               {{ course.name }}
             </a>
             <p class="course-row__desc">{{ course.description | stripHtml }}</p>
             <div class="course-row__meta">
-              <span>{{ course.difficulty }}</span>
+              <span>{{ course.difficulty | enumLabel }}</span>
               @if (course.technology) {
                 <span>· {{ course.technology }}</span>
               }

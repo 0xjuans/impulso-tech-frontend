@@ -11,6 +11,8 @@ import { finalize } from 'rxjs';
 
 import { CourseProgress } from '../../../core/api/enrollments/enrollment.dto';
 import { EnrollmentsService } from '../../../core/api/enrollments/enrollments.service';
+import { Evaluation } from '../../../core/api/evaluations/evaluation.dto';
+import { EvaluationsService } from '../../../core/api/evaluations/evaluations.service';
 import { Lesson } from '../../../core/api/lessons/lesson.dto';
 import { LessonsService } from '../../../core/api/lessons/lessons.service';
 
@@ -33,6 +35,7 @@ export class LessonPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly lessonsService = inject(LessonsService);
   private readonly enrollmentsService = inject(EnrollmentsService);
+  private readonly evaluationsService = inject(EvaluationsService);
 
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);

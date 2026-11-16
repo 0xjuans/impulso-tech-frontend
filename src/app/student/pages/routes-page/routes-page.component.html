@@ -29,7 +29,7 @@
               <span class="route-card__cover-fallback">{{ route.name[0] }}</span>
             }
             <span class="route-card__difficulty" [attr.data-level]="route.difficulty">
-              {{ route.difficulty }}
+              {{ route.difficulty | enumLabel }}
             </span>
           </div>
 

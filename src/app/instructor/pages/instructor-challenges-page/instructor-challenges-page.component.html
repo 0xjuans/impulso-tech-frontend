@@ -79,8 +79,8 @@
             </a>
             <p class="challenge__desc">{{ challenge.description | stripHtml }}</p>
             <ul class="challenge__meta">
-              <li class="challenge__badge challenge__badge--status">{{ challenge.status }}</li>
-              <li class="challenge__badge">{{ challenge.difficulty }}</li>
+              <li class="challenge__badge challenge__badge--status">{{ challenge.status | enumLabel }}</li>
+              <li class="challenge__badge">{{ challenge.difficulty | enumLabel }}</li>
               <li class="challenge__tech">{{ challenge.allowedLanguages }}</li>
               <li>{{ challenge.xpReward }} XP</li>
               @if (challenge.estimatedMinutes) {

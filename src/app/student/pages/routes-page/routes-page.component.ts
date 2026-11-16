@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 import { LearningRoute } from '../../../core/api/learning-routes/learning-route.dto';
 import { LearningRoutesService } from '../../../core/api/learning-routes/learning-routes.service';
 import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /**
  * Página que muestra el catálogo de rutas de aprendizaje publicadas por
@@ -18,7 +19,7 @@ import { StripHtmlPipe } from '../../../shared/pipes/strip-html.pipe';
 @Component({
   selector: 'app-routes-page',
   standalone: true,
-  imports: [StripHtmlPipe, RouterLink],
+  imports: [StripHtmlPipe, RouterLink, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './routes-page.component.html',
   styleUrl: './routes-page.component.scss',

@@ -56,11 +56,11 @@
               [class.ticket--unassigned]="ticket.assigneeId === null"
               (click)="select(ticket)">
               <span class="ticket__status" [attr.data-status]="ticket.status">
-                {{ ticket.status }}
+                {{ ticket.status | enumLabel }}
               </span>
               <strong class="ticket__title">{{ ticket.title }}</strong>
               <div class="ticket__meta">
-                <span>#{{ ticket.id }} · {{ ticket.type }}</span>
+                <span>#{{ ticket.id }} · {{ ticket.type | enumLabel }}</span>
               </div>
               <div class="ticket__meta">
                 <span>{{ ticket.reporterName }}</span>
@@ -76,9 +76,9 @@
           <header class="detail__head">
             <div>
               <div class="detail__meta-row">
-                <span class="ticket__status" [attr.data-status]="t.status">{{ t.status }}</span>
+                <span class="ticket__status" [attr.data-status]="t.status">{{ t.status | enumLabel }}</span>
                 <span class="detail__meta-item">#{{ t.id }}</span>
-                <span class="detail__meta-item">{{ t.type }}</span>
+                <span class="detail__meta-item">{{ t.type | enumLabel }}</span>
               </div>
               <h2>{{ t.title }}</h2>
               <p class="detail__reporter">

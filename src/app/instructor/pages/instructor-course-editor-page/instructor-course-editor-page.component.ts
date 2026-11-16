@@ -19,6 +19,7 @@ import {
 import { CoursesService } from '../../../core/api/courses/courses.service';
 import { Lesson } from '../../../core/api/lessons/lesson.dto';
 import { LessonsService } from '../../../core/api/lessons/lessons.service';
+import { EnumLabelPipe } from './../../../shared/pipes/enum-label.pipe';
 
 /** Estado de un módulo en el árbol interactivo. */
 interface ModuleNode {
@@ -44,7 +45,7 @@ interface ModuleNode {
 @Component({
   selector: 'app-instructor-course-editor-page',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, EnumLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-course-editor-page.component.html',
   styleUrl: './instructor-course-editor-page.component.scss',

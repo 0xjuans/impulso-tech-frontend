@@ -28,7 +28,7 @@
               <span class="course-card__cover-fallback">{{ course.name[0] }}</span>
             }
             <span class="course-card__difficulty" [attr.data-level]="course.difficulty">
-              {{ course.difficulty }}
+              {{ course.difficulty | enumLabel }}
             </span>
           </div>
 

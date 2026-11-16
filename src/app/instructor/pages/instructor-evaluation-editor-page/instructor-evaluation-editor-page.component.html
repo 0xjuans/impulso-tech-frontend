@@ -99,7 +99,7 @@
               <li class="question">
                 <div class="question__head">
                   <span class="question__num">#{{ q.orderIndex }}</span>
-                  <span class="question__type">{{ q.type }}</span>
+                  <span class="question__type">{{ q.type | enumLabel }}</span>
                   <span class="question__score">{{ q.score }} pt{{ q.score === 1 ? '' : 's' }}</span>
                   <button type="button"
                     class="question__delete"
