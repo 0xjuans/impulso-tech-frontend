@@ -27,12 +27,6 @@
           routerLinkActive="is-active"
           (click)="closeMenu()"
           [attr.title]="sideCollapsed() ? item.label : null">
-          <span class="shell__link-icon">
-            <app-icon [name]="item.icon" [sizePx]="18" />
-            @if (item.path === 'messages' && messagesUnread() > 0) {
-              <span class="shell__link-dot" aria-hidden="true"></span>
-            }
-          </span>
           <span class="shell__link-label">{{ item.label }}</span>
           @if (item.path === 'messages' && messagesUnread() > 0) {
             <span class="shell__link-badge" aria-label="Mensajes sin leer">
@@ -49,9 +43,6 @@
       class="shell__logout"
       (click)="logout()"
       [attr.title]="sideCollapsed() ? 'Cerrar sesión' : null">
-      <span class="shell__link-icon">
-        <app-icon name="logout" [sizePx]="16" />
-      </span>
       <span class="shell__link-label">Cerrar sesión</span>
       <span class="shell__tooltip" aria-hidden="true">Cerrar sesión</span>
     </button>
