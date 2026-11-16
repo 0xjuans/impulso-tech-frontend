@@ -7,8 +7,9 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { catchError, finalize, of, switchMap } from 'rxjs';
 
+import { CoursesService } from '../../../core/api/courses/courses.service';
 import { CourseProgress } from '../../../core/api/enrollments/enrollment.dto';
 import { EnrollmentsService } from '../../../core/api/enrollments/enrollments.service';
 import { Evaluation } from '../../../core/api/evaluations/evaluation.dto';
@@ -21,6 +22,8 @@ import { LessonsService } from '../../../core/api/lessons/lessons.service';
  *
  * Muestra el contenido textual de la lección y permite al estudiante
  * marcarla como completada, avanzando su progreso en el curso.
+ * Si la lección tiene evaluaciones publicadas, muestra un enlace
+ * para acceder a ellas.
  */
 @Component({
   selector: 'app-lesson-page',
@@ -34,6 +37,7 @@ export class LessonPageComponent implements OnInit {
   private readonly location = inject(Location);
   private readonly route = inject(ActivatedRoute);
   private readonly lessonsService = inject(LessonsService);
+  private readonly coursesService = inject(CoursesService);
   private readonly enrollmentsService = inject(EnrollmentsService);
   private readonly evaluationsService = inject(EvaluationsService);
 
@@ -44,6 +48,7 @@ export class LessonPageComponent implements OnInit {
 
   protected readonly lesson = signal<Lesson | null>(null);
   protected readonly progress = signal<CourseProgress | null>(null);
+  protected readonly evaluations = signal<readonly Evaluation[]>([]);
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -53,11 +58,30 @@ export class LessonPageComponent implements OnInit {
       this.loading.set(false);
       return;
     }
+
     this.lessonsService
       .get(lessonId)
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(
+        switchMap((lesson) => {
+          this.lesson.set(lesson);
+          this.evaluationsService
+            .listByLesson(lesson.id)
+            .pipe(catchError(() => of([] as Evaluation[])))
+            .subscribe((evals) => this.evaluations.set(evals.filter(e => e.status === 'PUBLICADO')));
+
+          return this.coursesService.getModule(lesson.moduleId).pipe(
+            switchMap((mod) =>
+              this.enrollmentsService.getProgress(mod.courseId).pipe(
+                catchError(() => of(null as CourseProgress | null)),
+              ),
+            ),
+            catchError(() => of(null as CourseProgress | null)),
+          );
+        }),
+        finalize(() => this.loading.set(false)),
+      )
       .subscribe({
-        next: (lesson) => this.lesson.set(lesson),
+        next: (progress) => this.progress.set(progress),
         error: () =>
           this.error.set(
             'No pudimos cargar esta lección en este momento. Inténtalo nuevamente.',
@@ -67,7 +91,7 @@ export class LessonPageComponent implements OnInit {
 
   protected complete(): void {
     const lesson = this.lesson();
-    if (!lesson || this.saving()) {
+    if (!lesson || this.saving() || this.isCompleted()) {
       return;
     }
     this.saving.set(true);

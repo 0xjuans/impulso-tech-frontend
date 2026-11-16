@@ -49,6 +49,11 @@ export class CoursesService {
     return this.http.get<Course>(`${this.baseUrl}/courses/${id}`);
   }
 
+  /** Recupera el detalle de un módulo por su identificador. */
+  getModule(moduleId: number): Observable<CourseModule> {
+    return this.http.get<CourseModule>(`${this.baseUrl}/course-modules/${moduleId}`);
+  }
+
   /** Lista los módulos publicados de un curso, en orden. */
   listModules(courseId: number): Observable<readonly CourseModule[]> {
     return this.http.get<readonly CourseModule[]>(

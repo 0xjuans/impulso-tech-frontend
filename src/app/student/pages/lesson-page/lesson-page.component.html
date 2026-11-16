@@ -37,10 +37,36 @@
       }
     </article>
 
+    <!-- Evaluaciones disponibles en esta lección -->
+    @if (evaluations().length > 0) {
+      <section class="lesson__evaluations">
+        <h2 class="lesson__evaluations-title">Evaluaciones</h2>
+        <ul class="lesson__evaluations-list">
+          @for (ev of evaluations(); track ev.id) {
+            <li>
+              <a class="lesson__evaluation-link" [routerLink]="['/student/evaluations', ev.id]">
+                <strong>{{ ev.name }}</strong>
+                @if (ev.description) {
+                  <span>{{ ev.description }}</span>
+                }
+                <span class="lesson__evaluation-meta">
+                  {{ ev.questions.length }} preguntas
+                  · Mínimo {{ ev.passingPercentage }}% para aprobar
+                  @if (ev.timeLimitMinutes) {
+                    · {{ ev.timeLimitMinutes }} min
+                  }
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
     <footer class="lesson__actions">
       @if (isCompleted()) {
         <div class="lesson__done" role="status">
-          Lección marcada como completada.
+          Lección completada.
           @if (progress(); as p) {
             Progreso del curso: <strong>{{ p.completionPercentage }}%</strong>.
           }
