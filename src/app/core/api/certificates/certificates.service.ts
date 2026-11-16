@@ -6,6 +6,16 @@ import { environment } from '../../../../environments/environment';
 import { CertificateResponse, CertificateVerification } from './certificate.dto';
 
 /**
+ * Curso que el usuario ha completado y para el cual aún no se ha
+ * emitido su certificado (RF-047).
+ */
+export interface PendingCertificate {
+  readonly courseId: number;
+  readonly courseName: string;
+  readonly completedAt: string;
+}
+
+/**
  * Servicio HTTP que consume los endpoints de certificados del backend
  * (RF-047).
  *
@@ -35,5 +45,27 @@ export class CertificatesService {
    */
   downloadUrl(code: string): string {
     return `${this.baseUrl}/certificates/${code}/download`;
+  }
+
+  /**
+   * Lista los cursos que el estudiante ya completó y para los que aún
+   * no se ha emitido el certificado. Se usan en la sección
+   * "Pendientes por reclamar" del panel.
+   */
+  listPending(): Observable<readonly PendingCertificate[]> {
+    return this.http.get<readonly PendingCertificate[]>(
+      `${this.baseUrl}/users/me/certificates/pending`,
+    );
+  }
+
+  /**
+   * Emite (o recupera) el certificado del curso indicado. Idempotente:
+   * si ya existía uno emitido, se devuelve el mismo sin duplicarlo.
+   */
+  claim(courseId: number): Observable<CertificateResponse> {
+    return this.http.post<CertificateResponse>(
+      `${this.baseUrl}/users/me/certificates/course/${courseId}`,
+      {},
+    );
   }
 }

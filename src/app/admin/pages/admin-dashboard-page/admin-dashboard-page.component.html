@@ -162,5 +162,104 @@
         </div>
       </div>
     </div>
+
+    <!-- TOP CURSOS GLOBALES ---------------------------------------------- -->
+    <div class="dash__section">
+      <div class="dash__section-head">
+        <h2>Cursos con más inscripciones</h2>
+        <span class="dash__section-hint">Top 5 en toda la plataforma</span>
+      </div>
+      @if (topCourses().length === 0) {
+        <p class="panel__empty">Todavía no hay cursos con inscripciones registradas.</p>
+      } @else {
+        <ul class="top-list">
+          @for (row of topCourses(); track row.courseId; let i = $index) {
+            <li class="top-row">
+              <span class="top-row__rank">{{ i + 1 }}</span>
+              <div class="top-row__body">
+                <strong class="top-row__name">{{ row.name }}</strong>
+                <span class="top-row__meta">
+                  {{ row.totalEnrollments }} inscripciones
+                </span>
+              </div>
+              <div class="top-row__badge">
+                <span>{{ row.totalEnrollments }}</span>
+                <small>inscripciones</small>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <!-- FEED DE ACTIVIDAD RECIENTE (2 columnas) ------------------------- -->
+    <div class="dash__row-two">
+      <section class="panel">
+        <header class="panel__head">
+          <h3>Últimas inscripciones</h3>
+          <span class="panel__hint">Actividad en cursos</span>
+        </header>
+        @if (recentEnrollments().length === 0) {
+          <p class="panel__empty">Todavía no hay inscripciones recientes.</p>
+        } @else {
+          <ul class="feed">
+            @for (row of recentEnrollments(); track row.enrollmentId) {
+              <li class="feed-row">
+                <div class="feed-row__avatar" aria-hidden="true">
+                  {{ row.studentName[0] }}
+                </div>
+                <div class="feed-row__body">
+                  <p class="feed-row__title">
+                    <strong>{{ row.studentName }}</strong> se inscribió en
+                    <em>{{ row.courseName }}</em>
+                  </p>
+                  <div class="feed-row__meta">
+                    <span class="feed-row__status" [attr.data-status]="row.status">
+                      {{ statusLabel(row.status) }}
+                    </span>
+                    <time>{{ row.startedAt | date: 'medium' }}</time>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="panel">
+        <header class="panel__head">
+          <h3>Últimos registros</h3>
+          <span class="panel__hint">Nuevas cuentas</span>
+        </header>
+        @if (recentSignups().length === 0) {
+          <p class="panel__empty">Todavía no hay registros recientes.</p>
+        } @else {
+          <ul class="feed">
+            @for (row of recentSignups(); track row.userId) {
+              <li class="feed-row">
+                <div class="feed-row__avatar feed-row__avatar--dark" aria-hidden="true">
+                  {{ row.fullName[0] }}
+                </div>
+                <div class="feed-row__body">
+                  <p class="feed-row__title">
+                    <strong>{{ row.fullName }}</strong>
+                    <span class="feed-row__username">&#64;{{ row.username }}</span>
+                  </p>
+                  <div class="feed-row__meta">
+                    <span class="feed-row__status" [attr.data-role]="row.role">
+                      {{ roleLabel(row.role) }}
+                    </span>
+                    <span class="feed-row__status" [attr.data-account]="row.status">
+                      {{ accountStatusLabel(row.status) }}
+                    </span>
+                    <time>{{ row.createdAt | date: 'medium' }}</time>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
   }
 </section>

@@ -40,3 +40,32 @@ export interface AdminDashboard {
   readonly resolvedTickets: number;
   readonly closedTickets: number;
 }
+
+/** Fila del panel "Top cursos" (RF-032 / RF-033). */
+export interface TopCourseRow {
+  readonly courseId: number;
+  readonly name: string;
+  readonly totalEnrollments: number;
+  readonly completedEnrollments: number;
+}
+
+/** Fila del feed "Últimas inscripciones". */
+export interface RecentEnrollmentRow {
+  readonly enrollmentId: number;
+  readonly courseId: number;
+  readonly courseName: string;
+  readonly studentId: number;
+  readonly studentName: string;
+  readonly status: 'INSCRITO' | 'EN_PROGRESO' | 'COMPLETADO' | string;
+  readonly startedAt: string;
+}
+
+/** Fila del feed "Últimos registros" (admin). */
+export interface RecentSignupRow {
+  readonly userId: number;
+  readonly username: string;
+  readonly fullName: string;
+  readonly role: string;
+  readonly status: string;
+  readonly createdAt: string;
+}

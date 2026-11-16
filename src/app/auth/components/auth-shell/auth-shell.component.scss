@@ -8,6 +8,7 @@
 :host {
   display: block;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-canvas);
 }
 
@@ -15,6 +16,7 @@
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* ----------------------------------------------------------------- Brand */

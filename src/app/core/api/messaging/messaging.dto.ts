@@ -18,6 +18,7 @@ export interface Conversation {
 /** Representación pública de un mensaje. */
 export interface Message {
   readonly id: number;
+  readonly conversationId: number;
   readonly senderId: number;
   readonly content: string;
   readonly sentAt: string;

@@ -42,7 +42,7 @@
       <label class="sandbox__field">
         <span>Entrada estándar (opcional)</span>
         <textarea rows="3" class="sandbox__stdin"
-          placeholder="Datos que se pasarán a stdin del programa."
+          placeholder="Datos que tu programa leerá como entrada al ejecutarse."
           [ngModel]="stdin()"
           (ngModelChange)="stdin.set($event)"
           name="stdin"></textarea>

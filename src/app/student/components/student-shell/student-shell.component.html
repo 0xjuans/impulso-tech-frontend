@@ -1,10 +1,21 @@
 <!-- Layout principal del área privada del estudiante -->
-<div class="shell" [ngClass]="{ 'shell--menu-open': menuOpen() }">
+<div
+  class="shell"
+  [ngClass]="{
+    'shell--menu-open': menuOpen(),
+    'shell--collapsed': sideCollapsed()
+  }">
   <!-- Barra lateral -->
   <aside class="shell__side" aria-label="Navegación principal">
-    <a class="shell__brand" routerLink="/student/home" (click)="closeMenu()">
+    <a
+      class="shell__brand"
+      routerLink="/student/home"
+      (click)="closeMenu()"
+      [attr.title]="sideCollapsed() ? 'Impulso Tech' : null">
       <span class="shell__brand-prompt" aria-hidden="true">&gt;</span>
-      <span>Impulso<span class="shell__brand-accent">.tech</span></span>
+      <span class="shell__brand-text">
+        Impulso<span class="shell__brand-accent">.tech</span>
+      </span>
       <span class="shell__brand-caret" aria-hidden="true"></span>
     </a>
 
@@ -14,18 +25,35 @@
           class="shell__link"
           [routerLink]="item.path"
           routerLinkActive="is-active"
-          (click)="closeMenu()">
+          (click)="closeMenu()"
+          [attr.title]="sideCollapsed() ? item.label : null">
           <span class="shell__link-icon">
             <app-icon [name]="item.icon" [sizePx]="18" />
+            @if (item.path === 'messages' && messagesUnread() > 0) {
+              <span class="shell__link-dot" aria-hidden="true"></span>
+            }
           </span>
           <span class="shell__link-label">{{ item.label }}</span>
+          @if (item.path === 'messages' && messagesUnread() > 0) {
+            <span class="shell__link-badge" aria-label="Mensajes sin leer">
+              {{ messagesUnread() > 99 ? '99+' : messagesUnread() }}
+            </span>
+          }
+          <span class="shell__tooltip" aria-hidden="true">{{ item.label }}</span>
         </a>
       }
     </nav>
 
-    <button type="button" class="shell__logout" (click)="logout()">
-      <app-icon name="logout" [sizePx]="16" />
-      Cerrar sesión
+    <button
+      type="button"
+      class="shell__logout"
+      (click)="logout()"
+      [attr.title]="sideCollapsed() ? 'Cerrar sesión' : null">
+      <span class="shell__link-icon">
+        <app-icon name="logout" [sizePx]="16" />
+      </span>
+      <span class="shell__link-label">Cerrar sesión</span>
+      <span class="shell__tooltip" aria-hidden="true">Cerrar sesión</span>
     </button>
   </aside>
 
@@ -49,16 +77,35 @@
       <span></span><span></span><span></span>
     </button>
 
+    <!-- Toggle para colapsar/expandir el sidebar en desktop.
+         Vive dentro de la cabecera superior para integrarse con el resto
+         de acciones del header en lugar de flotar sobre el layout. -->
+    <button
+      type="button"
+      class="shell__side-toggle"
+      (click)="toggleSideCollapsed()"
+      [attr.aria-expanded]="!sideCollapsed()"
+      [attr.aria-label]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
+      [attr.title]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        @if (sideCollapsed()) {
+          <!-- chevrons-right: doble chevron amable indicando expansión. -->
+          <path d="m6 17 5-5-5-5" />
+          <path d="m13 17 5-5-5-5" />
+        } @else {
+          <!-- chevrons-left: doble chevron amable indicando colapso. -->
+          <path d="m11 17-5-5 5-5" />
+          <path d="m18 17-5-5 5-5" />
+        }
+      </svg>
+    </button>
+
     <div class="shell__top-right">
       <app-notifications-bell />
 
-      <div class="shell__top-user" aria-live="polite">
-        <div class="shell__avatar" aria-hidden="true">{{ initials() }}</div>
-        <div class="shell__user-meta">
-          <strong>{{ displayName() }}</strong>
-          <small>&#64;{{ user()?.username }}</small>
-        </div>
-      </div>
+      <app-user-pill />
     </div>
   </header>
 

@@ -1,0 +1,45 @@
+<!--
+  Sección "Cómo funciona": 5 pasos ordenados que explican el recorrido
+  del estudiante desde que elige una ruta hasta que obtiene el
+  certificado. El id ancla al CTA del hero.
+-->
+<section id="como-funciona" class="how" aria-labelledby="how-title">
+  <div class="container how__container">
+    <header class="how__header">
+      <span class="how__eyebrow">Cómo funciona</span>
+      <h2 id="how-title" class="how__title">
+        De la primera lección al<br />
+        <span class="how__title-accent">certificado verificable</span>
+      </h2>
+      <p class="how__lead">
+        Un recorrido claro y guiado. Cinco pasos pensados para que aprendas
+        haciendo, no memorizando.
+      </p>
+    </header>
+
+    <ol class="how__timeline" aria-label="Pasos del recorrido">
+      @for (step of steps; track step.title; let i = $index) {
+        <li class="step" [style.--i]="i">
+          <div class="step__marker" aria-hidden="true">
+            <span class="step__num">0{{ i + 1 }}</span>
+            <span class="step__line"></span>
+          </div>
+          <article class="step__card">
+            <div class="step__icon" aria-hidden="true">
+              <app-icon [name]="step.icon" [sizePx]="22" />
+            </div>
+            <h3 class="step__title">{{ step.title }}</h3>
+            <p class="step__copy">{{ step.copy }}</p>
+          </article>
+        </li>
+      }
+    </ol>
+
+    <footer class="how__footer">
+      <p class="how__footer-copy">
+        Todo el recorrido está incluido: sin planes premium, sin cursos bloqueados.
+      </p>
+      <a class="how__cta" href="/auth/register">Crear mi cuenta gratis</a>
+    </footer>
+  </div>
+</section>

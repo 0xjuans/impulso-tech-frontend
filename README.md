@@ -6,7 +6,7 @@
 > full-stack moderno.
 
 Aplicación web construida en Angular que consume el
-[backend de Impulso Tech](../impulso-tech-backend). Ofrece tres áreas
+[backend de Impulso Tech](https://github.com/0xjuans/impulso-tech-backend). Ofrece tres áreas
 distintas —estudiante, instructor y administrador— compartiendo un
 sistema de diseño consistente y componentes reutilizables.
 

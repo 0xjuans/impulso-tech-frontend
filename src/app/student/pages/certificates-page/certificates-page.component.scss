@@ -51,3 +51,61 @@
 .cert__verify { background: var(--color-canvas); color: var(--color-ink);
   border: 1px solid rgba(32, 21, 21, 0.12); }
 .cert__verify:hover { border-color: rgba(255, 79, 0, 0.35); }
+
+/* Sección "Pendientes por reclamar" ------------------------------------ */
+
+.pending {
+  background: rgba(255, 79, 0, 0.06);
+  border: 1px solid rgba(255, 79, 0, 0.18);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pending__head strong { display: block; color: var(--color-ink); font-size: 15px; font-weight: 700; }
+.pending__head p { margin: 4px 0 0; color: var(--color-body); font-size: 13px; }
+
+.pending__message {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(16, 122, 74, 0.10);
+  color: #0f6b46;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+.pending__message.is-error { background: rgba(185, 28, 28, 0.10); color: #991b1b; }
+
+.pending__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+
+.pending__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--color-canvas);
+  border-radius: 8px;
+  border: 1px solid rgba(32, 21, 21, 0.06);
+}
+
+.pending__body { display: flex; flex-direction: column; min-width: 0; }
+.pending__body strong { color: var(--color-ink); font-size: 14px; font-weight: 700; }
+.pending__body small { color: var(--color-body); font-size: 12px; margin-top: 2px; }
+
+.pending__btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease, transform 150ms ease;
+}
+.pending__btn:hover:not([disabled]) { background: #e34600; transform: translateY(-1px); }
+.pending__btn[disabled] { opacity: 0.6; cursor: wait; }

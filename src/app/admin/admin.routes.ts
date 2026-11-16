@@ -20,6 +20,30 @@ export const adminRoutes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
+        path: 'notifications',
+        loadComponent: () =>
+          import(
+            '../student/pages/notifications-page/notifications-page.component'
+          ).then((m) => m.NotificationsPageComponent),
+        title: 'Notificaciones · Impulso Tech',
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('../student/pages/messages-page/messages-page.component').then(
+            (m) => m.MessagesPageComponent,
+          ),
+        title: 'Mensajes · Impulso Tech',
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import(
+            '../shared/pages/account-profile-page/account-profile-page.component'
+          ).then((m) => m.AccountProfilePageComponent),
+        title: 'Mi perfil · Impulso Tech',
+      },
+      {
         path: 'dashboard',
         loadComponent: () =>
           import('./pages/admin-dashboard-page/admin-dashboard-page.component').then(

@@ -1,5 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { DOCUMENT } from '@angular/common';
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
@@ -32,6 +34,8 @@ import { AuthStorageService } from './auth-storage.service';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly storage = inject(AuthStorageService);
+  private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
 
   /** URL base del módulo de autenticación en el backend. */
   private readonly baseUrl = `${environment.apiBaseUrl}/auth`;
@@ -41,6 +45,13 @@ export class AuthService {
 
   /** Señal reactiva con el token JWT vigente, o `null` si no hay sesión. */
   private readonly _accessToken = signal<string | null>(null);
+
+  /**
+   * Identificador del temporizador que cierra la sesión al vencer el
+   * token JWT. Se cancela cuando el usuario cierra sesión manualmente o
+   * cuando persistimos una nueva sesión (login exitoso).
+   */
+  private expiryHandle: ReturnType<typeof setTimeout> | null = null;
 
   /** Vista pública del usuario autenticado. */
   readonly currentUser = this._currentUser.asReadonly();
@@ -52,8 +63,17 @@ export class AuthService {
     // Restaurar la sesión persistida al arrancar la aplicación.
     const stored = this.storage.read();
     if (stored) {
-      this._accessToken.set(stored.accessToken);
-      this._currentUser.set(stored.user);
+      const exp = decodeJwtExp(stored.accessToken);
+      // Si el token guardado ya expiró (por ejemplo, el usuario dejó la
+      // pestaña abierta más de una hora), lo desechamos y arrancamos sin
+      // sesión para llevarlo a la landing en cuanto interactúe.
+      if (exp !== null && exp * 1000 <= Date.now()) {
+        this.storage.clear();
+      } else {
+        this._accessToken.set(stored.accessToken);
+        this._currentUser.set(stored.user);
+        this.scheduleAutoLogout(stored.accessToken);
+      }
     }
   }
 
@@ -133,6 +153,7 @@ export class AuthService {
     this._accessToken.set(null);
     this._currentUser.set(null);
     this.storage.clear();
+    this.cancelAutoLogout();
   }
 
   /** Solicita al backend el reenvío del correo de verificación. */
@@ -170,6 +191,58 @@ export class AuthService {
     this._accessToken.set(response.accessToken);
     this._currentUser.set(response.user);
     this.storage.save(response);
+    this.scheduleAutoLogout(response.accessToken);
+  }
+
+  /**
+   * Programa el cierre automático de sesión cuando venza el token JWT.
+   *
+   * <p>Al expirar, se limpia la sesión local y se redirige al usuario a
+   * la landing pública. Así la plataforma no queda en un estado ambiguo
+   * si el usuario deja la pestaña abierta más allá del tiempo de vida
+   * del token: se le entrega de vuelta al espacio público, listo para
+   * volver a iniciar sesión cuando lo necesite.</p>
+   */
+  private scheduleAutoLogout(token: string): void {
+    this.cancelAutoLogout();
+    const exp = decodeJwtExp(token);
+    if (exp === null) {
+      return;
+    }
+    const delay = exp * 1000 - Date.now();
+    if (delay <= 0) {
+      this.handleSessionExpired();
+      return;
+    }
+    this.expiryHandle = setTimeout(() => this.handleSessionExpired(), delay);
+  }
+
+  /** Cancela el temporizador de expiración si estaba activo. */
+  private cancelAutoLogout(): void {
+    if (this.expiryHandle !== null) {
+      clearTimeout(this.expiryHandle);
+      this.expiryHandle = null;
+    }
+  }
+
+  /**
+   * Maneja el vencimiento del token: limpia la sesión y devuelve al
+   * usuario a la landing principal de forma silenciosa.
+   */
+  private handleSessionExpired(): void {
+    this._accessToken.set(null);
+    this._currentUser.set(null);
+    this.storage.clear();
+    this.cancelAutoLogout();
+    // El evento notifica a otros componentes (por ejemplo, para mostrar
+    // un aviso de "sesión expirada") sin acoplar el servicio de auth
+    // con la capa de UI. Envolvemos en try/catch por precaución en SSR.
+    try {
+      this.document.dispatchEvent(new CustomEvent('impulso:session-expired'));
+    } catch {
+      // Ignorado: en entornos sin CustomEvent (SSR) simplemente no se dispara.
+    }
+    void this.router.navigateByUrl('/');
   }
 
   /**
@@ -192,5 +265,30 @@ export class AuthService {
     }
 
     return throwError(() => new Error(message));
+  }
+}
+
+/**
+ * Extrae el timestamp de expiración ({@code exp} en segundos Unix) de un
+ * JWT sin verificar la firma. La firma la verifica exclusivamente el
+ * backend; aquí solo necesitamos saber cuándo caduca para programar el
+ * cierre proactivo de sesión.
+ *
+ * <p>Se soporta base64url (los caracteres {@code -} y {@code _}) porque
+ * los JWT usan esa variante. Se devuelve {@code null} cuando el token
+ * está malformado o no incluye el campo.</p>
+ */
+function decodeJwtExp(token: string): number | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+    const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    // El padding puede faltar en el payload base64url; se completa aquí
+    // para que atob() no falle.
+    const padded = payload + '='.repeat((4 - (payload.length % 4)) % 4);
+    const json = JSON.parse(atob(padded)) as { exp?: unknown };
+    return typeof json.exp === 'number' ? json.exp : null;
+  } catch {
+    return null;
   }
 }
