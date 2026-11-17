@@ -49,13 +49,6 @@
       loading="lazy" />
   </header>
 
-  <!-- Tour del perfil de estudiante ------------------------------------- -->
-  <section class="home__tour">
-    <h2 class="home__tour-title">Conoce tu plataforma</h2>
-    <p class="home__tour-lead">Descubre todo lo que puedes hacer en Impulso Tech</p>
-    <app-tour-video src="assets/video/student-tour.mp4" />
-  </section>
-
   <!-- Métricas principales ---------------------------------------------- -->
   <div class="home__grid">
     <article class="stat-card">
@@ -103,6 +96,9 @@
       }
     </article>
   </div>
+
+  <!-- Recorrido de bienvenida (se abre solo la primera vez) --------------------------- -->
+  <app-tour-video src="assets/video/student-tour.mp4" tourId="student" [chapters]="tourChapters" />
 
   <!-- Contenido principal + sidebar ------------------------------------- -->
   <div class="home__two-columns">

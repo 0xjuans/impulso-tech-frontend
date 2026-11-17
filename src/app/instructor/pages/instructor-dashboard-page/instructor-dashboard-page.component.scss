@@ -450,29 +450,6 @@
 .feed-row__status[data-status='EN_PROGRESO'] { background: rgba(255, 178, 122, 0.22); color: #a04a12; }
 .feed-row__status[data-status='INSCRITO'] { background: rgba(107, 138, 253, 0.16); color: #3b52c4; }
 
-/* Tour del perfil --------------------------------------------------- */
-.dash__tour {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.dash__tour-title {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-ink);
-  text-align: center;
-}
-
-.dash__tour-lead {
-  margin: 0;
-  font-size: 14px;
-  color: var(--color-body);
-  text-align: center;
-}
-
 /* Responsive --------------------------------------------------------- */
 
 @media (max-width: 900px) {

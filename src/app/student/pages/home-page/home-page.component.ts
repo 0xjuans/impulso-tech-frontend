@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 import { TourVideoComponent } from '../../../shared/components/tour-video/tour-video.component';
+import { STUDENT_TOUR_CHAPTERS } from '../../../shared/components/tour-video/tour-chapters';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
@@ -50,6 +51,9 @@ export class HomePageComponent implements OnInit {
 
   /** Usuario autenticado expuesto a la plantilla. */
   protected readonly user = this.auth.currentUser;
+
+  /** Capítulos del recorrido en video que se ofrece al entrar. */
+  protected readonly tourChapters = STUDENT_TOUR_CHAPTERS;
 
   /** Saludo dinámico según la hora del día. */
   protected readonly greeting = computed(() => {

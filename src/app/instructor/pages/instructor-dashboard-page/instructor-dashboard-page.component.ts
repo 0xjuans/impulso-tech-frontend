@@ -22,6 +22,7 @@ import {
 import { DashboardService } from '../../../core/api/dashboard/dashboard.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
 import { TourVideoComponent } from '../../../shared/components/tour-video/tour-video.component';
+import { INSTRUCTOR_TOUR_CHAPTERS } from '../../../shared/components/tour-video/tour-chapters';
 
 /**
  * Panel del instructor (RF-032).
@@ -46,6 +47,9 @@ import { TourVideoComponent } from '../../../shared/components/tour-video/tour-v
 export class InstructorDashboardPageComponent implements OnInit {
   private readonly service = inject(DashboardService);
   private readonly auth = inject(AuthService);
+
+  /** Capítulos del recorrido en video que se ofrece al entrar. */
+  protected readonly tourChapters = INSTRUCTOR_TOUR_CHAPTERS;
 
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);

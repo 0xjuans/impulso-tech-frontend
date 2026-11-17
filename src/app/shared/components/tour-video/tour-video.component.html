@@ -1,12 +1,92 @@
-<!-- Reproductor de video del tour del perfil -->
-<div class="tour-video">
-  <video
-    class="tour-video__player"
-    [src]="src"
-    [poster]="poster"
-    controls
-    playsinline
-    preload="metadata">
-    Tu navegador no soporta la reproducción de video.
-  </video>
-</div>
+<!-- Botón discreto para reabrir el recorrido cuando la ventana está cerrada -->
+<button class="tour-trigger" type="button" (click)="reopen()">
+  <span class="tour-trigger__icon" aria-hidden="true">▶</span>
+  Ver recorrido
+</button>
+
+@if (open()) {
+  <div class="tour-backdrop" (click)="close()"></div>
+
+  <div
+    class="tour-modal"
+    [class.tour-modal--player]="step() === 'player'"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tour-title">
+    <button class="tour-modal__close" type="button" (click)="close()" aria-label="Cerrar recorrido">
+      ✕
+    </button>
+
+    @if (step() === 'welcome') {
+      <!-- Paso 1: invitación de Luki -->
+      <div class="tour-welcome">
+        <img class="tour-welcome__mascot" src="mascot/saludo.webp" alt="" draggable="false" />
+        <h2 class="tour-welcome__title" id="tour-title">
+          ¡Hola@if (firstName()) {, <span>{{ firstName() }}</span>}! ¿Te muestro la plataforma?
+        </h2>
+        <p class="tour-welcome__lead">
+          Un recorrido narrado y breve por {{ chapters.length }} secciones.
+          Puedes saltar a la que te interese.
+        </p>
+        <ul class="tour-welcome__chips" aria-hidden="true">
+          @for (chapter of chapters; track chapter.label) {
+            <li>{{ chapter.label }}</li>
+          }
+        </ul>
+        <div class="tour-welcome__actions">
+          <button class="tour-btn tour-btn--primary" type="button" (click)="start()">
+            Empezar recorrido
+          </button>
+          <button class="tour-btn" type="button" (click)="close()">Ahora no</button>
+        </div>
+      </div>
+    } @else {
+      <!-- Paso 2: video con navegación por capítulos -->
+      <div class="tour-player">
+        <div class="tour-player__main">
+          <video
+            #player
+            class="tour-player__video"
+            [src]="src"
+            controls
+            autoplay
+            playsinline
+            (timeupdate)="onTimeUpdate()">
+            Tu navegador no soporta la reproducción de video.
+          </video>
+
+          @if (currentChapter(); as chapter) {
+            <div class="tour-player__now">
+              <div class="tour-player__now-text">
+                <h2 id="tour-title">{{ chapter.label }}</h2>
+                <p>{{ chapter.description }}</p>
+              </div>
+              <a class="tour-btn tour-btn--primary" [routerLink]="chapter.link" (click)="close()">
+                Ir a {{ chapter.label }} →
+              </a>
+            </div>
+          }
+        </div>
+
+        <nav class="tour-player__chapters" aria-label="Secciones del recorrido">
+          <ol>
+            @for (chapter of chapters; track chapter.label; let i = $index) {
+              <li>
+                <button
+                  class="tour-chapter"
+                  type="button"
+                  [class.tour-chapter--active]="i === currentIndex()"
+                  [class.tour-chapter--done]="i < currentIndex()"
+                  [attr.aria-current]="i === currentIndex() ? 'step' : null"
+                  (click)="goTo(i)">
+                  <span class="tour-chapter__num">{{ i + 1 }}</span>
+                  <span class="tour-chapter__label">{{ chapter.label }}</span>
+                </button>
+              </li>
+            }
+          </ol>
+        </nav>
+      </div>
+    }
+  </div>
+}

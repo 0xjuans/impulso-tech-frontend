@@ -20,12 +20,8 @@
     </div>
   </header>
 
-  <!-- Tour del perfil de instructor -------------------------------------- -->
-  <section class="dash__tour">
-    <h2 class="dash__tour-title">Conoce tu panel</h2>
-    <p class="dash__tour-lead">Descubre todas las herramientas disponibles para gestionar tu contenido</p>
-    <app-tour-video src="assets/video/instructor-tour.mp4" />
-  </section>
+  <!-- Recorrido de bienvenida (se abre solo la primera vez) ----------------------------------- -->
+  <app-tour-video src="assets/video/instructor-tour.mp4" tourId="instructor" [chapters]="tourChapters" />
 
   @if (loading()) {
     <div class="dash__placeholder">
