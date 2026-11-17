@@ -1,0 +1,272 @@
+/* Tour interactivo tipo video ------------------------------------------------ */
+
+.tour {
+  --accent: #e8734a;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-width: 720px;
+  background: #1a1210;
+  border-radius: var(--radius-md, 12px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* Intro -------------------------------------------------------------------- */
+.tour__intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: linear-gradient(135deg, #1a1210 0%, #2d1f1a 50%, #1a1210 100%);
+  z-index: 2;
+}
+
+.tour__intro-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.tour__brand-prompt {
+  font-family: monospace;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.tour__brand {
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  color: #fff;
+}
+
+.tour__brand-accent {
+  color: var(--accent);
+}
+
+.tour__intro-role {
+  font-size: clamp(14px, 2.5vw, 20px);
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 18px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.tour__intro-sub {
+  margin: 0;
+  font-size: clamp(11px, 2vw, 15px);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.tour__play-big {
+  margin-top: 16px;
+  background: none;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+
+  &:hover {
+    border-color: var(--accent);
+    transform: scale(1.08);
+  }
+}
+
+/* Slide -------------------------------------------------------------------- */
+.tour__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 32px 12px;
+  animation: fadeSlide 0.35s ease;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tour__slide-number {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.tour__slide-total {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.tour__slide-title {
+  margin: 8px 0 12px;
+  font-size: clamp(20px, 3.5vw, 32px);
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.tour__slide-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 20px;
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    transition: width 50ms linear;
+  }
+}
+
+.tour__slide-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+
+  li {
+    font-size: clamp(12px, 2.2vw, 16px);
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.tour__bullet {
+  font-size: 8px;
+  line-height: 1;
+}
+
+/* Controles ---------------------------------------------------------------- */
+.tour__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 0 4px;
+}
+
+.tour__btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+}
+
+.tour__btn--play {
+  width: 42px;
+  height: 42px;
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+
+  &:hover {
+    background: var(--accent);
+    opacity: 0.9;
+  }
+}
+
+/* Indicadores de punto ----------------------------------------------------- */
+.tour__dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 0 8px;
+}
+
+.tour__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+
+  &.is-active {
+    background: var(--accent);
+    transform: scale(1.3);
+  }
+
+  &:hover:not(.is-active) {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Barra de progreso global ------------------------------------------------- */
+.tour__global-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.05);
+
+  span {
+    display: block;
+    height: 100%;
+    transition: width 50ms linear;
+  }
+}
+
+/* Responsive --------------------------------------------------------------- */
+@media (max-width: 600px) {
+  .tour {
+    aspect-ratio: auto;
+    min-height: 340px;
+  }
+
+  .tour__stage {
+    padding: 16px 20px 8px;
+  }
+
+  .tour__play-big {
+    width: 52px;
+    height: 52px;
+
+    svg {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}

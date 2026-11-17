@@ -21,6 +21,8 @@ import {
 } from '../../../core/api/dashboard/dashboard.dto';
 import { DashboardService } from '../../../core/api/dashboard/dashboard.service';
 import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.component';
+import { TourVideoComponent } from '../../../shared/components/tour-video/tour-video.component';
+import { INSTRUCTOR_TOUR_SLIDES } from '../../../shared/components/tour-video/tour-slides';
 
 /**
  * Panel del instructor (RF-032).
@@ -37,7 +39,7 @@ import { AppIconComponent } from '../../../shared/components/app-icon/app-icon.c
 @Component({
   selector: 'app-instructor-dashboard-page',
   standalone: true,
-  imports: [RouterLink, AppIconComponent, DatePipe],
+  imports: [RouterLink, AppIconComponent, DatePipe, TourVideoComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './instructor-dashboard-page.component.html',
   styleUrl: './instructor-dashboard-page.component.scss',
@@ -58,6 +60,7 @@ export class InstructorDashboardPageComponent implements OnInit {
 
   /** Nombre del instructor autenticado para el saludo del hero. */
   protected readonly firstName = computed(() => this.auth.currentUser()?.firstName ?? '');
+  protected readonly tourSlides = INSTRUCTOR_TOUR_SLIDES;
 
   /** Saludo contextual según la hora local del navegador. */
   protected readonly greeting = computed(() => {

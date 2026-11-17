@@ -1,0 +1,94 @@
+<!-- Tour interactivo animado con auto-play -->
+<div class="tour" #container [style.--accent]="accentColor">
+  <!-- Pantalla de intro -->
+  @if (showIntro()) {
+    <div class="tour__intro" (click)="play()">
+      <div class="tour__intro-content">
+        <span class="tour__brand-prompt" aria-hidden="true">&gt;</span>
+        <span class="tour__brand">Impulso<span class="tour__brand-accent">.tech</span></span>
+        <div class="tour__intro-role">{{ role }}</div>
+        @if (subtitle) {
+          <p class="tour__intro-sub">{{ subtitle }}</p>
+        }
+        <button type="button" class="tour__play-big" aria-label="Reproducir tour">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5,3 19,12 5,21" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Slide actual -->
+  @if (!showIntro()) {
+    <div class="tour__stage">
+      <div class="tour__slide-number">
+        {{ (currentIndex() + 1).toString().padStart(2, '0') }}
+        <span class="tour__slide-total">/ {{ slides.length.toString().padStart(2, '0') }}</span>
+      </div>
+
+      <h3 class="tour__slide-title">{{ slides[currentIndex()].title }}</h3>
+
+      <div class="tour__slide-bar" [style.width.px]="80">
+        <span [style.width.%]="progress()" [style.background]="accentColor"></span>
+      </div>
+
+      <ul class="tour__slide-items">
+        @for (item of slides[currentIndex()].items; track $index) {
+          <li>
+            <span class="tour__bullet" [style.color]="accentColor" aria-hidden="true">&#9679;</span>
+            {{ item }}
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Controles -->
+    <div class="tour__controls">
+      <button type="button" class="tour__btn" (click)="prev()" aria-label="Anterior">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15,18 9,12 15,6" />
+        </svg>
+      </button>
+
+      <button type="button" class="tour__btn tour__btn--play" (click)="togglePlay()"
+              [attr.aria-label]="playing() ? 'Pausar' : 'Reproducir'">
+        @if (playing()) {
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16" rx="1" />
+            <rect x="14" y="4" width="4" height="16" rx="1" />
+          </svg>
+        } @else {
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5,3 19,12 5,21" />
+          </svg>
+        }
+      </button>
+
+      <button type="button" class="tour__btn" (click)="next()" aria-label="Siguiente">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9,18 15,12 9,6" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Indicadores de punto -->
+    <div class="tour__dots">
+      @for (slide of slides; track $index) {
+        <button type="button"
+                class="tour__dot"
+                [class.is-active]="$index === currentIndex()"
+                [attr.aria-label]="'Ir a ' + slide.title"
+                (click)="goTo($index)">
+        </button>
+      }
+    </div>
+
+    <!-- Barra de progreso global -->
+    <div class="tour__global-bar">
+      <span [style.width.%]="globalProgress()" [style.background]="accentColor"></span>
+    </div>
+  }
+</div>

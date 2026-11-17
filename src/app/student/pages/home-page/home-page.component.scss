@@ -579,6 +579,29 @@
   font-weight: 700;
 }
 
+/* Tour del perfil -------------------------------------------------- */
+.home__tour {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.home__tour-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-ink);
+  text-align: center;
+}
+
+.home__tour-lead {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-body);
+  text-align: center;
+}
+
 /* Responsive ------------------------------------------------------- */
 @media (max-width: 900px) {
   .home__hero {
