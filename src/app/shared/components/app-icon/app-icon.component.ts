@@ -33,7 +33,9 @@ export type AppIconName =
   | 'flame'
   | 'bolt'
   | 'arrow-right'
-  | 'shield';
+  | 'shield'
+  | 'briefcase'
+  | 'folder';
 
 /**
  * Componente que renderiza un icono SVG monocromático usando el
@@ -83,6 +85,8 @@ export type AppIconName =
         @case ('bolt') { <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" /> }
         @case ('arrow-right') { <path d="M5 12h14M13 5l7 7-7 7" /> }
         @case ('shield') { <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /> }
+        @case ('briefcase') { <path d="M4 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20" /> }
+        @case ('folder') { <path d="M4 20a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2z" /> }
       }
     </svg>
   `,

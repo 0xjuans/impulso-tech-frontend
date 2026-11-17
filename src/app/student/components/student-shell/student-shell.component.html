@@ -27,6 +27,12 @@
           routerLinkActive="is-active"
           (click)="closeMenu()"
           [attr.title]="sideCollapsed() ? item.label : null">
+          <span class="shell__link-icon">
+            <app-icon [name]="item.icon" [sizePx]="20" />
+            @if (item.path === 'messages' && messagesUnread() > 0) {
+              <span class="shell__link-dot" aria-hidden="true"></span>
+            }
+          </span>
           <span class="shell__link-label">{{ item.label }}</span>
           @if (item.path === 'messages' && messagesUnread() > 0) {
             <span class="shell__link-badge" aria-label="Mensajes sin leer">
@@ -43,10 +49,32 @@
       class="shell__logout"
       (click)="logout()"
       [attr.title]="sideCollapsed() ? 'Cerrar sesión' : null">
+      <span class="shell__link-icon"><app-icon name="logout" [sizePx]="20" /></span>
       <span class="shell__link-label">Cerrar sesión</span>
       <span class="shell__tooltip" aria-hidden="true">Cerrar sesión</span>
     </button>
   </aside>
+
+  <!-- Pestaña flotante anclada al borde del sidebar para colapsarlo o
+       expandirlo. Se desliza con el ancho de la barra y se oculta en
+       mobile, donde el burger cumple la misma función. -->
+  <button
+    type="button"
+    class="shell__side-toggle"
+    (click)="toggleSideCollapsed()"
+    [attr.aria-expanded]="!sideCollapsed()"
+    [attr.aria-label]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
+    [attr.title]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.4"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      @if (sideCollapsed()) {
+        <path d="m9 18 6-6-6-6" />
+      } @else {
+        <path d="m15 18-6-6 6-6" />
+      }
+    </svg>
+  </button>
 
   <!-- Cortina para cerrar el menú lateral en mobile al hacer clic fuera. -->
   @if (menuOpen()) {
@@ -66,31 +94,6 @@
       [attr.aria-expanded]="menuOpen()"
       aria-label="Abrir menú">
       <span></span><span></span><span></span>
-    </button>
-
-    <!-- Toggle para colapsar/expandir el sidebar en desktop.
-         Vive dentro de la cabecera superior para integrarse con el resto
-         de acciones del header en lugar de flotar sobre el layout. -->
-    <button
-      type="button"
-      class="shell__side-toggle"
-      (click)="toggleSideCollapsed()"
-      [attr.aria-expanded]="!sideCollapsed()"
-      [attr.aria-label]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
-      [attr.title]="sideCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="2.2"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        @if (sideCollapsed()) {
-          <!-- chevrons-right: doble chevron amable indicando expansión. -->
-          <path d="m6 17 5-5-5-5" />
-          <path d="m13 17 5-5-5-5" />
-        } @else {
-          <!-- chevrons-left: doble chevron amable indicando colapso. -->
-          <path d="m11 17-5-5 5-5" />
-          <path d="m18 17-5-5 5-5" />
-        }
-      </svg>
     </button>
 
     <div class="shell__top-right">

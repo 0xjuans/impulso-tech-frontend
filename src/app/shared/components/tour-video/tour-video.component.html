@@ -61,9 +61,11 @@
                 <h2 id="tour-title">{{ chapter.label }}</h2>
                 <p>{{ chapter.description }}</p>
               </div>
-              <a class="tour-btn tour-btn--primary" [routerLink]="chapter.link" (click)="close()">
-                Ir a {{ chapter.label }} →
-              </a>
+              @if (!chapter.intro) {
+                <a class="tour-btn tour-btn--primary" [routerLink]="chapter.link" (click)="close()">
+                  Ir a {{ chapter.label }} →
+                </a>
+              }
             </div>
           }
         </div>
